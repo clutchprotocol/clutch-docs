@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Clutch Hub API Overview
 
-Clutch Hub API bridges applications to the Clutch Node blockchain. It exposes GraphQL and REST endpoints.
+Clutch Hub API bridges applications to the Clutch Node blockchain. It exposes GraphQL and REST endpoints for transaction creation, submission, and user management.
 
 ## Endpoints
 
@@ -12,19 +12,23 @@ Clutch Hub API bridges applications to the Clutch Node blockchain. It exposes Gr
 |----------|--------|-------------|
 | `/health` | GET | Health check |
 | `/graphql` | POST | GraphQL API |
+| `/auth/register` | POST | User registration |
+| `/auth/login` | POST | User login |
+| `/users` | GET, POST | User CRUD |
 
-## Configuration
+## Features
 
-Main settings in `config/default.toml`:
-
-- **ws_addr** — API bind address (e.g. `0.0.0.0:3000`)
-- **clutch_node_ws_url** — Node WebSocket (e.g. `ws://node1:8081/ws`)
-- **seq_url** — Seq logging URL
+- User authentication (JWT)
+- Unsigned transaction generation
+- Signed transaction submission
+- GraphQL for flexible queries
+- Seq integration for structured logging
 
 ## Docker
 
 ```bash
-docker run -p 3000:3000 9194010019/clutch-hub-api:latest
+docker pull 9194010019/clutch-hub-api:latest
+docker run -p 3000:3000 -v $(pwd)/config:/app/config:ro 9194010019/clutch-hub-api:latest
 ```
 
-Or use [clutch-deploy](https://github.com/clutchprotocol/clutch-deploy).
+Or use [clutch-deploy](https://github.com/clutchprotocol/clutch-deploy) for the full stack.

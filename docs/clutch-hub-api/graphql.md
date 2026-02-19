@@ -1,10 +1,10 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 # GraphQL API
 
-The API exposes a GraphQL endpoint at `POST /graphql`.
+The API exposes GraphQL at `POST /graphql`.
 
 ## Example
 
@@ -14,12 +14,61 @@ curl -X POST http://localhost:3000/graphql \
   -d '{"query": "{ __typename }"}'
 ```
 
+## Mutations
+
+### createUnsignedRideRequest
+
+Creates an unsigned ride request transaction.
+
+```graphql
+mutation CreateUnsignedRideRequest(
+  $pickupLatitude: Float!, $pickupLongitude: Float!,
+  $dropoffLatitude: Float!, $dropoffLongitude: Float!, $fare: Int!
+) {
+  createUnsignedRideRequest(
+    pickupLatitude: $pickupLatitude,
+    pickupLongitude: $pickupLongitude,
+    dropoffLatitude: $dropoffLatitude,
+    dropoffLongitude: $dropoffLongitude,
+    fare: $fare
+  ) {
+    data
+    from
+    nonce
+  }
+}
+```
+
+### submitSignedTransaction
+
+Submits a signed transaction.
+
+```graphql
+mutation SubmitSignedTransaction($input: SignedTransactionInput!) {
+  submitSignedTransaction(input: $input) {
+    txHash
+    status
+  }
+}
+```
+
+### generateToken
+
+Generates a JWT for API access (used by SDK).
+
+```graphql
+mutation GenerateToken($publicKey: String!) {
+  generateToken(publicKey: $publicKey) {
+    token
+    expiresAt
+  }
+}
+```
+
 ## Authentication
 
-For protected operations, include the JWT token:
+For protected mutations, include the JWT:
 
 ```
 Authorization: Bearer <token>
 ```
-
-See [Clutch Hub API README](https://github.com/clutchprotocol/clutch-hub-api) for auth endpoints (`/auth/register`, `/auth/login`).

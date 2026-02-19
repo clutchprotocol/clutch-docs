@@ -80,10 +80,10 @@ const config: Config = {
         {
           title: 'Docs',
           items: [
-            {label: 'Getting Started', to: '/intro'},
-            {label: 'Clutch Node', to: '/clutch-node/overview'},
-            {label: 'Clutch Hub API', to: '/clutch-hub-api/overview'},
-            {label: 'SDK', to: '/clutch-hub-sdk-js/overview'},
+            {label: 'Introduction', to: '/intro'},
+            {label: 'Quick Start', to: '/getting-started/quickstart'},
+            {label: 'Architecture', to: '/getting-started/architecture'},
+            {label: 'Demo App', to: '/demo-app/overview'},
           ],
         },
         {

@@ -4,14 +4,14 @@ sidebar_position: 1
 
 # Quick Start
 
-Get the Clutch Protocol stack running locally with Docker.
+Get the Clutch Protocol stack running in minutes.
 
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
 - (Optional) GHCR login for private images: `docker login ghcr.io`
 
-## Run the Full Stack
+## 1. Clone and Start
 
 ```bash
 git clone https://github.com/clutchprotocol/clutch-deploy.git
@@ -22,7 +22,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-## Verify
+## 2. Verify
 
 | Service | URL |
 |---------|-----|
@@ -31,8 +31,19 @@ docker compose up -d
 | Grafana | http://localhost:3030 (admin/admin) |
 | Seq Logs | http://localhost:5341 |
 
+## 3. Try the Demo App
+
+```bash
+git clone https://github.com/clutchprotocol/clutch-hub-demo-app.git
+cd clutch-hub-demo-app
+npm install
+npm run dev
+```
+
+Visit http://localhost:5173 and request a ride.
+
 ## Next Steps
 
-- [Docker Deploy](/getting-started/docker-deploy) — Full configuration details
-- [Clutch Hub API](/clutch-hub-api/overview) — API usage
-- [SDK](/clutch-hub-sdk-js/overview) — Integrate with your app
+- [Architecture](/getting-started/architecture) — Understand the system
+- [Clutch Hub API](/clutch-hub-api/overview) — API details
+- [SDK](/clutch-hub-sdk-js/overview) — Build your own app

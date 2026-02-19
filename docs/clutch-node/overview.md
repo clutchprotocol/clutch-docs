@@ -9,9 +9,11 @@ Clutch Node is the blockchain core of Clutch Protocol. It runs the consensus lay
 ## Features
 
 - **Aura consensus** — Block production and finality
-- **Custom transaction format** — Optimized for ride-sharing
+- **Custom transaction format** — Optimized for ride-sharing (non-EVM)
 - **Metrics** — Prometheus-compatible `/metrics` on ports 3001–3003
 - **Multi-node** — Bootstrap and peer discovery via libp2p
+- **Decentralized** — Eliminates intermediaries, direct user-to-user
+- **Secure** — Blockchain-verified transactions
 
 ## Ports (per node)
 
