@@ -6,6 +6,8 @@ sidebar_position: 2
 
 Full-stack deployment using [clutch-deploy](https://github.com/clutchprotocol/clutch-deploy).
 
+Pre-built images are published to [GHCR and Docker Hub](/reference/docker-images). `clutch-deploy` compose files reference the GHCR `:latest` tags.
+
 ## Services
 
 | Service | Ports | Description |

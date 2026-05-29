@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Clutch Deploy
 
-[clutch-deploy](https://github.com/clutchprotocol/clutch-deploy) provides Docker Compose for the full Clutch stack.
+[clutch-deploy](https://github.com/clutchprotocol/clutch-deploy) provides Docker Compose for the full Clutch stack. Compose files pull pre-built images from [GHCR](/reference/docker-images) (`ghcr.io/clutchprotocol/...:latest`).
 
 ## Quick start
 

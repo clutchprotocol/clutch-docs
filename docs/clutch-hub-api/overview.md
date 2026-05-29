@@ -38,6 +38,8 @@ The API never receives private keys. Apps sign transactions client-side and subm
 
 ## Docker
 
+Pull from [GHCR](https://github.com/clutchprotocol/clutch-hub-api/pkgs/container/clutch-hub-api) or [Docker Hub](https://hub.docker.com/r/9194010019/clutch-hub-api). See [Docker images](/reference/docker-images) for all packages.
+
 ```bash
 docker pull ghcr.io/clutchprotocol/clutch-hub-api:latest
 docker run -p 3000:3000 -v $(pwd)/config:/app/config:ro ghcr.io/clutchprotocol/clutch-hub-api:latest

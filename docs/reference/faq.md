@@ -71,10 +71,14 @@ Indexer polls every ~4 seconds. Wait and refresh.
 
 ## Docker images
 
-- Node: `ghcr.io/clutchprotocol/clutch-node:latest`
-- API: `ghcr.io/clutchprotocol/clutch-hub-api:latest`
-- Demo: `ghcr.io/clutchprotocol/clutch-hub-demo-app:latest`
-- Explorer: `ghcr.io/clutchprotocol/clutch-explorer-backend:latest`, `ghcr.io/clutchprotocol/clutch-explorer-frontend:latest`
+See the full [Docker images reference](/reference/docker-images) for registry links and pull commands.
+
+| Component | GHCR | Docker Hub |
+|-----------|------|------------|
+| Node | [`ghcr.io/clutchprotocol/clutch-node`](https://github.com/clutchprotocol/clutch-node/pkgs/container/clutch-node) | [`9194010019/clutch-node`](https://hub.docker.com/r/9194010019/clutch-node) |
+| Hub API | [`ghcr.io/clutchprotocol/clutch-hub-api`](https://github.com/clutchprotocol/clutch-hub-api/pkgs/container/clutch-hub-api) | [`9194010019/clutch-hub-api`](https://hub.docker.com/r/9194010019/clutch-hub-api) |
+| Demo app | [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/clutchprotocol/clutch-hub-demo-app/pkgs/container/clutch-hub-demo-app) | [`9194010019/clutch-hub-demo-app`](https://hub.docker.com/r/9194010019/clutch-hub-demo-app) |
+| Explorer | [`clutch-explorer-backend`](https://github.com/clutchprotocol/clutch-explorer/pkgs/container/clutch-explorer-backend), [`clutch-explorer-frontend`](https://github.com/clutchprotocol/clutch-explorer/pkgs/container/clutch-explorer-frontend) on GHCR | — |
 
 ## Documentation
 

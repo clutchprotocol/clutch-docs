@@ -37,6 +37,7 @@ Community governance (DAO) is on the roadmap and described on the [marketing sit
 | Demo app | https://demo.clutchprotocol.io |
 | Stage demo | https://app-stage.clutchprotocol.io |
 | npm SDK | https://www.npmjs.com/package/clutch-hub-sdk-js |
+| Docker packages | [Docker images](/reference/docker-images) · [GHCR org](https://github.com/orgs/clutchprotocol/packages) · [Docker Hub](https://hub.docker.com/u/9194010019) |
 
 ## Fee Distribution
 
@@ -54,6 +55,7 @@ Referrer fees on ride payments are configured on the node (default 2% each for r
 - [Passenger–driver flow](/getting-started/ride-lifecycle#complete-passengerdriver-flow) — Full sequence diagram
 - [Ride Lifecycle](/getting-started/ride-lifecycle) — End-to-end tutorial
 - [Architecture](/getting-started/architecture) — System design
+- [Docker images](/reference/docker-images) — GHCR and Docker Hub packages
 - [Clutch Hub API](/clutch-hub-api/overview) — GraphQL reference
 - [SDK](/clutch-hub-sdk-js/overview) — JavaScript/TypeScript integration
 - [Explorer](/clutch-explorer/overview) — Block explorer

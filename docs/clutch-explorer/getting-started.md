@@ -21,6 +21,8 @@ docker compose up -d
 | Explorer API | http://localhost:8088 |
 | API health | http://localhost:8088/health |
 
+Docker images (GHCR only): [`clutch-explorer-backend`](https://github.com/clutchprotocol/clutch-explorer/pkgs/container/clutch-explorer-backend), [`clutch-explorer-frontend`](https://github.com/clutchprotocol/clutch-explorer/pkgs/container/clutch-explorer-frontend). Full list: [Docker images](/reference/docker-images).
+
 ## Standalone development
 
 See the [clutch-explorer](https://github.com/clutchprotocol/clutch-explorer) repository for backend and frontend setup with Postgres.

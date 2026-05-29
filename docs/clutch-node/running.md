@@ -44,7 +44,9 @@ $env:LIBCLANG_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\V
 
 ## Images
 
-| Registry | Image |
-|----------|-------|
-| GHCR | `ghcr.io/clutchprotocol/clutch-node:latest` |
-| Docker Hub | `9194010019/clutch-node:latest` |
+| Registry | Image | Package page |
+|----------|-------|--------------|
+| GHCR | `ghcr.io/clutchprotocol/clutch-node:latest` | [clutch-node on GHCR](https://github.com/clutchprotocol/clutch-node/pkgs/container/clutch-node) |
+| Docker Hub | `9194010019/clutch-node:latest` | [clutch-node on Docker Hub](https://hub.docker.com/r/9194010019/clutch-node) |
+
+All published images: [Docker images reference](/reference/docker-images).

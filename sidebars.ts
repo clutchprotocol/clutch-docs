@@ -81,6 +81,7 @@ const sidebars: SidebarsConfig = {
         'reference/security',
         'reference/transaction-flow',
         'reference/signing-and-encoding',
+        'reference/docker-images',
         'reference/faq',
       ],
     },

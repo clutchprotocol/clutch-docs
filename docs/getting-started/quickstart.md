@@ -10,7 +10,7 @@ Get the Clutch Protocol stack running in minutes.
 
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
 - Node.js 20+ (only if running demo app outside Docker)
-- (Optional) GHCR login: `docker login ghcr.io`
+- (Optional) GHCR login: `docker login ghcr.io` — see [Docker images](/reference/docker-images) for package links
 
 ## 1. Clone and start full stack
 
