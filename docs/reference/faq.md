@@ -7,7 +7,7 @@ sidebar_position: 3
 ## General
 
 **What is Clutch Protocol?**  
-A decentralized ride-sharing blockchain with on-chain ride lifecycle, client-side signing, and low platform fees.
+A decentralized ride-sharing blockchain with on-chain ride lifecycle, client-side signing, and CLT payments (referrer fees on RidePay + block rewards for validators).
 
 **Is it production-ready?**  
 No. Alpha/experimental. APIs may change without notice.

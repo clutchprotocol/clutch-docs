@@ -4,11 +4,11 @@ sidebar_position: 1
 
 # Introduction
 
-**Clutch Protocol** is a decentralized ride-sharing blockchain that cuts platform fees from 15–25% to 5–8%, enables instant payouts, and targets transparent on-chain ride operations. Built on a custom non-EVM blockchain.
+**Clutch Protocol** is a decentralized ride-sharing blockchain with on-chain ride lifecycle, client-side signing, and instant CLT payouts to drivers. Built on a custom non-EVM blockchain.
 
 ## Key Features
 
-- **Ultra-low fees** — 5–8% vs 15–25% on traditional platforms
+- **Driver-first payments** — Drivers receive most of each fare; optional referrer fees up to 4% (default 2%+2%) on `RidePay`
 - **Instant payouts** — Drivers receive CLT as passengers pay via on-chain transactions
 - **Transparent & secure** — On-chain transactions with cryptographic security and full auditability
 - **Developer-friendly** — JavaScript SDK, GraphQL API, Docker deployment, block explorer
@@ -39,15 +39,20 @@ Community governance (DAO) is on the roadmap and described on the [marketing sit
 | npm SDK | https://www.npmjs.com/package/clutch-hub-sdk-js |
 | Docker packages | [Docker images](/reference/docker-images) · [GHCR org](https://github.com/orgs/clutchprotocol/packages) · [Docker Hub](https://hub.docker.com/u/9194010019) |
 
-## Fee Distribution
+## CLT economics
 
-For a $10 ride (target model):
+Ride payments and validator rewards are separate:
 
-- **Driver**: $9.00 (90%)
-- **Network nodes**: $0.50 (5%)
-- **Development fund**: $0.50 (5%)
+| Layer | Mechanism | Default |
+|-------|-----------|---------|
+| **RidePay** | Referrer fees + driver remainder | 2% request + 2% offer per payment |
+| **Blocks** | Fixed reward to block author | 50 CLT per block |
 
-Referrer fees on ride payments are configured on the node (default 2% each for request/offer referrers).
+**Example:** 10 CLT fare, one full `RidePay`, both referrers set → request referrer 1 CLT, offer referrer 1 CLT, driver 8 CLT.
+
+Validators are **not** paid from ride fares; they earn `block_reward_amount` when authoring blocks.
+
+Full details: [CLT Economics](/clutch-node/clt-economics)
 
 ## Quick Links
 

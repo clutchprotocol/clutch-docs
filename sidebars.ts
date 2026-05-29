@@ -22,6 +22,7 @@ const sidebars: SidebarsConfig = {
         'clutch-node/configuration',
         'clutch-node/running',
         'clutch-node/transaction-types',
+        'clutch-node/clt-economics',
       ],
     },
     {

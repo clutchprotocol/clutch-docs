@@ -32,12 +32,18 @@ RideRequestCancel              RideCancel
 
 ## Referrer fees
 
-On `RidePay`, the node distributes referrer fees based on config:
+On `RidePay`, the node distributes referrer fees from each payment installment:
 
 - `ride_request_referrer_fee_percent` (default 2%)
 - `ride_offer_referrer_fee_percent` (default 2%)
 
+Fees use ceiling rounding. The **driver** receives the installment minus total referrer fees. The passenger is debited the full fare at `RideAcceptance`; `RidePay` credits the driver and referrers without debiting the passenger again.
+
 Referrer addresses for new requests and offers are injected server-side by the Hub API from `default_ride_request_referrer` and `default_ride_offer_referrer` config.
+
+Validators earn a fixed **block reward** (`block_reward_amount`, default 50 CLT per block), separate from ride payments.
+
+See [CLT Economics](/clutch-node/clt-economics) for the full payment flow and examples.
 
 ## JSON-RPC methods (node WebSocket)
 
