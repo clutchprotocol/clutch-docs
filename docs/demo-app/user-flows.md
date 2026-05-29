@@ -6,6 +6,8 @@ sidebar_position: 3
 
 The demo app maps UI actions to SDK calls. Use it as a reference when building your own dApp.
 
+For the full interaction between passenger and driver (including Hub API and node), see the [passenger–driver flow diagram](/getting-started/ride-lifecycle#complete-passengerdriver-flow).
+
 ## Role selection
 
 | UI | Behavior |

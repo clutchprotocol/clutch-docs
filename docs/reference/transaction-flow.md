@@ -6,16 +6,7 @@ sidebar_position: 2
 
 ## Full ride lifecycle
 
-```
-Passenger                          Driver
-    │                                 │
-    ├─ RideRequest ──────────────────►│ sees via list/subscribe
-    │                                 ├─ RideOffer
-    ├─ RideAcceptance ◄───────────────┤
-    ├─ RidePay (partial OK) ────────►│ receives CLT
-    │                                 │
-    └─ completed when farePaid = fare
-```
+See the [complete passenger–driver flow diagram](/getting-started/ride-lifecycle#complete-passengerdriver-flow) for the bilateral sequence (passenger, driver, Hub API, and node) including cancellation branches.
 
 Cancellation paths:
 

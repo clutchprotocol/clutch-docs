@@ -51,6 +51,7 @@ Referrer fees on ride payments are configured on the node (default 2% each for r
 ## Quick Links
 
 - [Quick Start](/getting-started/quickstart) — Run locally in minutes
+- [Passenger–driver flow](/getting-started/ride-lifecycle#complete-passengerdriver-flow) — Full sequence diagram
 - [Ride Lifecycle](/getting-started/ride-lifecycle) — End-to-end tutorial
 - [Architecture](/getting-started/architecture) — System design
 - [Clutch Hub API](/clutch-hub-api/overview) — GraphQL reference

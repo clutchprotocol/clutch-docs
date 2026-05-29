@@ -6,6 +6,129 @@ sidebar_position: 4
 
 This guide walks through the complete ride-sharing flow using the Clutch Hub SDK — from wallet setup to payment.
 
+## Complete passenger–driver flow {#complete-passengerdriver-flow}
+
+Overview of how **passenger** and **driver** apps interact through the Hub API and node. Every write follows: `createUnsigned*` → sign client-side → `sendRawTransaction`.
+
+### Swimlane overview
+
+```mermaid
+flowchart TB
+    subgraph PassengerLane [Passenger]
+        P1[Fund wallet via faucet]
+        P2[RideRequest]
+        P3[Watch offers]
+        P4[RideAcceptance]
+        P5[RidePay partial or full]
+        P6[Completed trip]
+        P1 --> P2 --> P3 --> P4 --> P5 --> P6
+    end
+
+    subgraph DriverLane [Driver]
+        D1[Fund wallet via faucet]
+        D2[Subscribe or list requests]
+        D3[RideOffer]
+        D4[Active trip]
+        D5[Receive CLT via RidePay]
+        D6[Completed trip]
+        D1 --> D2 --> D3 --> D4 --> D5 --> D6
+    end
+
+    P2 -.->|request visible on chain| D2
+    D3 -.->|offer visible to passenger| P3
+    P4 -.->|trip active| D4
+    P5 -.->|CLT to driver| D5
+```
+
+### Sequence diagram (happy path)
+
+```mermaid
+sequenceDiagram
+    participant Passenger
+    participant Driver
+    participant HubAPI as Hub_API
+    participant Node as Clutch_Node
+
+    Note over Passenger,Driver: Setup testnet wallets
+    Passenger->>HubAPI: requestFaucet
+    Driver->>HubAPI: requestFaucet
+    HubAPI->>Node: signed Transfer tx
+
+    Note over Passenger: Step 1 — RideRequest
+    Passenger->>HubAPI: createUnsignedRideRequest
+    HubAPI->>Node: get_next_nonce
+    HubAPI-->>Passenger: unsigned tx JSON
+    Passenger->>Passenger: signTransaction
+    Passenger->>HubAPI: sendRawTransaction
+    HubAPI->>Node: send_raw_transaction
+
+    Note over Driver: Step 2 — discover and RideOffer
+    Driver->>HubAPI: subscribeRideRequests or listRideRequests
+    HubAPI->>Node: list_ride_requests
+    HubAPI-->>Driver: open requests
+    Driver->>HubAPI: createUnsignedRideOffer
+    Driver->>Driver: signTransaction
+    Driver->>HubAPI: sendRawTransaction
+    HubAPI->>Node: send_raw_transaction
+
+    Note over Passenger: Step 3 — RideAcceptance
+    Passenger->>HubAPI: subscribeRideOffers or listRideOffers
+    HubAPI->>Node: list_ride_offers
+    Passenger->>HubAPI: createUnsignedRideAcceptance
+    Passenger->>Passenger: signTransaction
+    Passenger->>HubAPI: sendRawTransaction
+    HubAPI->>Node: send_raw_transaction
+
+    Note over Passenger: Step 4 — RidePay
+    Passenger->>HubAPI: createUnsignedRidePay partial amount
+    Passenger->>Passenger: signTransaction
+    Passenger->>HubAPI: sendRawTransaction
+    HubAPI->>Node: send_raw_transaction
+    Passenger->>HubAPI: createUnsignedRidePay remainder
+    Passenger->>Passenger: signTransaction
+    Passenger->>HubAPI: sendRawTransaction
+    HubAPI->>Node: send_raw_transaction
+
+    Note over Passenger,Driver: Completed when farePaid equals fare
+    Passenger->>HubAPI: subscribeCompletedTrips
+    Driver->>HubAPI: subscribeCompletedTrips
+    HubAPI->>Node: list_completed_trips
+```
+
+### Cancellation branches
+
+```mermaid
+sequenceDiagram
+    participant Passenger
+    participant Driver
+    participant HubAPI as Hub_API
+    participant Node as Clutch_Node
+
+    alt Before driver acceptance
+        Note over Passenger: Request still open
+        Passenger->>HubAPI: createUnsignedRideRequestCancel
+        Passenger->>Passenger: signTransaction
+        Passenger->>HubAPI: sendRawTransaction
+        HubAPI->>Node: send_raw_transaction
+    else After acceptance, before full payment
+        Note over Passenger,Driver: Either party may cancel
+        Passenger->>HubAPI: createUnsignedRideCancel
+        Passenger->>HubAPI: sendRawTransaction
+        HubAPI->>Node: send_raw_transaction
+        Note over Driver: Or driver initiates cancel
+        Driver->>HubAPI: createUnsignedRideCancel
+        Driver->>HubAPI: sendRawTransaction
+        HubAPI->>Node: send_raw_transaction
+    end
+```
+
+| When | Who | Transaction | Condition |
+|------|-----|-------------|-----------|
+| Before acceptance | Passenger only | `RideRequestCancel` | No driver accepted yet |
+| After acceptance | Passenger or driver | `RideCancel` | `farePaid` less than `fare` |
+
+Code examples for cancellation are in [Cancellation](#cancellation) below.
+
 ## Prerequisites
 
 - Clutch stack running locally ([Quick Start](/getting-started/quickstart)) or use [Stage environment](/getting-started/environments)
