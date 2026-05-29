@@ -19,7 +19,7 @@ const config: Config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
 
   i18n: {
     defaultLocale: 'en',
@@ -63,6 +63,16 @@ const config: Config = {
           label: 'Documentation',
         },
         {
+          href: 'https://demo.clutchprotocol.io',
+          label: 'Demo App',
+          position: 'right',
+        },
+        {
+          href: 'https://www.npmjs.com/package/clutch-hub-sdk-js',
+          label: 'npm SDK',
+          position: 'right',
+        },
+        {
           href: 'https://clutchprotocol.io',
           label: 'Website',
           position: 'right',
@@ -82,14 +92,24 @@ const config: Config = {
           items: [
             {label: 'Introduction', to: '/intro'},
             {label: 'Quick Start', to: '/getting-started/quickstart'},
+            {label: 'Ride Lifecycle', to: '/getting-started/ride-lifecycle'},
             {label: 'Architecture', to: '/getting-started/architecture'},
+          ],
+        },
+        {
+          title: 'Build',
+          items: [
+            {label: 'Hub API', to: '/clutch-hub-api/overview'},
+            {label: 'SDK', to: '/clutch-hub-sdk-js/overview'},
             {label: 'Demo App', to: '/demo-app/overview'},
+            {label: 'Explorer', to: '/clutch-explorer/overview'},
           ],
         },
         {
           title: 'Project',
           items: [
             {label: 'Website', href: 'https://clutchprotocol.io'},
+            {label: 'Demo', href: 'https://demo.clutchprotocol.io'},
             {label: 'GitHub', href: 'https://github.com/clutchprotocol'},
             {label: 'Deploy', href: 'https://github.com/clutchprotocol/clutch-deploy'},
           ],

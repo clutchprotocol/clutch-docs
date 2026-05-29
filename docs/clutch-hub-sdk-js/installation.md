@@ -10,18 +10,17 @@ sidebar_position: 2
 npm install clutch-hub-sdk-js
 ```
 
-## Version Strategies
+## Version strategies
 
-| Use Case | Package Spec | Example |
+| Use case | Package spec | Example |
 |----------|--------------|---------|
-| **Production** | Pinned version | `"1.3.1"` |
-| **Development** | Caret range | `"^1.3.0"` |
-| **Staging** | Tilde range | `"~1.3.1"` |
-| **Canary** | Tag | `@canary` |
+| Production | Pinned version | `"1.22.1"` |
+| Development | Caret range | `"^1.22.0"` |
+| Canary | Tag | `@canary` |
 
 ```bash
-# Install specific version
-npm install clutch-hub-sdk-js@1.3.1
+# Install latest
+npm install clutch-hub-sdk-js
 
 # Install canary (bleeding edge)
 npm install clutch-hub-sdk-js@canary
@@ -32,5 +31,21 @@ npm view clutch-hub-sdk-js versions --json
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 18+ (20+ recommended)
 - ES2020+ (BigInt support)
+- Browser or Node.js environment with `fetch` / axios support
+
+## Constructor
+
+Both arguments are required:
+
+```typescript
+new ClutchHubSdk(apiUrl: string, publicKey: string)
+```
+
+The SDK automatically obtains a JWT via `generateToken` when calling authenticated methods.
+
+## Next steps
+
+- [Usage](/clutch-hub-sdk-js/usage)
+- [Ride Lifecycle](/getting-started/ride-lifecycle)

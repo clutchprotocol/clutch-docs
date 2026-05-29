@@ -4,25 +4,47 @@ sidebar_position: 1
 
 # Demo App Overview
 
-The **Clutch Hub Demo App** is a React + Vite application that demonstrates blockchain-based ride-sharing using the Clutch Hub SDK.
+The **Clutch Hub Demo App** is a React + Vite application demonstrating blockchain-based ride-sharing with passenger and driver roles.
 
 ## Features
 
-- **User profile** — Store public/private keys (optional localStorage)
-- **Ride request** — Interactive map (Leaflet) for pickup/dropoff, fare input
-- **Transaction signing** — Client-side signing when keys are stored
-- **Transaction history** — Persistent list per public key
+- **Dual roles** — Separate passenger and driver experiences
+- **Wallet management** — Generate or import keys (optional localStorage)
+- **Interactive map** — Leaflet map for pickup/dropoff selection
+- **Full ride lifecycle** — Request, offer, accept, pay, cancel
+- **Real-time updates** — GraphQL subscriptions with polling fallback
+- **Faucet integration** — One-click test CLT funding
+- **Transaction history** — Persistent list per wallet address
+- **Stage auto-detect** — Maps `app-stage.*` hostname to `api-stage.*`
 
 ## Tech Stack
 
-- React
+- React 19
 - Vite
 - Leaflet (maps)
-- clutch-hub-sdk-js
+- [clutch-hub-sdk-js](https://www.npmjs.com/package/clutch-hub-sdk-js)
 
-## Key Concepts Demonstrated
+## Key concepts demonstrated
 
 1. **User sovereignty** — Users own and control their keys
-2. **Client-side signing** — Keys never leave the browser
+2. **Client-side signing** — Private keys never sent to the server
 3. **Transparency** — Transaction history visible on-chain
-4. **Trustless operations** — No central authority for ride processing
+4. **Trustless operations** — Ride state enforced by the blockchain
+
+## Live demos
+
+| Environment | URL |
+|-------------|-----|
+| Production demo | https://demo.clutchprotocol.io |
+| Stage | https://app-stage.clutchprotocol.io |
+| Local | http://localhost:5173 |
+
+## Documentation
+
+- [Getting Started](/demo-app/getting-started)
+- [User Flows](/demo-app/user-flows) — UI action → SDK call mapping
+
+## Related
+
+- [Ride Lifecycle](/getting-started/ride-lifecycle)
+- [SDK Usage](/clutch-hub-sdk-js/usage)

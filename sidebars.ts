@@ -10,6 +10,8 @@ const sidebars: SidebarsConfig = {
         'getting-started/quickstart',
         'getting-started/docker-deploy',
         'getting-started/architecture',
+        'getting-started/ride-lifecycle',
+        'getting-started/environments',
       ],
     },
     {
@@ -19,6 +21,7 @@ const sidebars: SidebarsConfig = {
         'clutch-node/overview',
         'clutch-node/configuration',
         'clutch-node/running',
+        'clutch-node/transaction-types',
       ],
     },
     {
@@ -28,6 +31,8 @@ const sidebars: SidebarsConfig = {
         'clutch-hub-api/overview',
         'clutch-hub-api/authentication',
         'clutch-hub-api/graphql',
+        'clutch-hub-api/subscriptions',
+        'clutch-hub-api/faucet',
         'clutch-hub-api/configuration',
       ],
     },
@@ -39,6 +44,7 @@ const sidebars: SidebarsConfig = {
         'clutch-hub-sdk-js/installation',
         'clutch-hub-sdk-js/usage',
         'clutch-hub-sdk-js/api-reference',
+        'clutch-hub-sdk-js/subscriptions',
       ],
     },
     {
@@ -47,6 +53,16 @@ const sidebars: SidebarsConfig = {
       items: [
         'demo-app/overview',
         'demo-app/getting-started',
+        'demo-app/user-flows',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Clutch Explorer',
+      items: [
+        'clutch-explorer/overview',
+        'clutch-explorer/getting-started',
+        'clutch-explorer/api-reference',
       ],
     },
     {
@@ -64,6 +80,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'reference/security',
         'reference/transaction-flow',
+        'reference/signing-and-encoding',
         'reference/faq',
       ],
     },

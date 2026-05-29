@@ -9,9 +9,10 @@ Get the Clutch Protocol stack running in minutes.
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
-- (Optional) GHCR login for private images: `docker login ghcr.io`
+- Node.js 20+ (only if running demo app outside Docker)
+- (Optional) GHCR login: `docker login ghcr.io`
 
-## 1. Clone and Start
+## 1. Clone and start full stack
 
 ```bash
 git clone https://github.com/clutchprotocol/clutch-deploy.git
@@ -22,28 +23,57 @@ cp .env.example .env
 docker compose up -d
 ```
 
-## 2. Verify
+This starts nodes, Hub API, demo app, explorer, Prometheus, Grafana, and Seq.
+
+## 2. Verify services
 
 | Service | URL |
 |---------|-----|
-| API Health | http://localhost:3000/health |
+| API health | http://localhost:3000/health |
 | GraphQL | http://localhost:3000/graphql |
+| Demo app | http://localhost:5173 |
+| Explorer | http://localhost:5174 |
 | Grafana | http://localhost:3030 (admin/admin) |
-| Seq Logs | http://localhost:5341 |
+| Seq logs | http://localhost:5341 |
 
-## 3. Try the Demo App
+## 3. Try the demo app
+
+Open http://localhost:5173:
+
+1. Choose **Passenger** or **Driver**
+2. Generate or import a wallet
+3. Click **Request CLT** to fund via faucet
+4. As passenger: pick locations on the map and request a ride
+5. As driver: view requests and submit an offer
+
+Or run the demo standalone:
 
 ```bash
 git clone https://github.com/clutchprotocol/clutch-hub-demo-app.git
 cd clutch-hub-demo-app
 npm install
-npm run dev
+VITE_API_URL=http://localhost:3000 npm run dev
 ```
 
-Visit http://localhost:5173 and request a ride.
+## 4. Build with the SDK
 
-## Next Steps
+```bash
+npm install clutch-hub-sdk-js
+```
 
-- [Architecture](/getting-started/architecture) — Understand the system
-- [Clutch Hub API](/clutch-hub-api/overview) — API details
+```javascript
+import { ClutchHubSdk } from 'clutch-hub-sdk-js';
+
+const sdk = new ClutchHubSdk('http://localhost:3000', publicKey);
+await sdk.requestFaucet(publicKey);
+```
+
+See [Ride Lifecycle](/getting-started/ride-lifecycle) for the full flow.
+
+## Next steps
+
+- [Environments](/getting-started/environments) — Local vs stage URLs
+- [Architecture](/getting-started/architecture) — System design
+- [Clutch Hub API](/clutch-hub-api/overview) — GraphQL reference
 - [SDK](/clutch-hub-sdk-js/overview) — Build your own app
+- [Explorer](/clutch-explorer/overview) — Browse on-chain data

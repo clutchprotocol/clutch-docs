@@ -4,31 +4,50 @@ sidebar_position: 1
 
 # Clutch Hub API Overview
 
-Clutch Hub API bridges applications to the Clutch Node blockchain. It exposes GraphQL and REST endpoints for transaction creation, submission, and user management.
+Clutch Hub API bridges applications to the Clutch Node blockchain. It builds unsigned transactions, submits signed transactions, exposes chain state via GraphQL, and provides a testnet faucet.
 
-## Endpoints
+## HTTP endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/health` | GET | Health check |
-| `/graphql` | POST | GraphQL API |
-| `/auth/register` | POST | User registration |
-| `/auth/login` | POST | User login |
-| `/users` | GET, POST | User CRUD |
+| `/health` | GET | Liveness check |
+| `/faucet` | POST | Testnet CLT drip (when enabled) |
+| `/graphql` | POST | GraphQL queries and mutations |
+| `/graphql/ws` | GET | GraphQL subscriptions (WebSocket) |
+
+There is **no** REST user registration or login. Authentication is wallet-based JWT via GraphQL `generateToken`. See [Authentication](/clutch-hub-api/authentication).
 
 ## Features
 
-- User authentication (JWT)
-- Unsigned transaction generation
-- Signed transaction submission
-- GraphQL for flexible queries
+- Wallet JWT authentication
+- Unsigned transaction generation for the full ride lifecycle
+- Signed transaction submission to the node
+- GraphQL queries for ride lists and account balance
+- GraphQL subscriptions (poll-based snapshots from the node)
+- Testnet faucet (`Transfer` signed server-side)
 - Seq integration for structured logging
+- Prometheus metrics sidecar (configurable)
+
+## Architecture role
+
+```
+Your App / SDK  ──►  Hub API (GraphQL)  ──►  Clutch Node (WebSocket JSON-RPC)
+```
+
+The API never receives private keys. Apps sign transactions client-side and submit raw RLP hex via `sendRawTransaction`.
 
 ## Docker
 
 ```bash
-docker pull 9194010019/clutch-hub-api:latest
-docker run -p 3000:3000 -v $(pwd)/config:/app/config:ro 9194010019/clutch-hub-api:latest
+docker pull ghcr.io/clutchprotocol/clutch-hub-api:latest
+docker run -p 3000:3000 -v $(pwd)/config:/app/config:ro ghcr.io/clutchprotocol/clutch-hub-api:latest
 ```
 
-Or use [clutch-deploy](https://github.com/clutchprotocol/clutch-deploy) for the full stack.
+Or use [clutch-deploy](/deployment/clutch-deploy) for the full stack.
+
+## Documentation
+
+- [GraphQL reference](/clutch-hub-api/graphql)
+- [Subscriptions](/clutch-hub-api/subscriptions)
+- [Faucet](/clutch-hub-api/faucet)
+- [Configuration](/clutch-hub-api/configuration)
