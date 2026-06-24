@@ -11,6 +11,7 @@ const sidebars: SidebarsConfig = {
         'getting-started/docker-deploy',
         'getting-started/architecture',
         'getting-started/ride-lifecycle',
+        'getting-started/app-developer-incentives',
         'getting-started/environments',
       ],
     },

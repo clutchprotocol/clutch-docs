@@ -56,6 +56,7 @@ Full details: [CLT Economics](/clutch-node/clt-economics)
 
 ## Quick Links
 
+- [Build apps and earn CLT](/getting-started/app-developer-incentives) — Referrer fees for app developers
 - [Quick Start](/getting-started/quickstart) — Run locally in minutes
 - [Passenger–driver flow](/getting-started/ride-lifecycle#complete-passengerdriver-flow) — Full sequence diagram
 - [Ride Lifecycle](/getting-started/ride-lifecycle) — End-to-end tutorial

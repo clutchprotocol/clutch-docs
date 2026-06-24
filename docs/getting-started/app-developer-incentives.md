@@ -1,0 +1,122 @@
+---
+sidebar_position: 5
+---
+
+# App Developer Incentives
+
+Build a ride-sharing app on Clutch and earn CLT when users complete rides on your deployment. The network pays **referrer fees** on each `RidePay` — there is no separate grants program or development treasury.
+
+## How app builders earn
+
+When a passenger pays a driver via `RidePay`, the node splits each payment installment:
+
+| Recipient | Share (default) | Source |
+|-----------|-----------------|--------|
+| Request referrer | 2% of installment | `RideRequest.referrer` |
+| Offer referrer | 2% of installment | `RideOffer.referrer` |
+| Driver | Remainder | Fare minus referrer fees |
+
+Fees are credited in **CLT** on-chain. If the same wallet is referrer on both request and offer, it can receive up to **4%** of each `RidePay` installment (with default node config).
+
+Referrer fees use **ceiling rounding** (e.g. 2% of 3 CLT = 1 CLT).
+
+## When you get paid
+
+Referrer fees are paid **only on `RidePay`**, not when a ride is requested or accepted.
+
+1. Passenger accepts an offer → full fare is debited from the passenger (`RideAcceptance`).
+2. Passenger sends one or more `RidePay` transactions → referrers and driver are credited from that installment.
+3. If the trip is cancelled before full payment, unpaid fare is refunded to the passenger — no referrer fee on amounts never paid.
+
+Your earnings scale with **ride volume and fares** on transactions where your wallet is the referrer.
+
+## Earnings example
+
+Default config, **10 CLT** fare, one full `RidePay`, both referrers set to your app wallet:
+
+| Recipient | CLT |
+|-----------|-----|
+| Your wallet (request referrer) | 1 |
+| Your wallet (offer referrer) | 1 |
+| Driver | 8 |
+
+If you set the same address for both `default_ride_request_referrer` and `default_ride_offer_referrer`, you receive **2 CLT** on this ride.
+
+With **no** referrers configured, the driver receives the full installment and app builders earn nothing from that ride.
+
+## How to participate
+
+```mermaid
+flowchart LR
+    YourApp[Your app] --> SDK[clutch-hub-sdk-js]
+    SDK --> HubAPI[Your Hub API]
+    HubAPI -->|"inject referrer on createUnsigned*"| Node[clutch-node]
+    Node -->|"RidePay credits referrer"| YourWallet[Your CLT wallet]
+```
+
+### 1. Run your own Hub API
+
+Referrer addresses are attached when the Hub API builds unsigned `RideRequest` and `RideOffer` transactions. Clients do not choose the referrer on the public Hub — it comes from **your** Hub config.
+
+Set your CLT wallet in Hub API config:
+
+```toml
+# App-developer referrers injected by Hub API
+default_ride_request_referrer = "0xYourClutchPublicKey"
+default_ride_offer_referrer = "0xYourClutchPublicKey"
+```
+
+Use the same address on both sides to earn both fee streams, or use different addresses for request vs offer attribution.
+
+See [Hub API configuration](/clutch-hub-api/configuration).
+
+### 2. Build your app with the SDK
+
+Integrate [`clutch-hub-sdk-js`](https://www.npmjs.com/package/clutch-hub-sdk-js) for signing and GraphQL calls. Point the SDK at **your** Hub API URL, not only the public stage/demo Hub.
+
+### 3. Deploy the stack
+
+Use [clutch-deploy](/deployment/clutch-deploy) to run nodes, your Hub API, and your app (Docker Compose). All rides through your Hub carry your referrer addresses.
+
+### 4. Track earnings
+
+Use [Clutch Explorer](/clutch-explorer/overview) or node RPC `get_account_balance_effects` to audit `ReferrerRequestFee` and `ReferrerOfferFee` credits to your wallet.
+
+## What you need
+
+| Requirement | Purpose |
+|-------------|---------|
+| CLT wallet (secp256k1 key pair) | Receive referrer payouts |
+| Hub API deployment | Inject your referrer on ride txs |
+| App (web/mobile) + SDK | User-facing ride flows |
+| Connection to Clutch nodes | Submit signed transactions |
+
+## Important limits
+
+:::warning Alpha / testnet
+Clutch is experimental. CLT on testnet has no fiat value. APIs and economics may change.
+:::
+
+- **Your Hub, your referrers** — Earnings go to whoever owns the Hub config. Apps using someone else's shared Hub do not automatically get a share unless that operator sets your wallet as referrer.
+- **No per-app registry** — There is no on-chain app ID or automatic revenue split across multiple third-party apps on one Hub today.
+- **No grants or dev fund** — Referrer fees on rides are the only built-in app-builder revenue mechanism.
+- **Validators are separate** — Block rewards (`block_reward_amount`, default 50 CLT/block) go to **validator** block authors, not app developers.
+
+## Node-side fee percents
+
+Referrer **percentages** are set on each node (must match across validators):
+
+```toml
+ride_request_referrer_fee_percent = 2
+ride_offer_referrer_fee_percent = 2
+```
+
+See [Node configuration](/clutch-node/configuration) and [CLT Economics](/clutch-node/clt-economics).
+
+## Next steps
+
+- [Quick Start](/getting-started/quickstart) — Run the stack locally
+- [Ride Lifecycle](/getting-started/ride-lifecycle) — Passenger/driver transaction tutorial
+- [Hub API configuration](/clutch-hub-api/configuration) — Referrer settings
+- [CLT Economics](/clutch-node/clt-economics) — Full payment and block-reward model
+- [SDK overview](/clutch-hub-sdk-js/overview) — Integrate your app

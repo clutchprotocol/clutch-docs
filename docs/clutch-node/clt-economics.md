@@ -97,6 +97,7 @@ block_reward_amount = 50
 
 ## Related
 
+- [App Developer Incentives](/getting-started/app-developer-incentives) — Earn CLT as an app builder via referrer fees
 - [Transaction Types — Referrer fees](/clutch-node/transaction-types#referrer-fees)
 - [Ride Lifecycle](/getting-started/ride-lifecycle)
 - [Node Configuration](/clutch-node/configuration)

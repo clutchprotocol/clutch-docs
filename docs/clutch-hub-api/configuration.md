@@ -34,6 +34,8 @@ Environment variables use the `APP_` prefix: `APP_LOG_LEVEL=debug` maps to `log_
 | `default_ride_request_referrer` | Injected referrer on requests | address or empty |
 | `default_ride_offer_referrer` | Injected referrer on offers | address or empty |
 
+Set these to your CLT wallet to earn referrer fees on rides through your Hub. Clients cannot override referrer on the Hub API — it is server-side only. See [App Developer Incentives](/getting-started/app-developer-incentives).
+
 ## Environment overrides
 
 ```bash
