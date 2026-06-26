@@ -21,7 +21,7 @@ Prometheus scrapes each node's `/metrics` endpoint on a fixed interval and store
 - **Dashboards**: Clutch Node dashboard (state, block index, latest blocks)
 - **Config**: `config/monitoring/grafana/`
 
-![Grafana dashboard](/img/grafana.png)
+![Grafana dashboard](/img/grafana.svg)
 
 Dashboard panels typically cover:
 

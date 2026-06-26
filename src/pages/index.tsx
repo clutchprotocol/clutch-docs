@@ -1,7 +1,6 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import {useColorMode} from '@docusaurus/theme-common';
 
 import styles from './index.module.css';
 
@@ -97,33 +96,45 @@ function Features(): ReactNode {
   );
 }
 
-function Architecture(): ReactNode {
-  const {colorMode} = useColorMode();
-  const mermaidTheme = colorMode === 'dark' ? 'dark' : 'default';
-  const diagram = `%%{init: {'theme':'${mermaidTheme}'}}%%
-flowchart LR
-    App["Demo App / Your dApp + SDK"] -->|"build + sign tx"| Hub["Clutch Hub API (GraphQL/WS)"]
-    Hub -->|"submit signed tx"| Node["Clutch Node (Blockchain)"]
-    Node -->|"index blocks/txs"| Explorer["Clutch Explorer"]
-    Node -->|"metrics"| Grafana["Grafana / Prometheus"]`;
+function ArchitectureSteps(): ReactNode {
+  const steps = [
+    'Build unsigned tx — the app asks the Hub API for an unsigned transaction payload',
+    'Sign client-side — the user signs the hash locally (keys never sent to server)',
+    'Submit signed tx — the app sends signed RLP hex to the Hub, which forwards to the node',
+    'Validate & mine — the node verifies signature/nonce, applies state, includes in a block',
+  ];
   return (
     <section className={styles.section}>
       <h2 className={styles.sectionTitle}>How it fits together</h2>
       <div className={styles.archBlock}>
-        <pre className="mermaid">{diagram}</pre>
+        <p>
+          <strong>Demo App / Your dApp + SDK</strong> → <strong>Clutch Hub API</strong>{' '}
+          (GraphQL / WS + faucet) → <strong>Clutch Node</strong> (blockchain,
+          WebSocket RPC) → <strong>Clutch Explorer</strong> (indexer + UI)
+        </p>
+        <ol>
+          {steps.map((s) => (
+            <li key={s.slice(0, 24)}>{s}</li>
+          ))}
+        </ol>
+        <p>
+          See the full{' '}
+          <Link to="/getting-started/architecture">architecture overview</Link>{' '}
+          and <Link to="/getting-started/ride-lifecycle">ride lifecycle</Link>.
+        </p>
       </div>
     </section>
   );
 }
 
 export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
+  useDocusaurusContext();
   return (
     <div>
       <Hero />
       <main>
         <Features />
-        <Architecture />
+        <ArchitectureSteps />
       </main>
     </div>
   );

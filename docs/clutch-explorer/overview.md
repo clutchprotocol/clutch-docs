@@ -20,12 +20,12 @@ Unlike the Hub API (GraphQL for app developers), the explorer is read-only infra
 
 ## Screenshots
 
-![Block view](/img/explorer-block.png)
+![Block view](/img/explorer-block.svg)
 
-![Account view](/img/explorer-account.png)
+![Account view](/img/explorer-account.svg)
 
 :::note
-Screenshots are captured from the running explorer frontend. To regenerate, start the stack via [clutch-deploy](/deployment/clutch-deploy) and save the screens to `static/img/`.
+Screenshots are placeholders. To replace, start the stack via [clutch-deploy](/deployment/clutch-deploy), capture from the explorer frontend, save as `.png` into `static/img/`, and update the references above.
 :::
 
 ## Components
