@@ -16,7 +16,6 @@ const config: Config = {
 
   organizationName: 'clutchprotocol',
   projectName: 'clutch-docs',
-  deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
@@ -69,7 +68,7 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://demo.clutchprotocol.io',
+          href: 'https://app-stage.clutchprotocol.io',
           label: 'Demo App',
           position: 'right',
         },
@@ -81,6 +80,11 @@ const config: Config = {
         {
           href: 'https://clutchprotocol.io',
           label: 'Website',
+          position: 'right',
+        },
+        {
+          href: 'https://github.com/clutchprotocol/clutch-deploy',
+          label: 'Deploy',
           position: 'right',
         },
         {

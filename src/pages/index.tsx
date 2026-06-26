@@ -1,6 +1,130 @@
 import type {ReactNode} from 'react';
-import {Redirect} from '@docusaurus/router';
+import Link from '@docusaurus/Link';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import {useColorMode} from '@docusaurus/theme-common';
+
+import styles from './index.module.css';
+
+type Feature = {
+  title: string;
+  icon: string;
+  description: string;
+  to: string;
+};
+
+const features: Feature[] = [
+  {
+    title: 'Clutch Node',
+    icon: '🧱',
+    description: 'Blockchain core with Aura consensus, custom RLP transactions, non-EVM design.',
+    to: '/clutch-node/overview',
+  },
+  {
+    title: 'Hub API',
+    icon: '🔌',
+    description: 'GraphQL bridge between apps and the node, with wallet JWT auth and a testnet faucet.',
+    to: '/clutch-hub-api/overview',
+  },
+  {
+    title: 'JavaScript SDK',
+    icon: '📦',
+    description: 'Client-side signing, RLP encoding, and live subscriptions over WebSocket.',
+    to: '/clutch-hub-sdk-js/overview',
+  },
+  {
+    title: 'Block Explorer',
+    icon: '🔍',
+    description: 'Read-only chain indexer, REST API, and web UI for blocks, transactions, and accounts.',
+    to: '/clutch-explorer/overview',
+  },
+  {
+    title: 'Demo App',
+    icon: '🚗',
+    description: 'Reference React app showing the passenger and driver ride flow end to end.',
+    to: '/demo-app/overview',
+  },
+  {
+    title: 'CLT Economics',
+    icon: '💰',
+    description: 'Driver-first payments with referrer fees and fixed validator block rewards.',
+    to: '/clutch-node/clt-economics',
+  },
+];
+
+function Hero(): ReactNode {
+  return (
+    <header className={styles.heroBanner}>
+      <div className={styles.heroInner}>
+        <h1 className={styles.heroTitle}>Clutch Protocol</h1>
+        <p className={styles.heroSubtitle}>
+          Decentralized ride-sharing blockchain
+        </p>
+        <p className={styles.heroTagline}>
+          Open-source stack for on-chain ride lifecycle, client-side signing,
+          and instant CLT payouts to drivers.
+        </p>
+        <div className={styles.buttons}>
+          <Link className={styles.heroButtonPrimary} to="/intro">
+            Get Started
+          </Link>
+          <Link
+            className={styles.heroButtonOutline}
+            href="https://app-stage.clutchprotocol.io"
+          >
+            Try Stage Demo →
+          </Link>
+        </div>
+        <div className={styles.alphaBadge}>Alpha Software · Testnet Live</div>
+      </div>
+    </header>
+  );
+}
+
+function Features(): ReactNode {
+  return (
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle}>Explore the stack</h2>
+      <div className={styles.featureGrid}>
+        {features.map((f) => (
+          <Link key={f.title} to={f.to} className={styles.featureCard}>
+            <span className={styles.featureIcon}>{f.icon}</span>
+            <h3 className={styles.featureTitle}>{f.title}</h3>
+            <p className={styles.featureDesc}>{f.description}</p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Architecture(): ReactNode {
+  const {colorMode} = useColorMode();
+  const mermaidTheme = colorMode === 'dark' ? 'dark' : 'default';
+  const diagram = `%%{init: {'theme':'${mermaidTheme}'}}%%
+flowchart LR
+    App["Demo App / Your dApp + SDK"] -->|"build + sign tx"| Hub["Clutch Hub API (GraphQL/WS)"]
+    Hub -->|"submit signed tx"| Node["Clutch Node (Blockchain)"]
+    Node -->|"index blocks/txs"| Explorer["Clutch Explorer"]
+    Node -->|"metrics"| Grafana["Grafana / Prometheus"]`;
+  return (
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle}>How it fits together</h2>
+      <div className={styles.archBlock}>
+        <pre className="mermaid">{diagram}</pre>
+      </div>
+    </section>
+  );
+}
 
 export default function Home(): ReactNode {
-  return <Redirect to="/intro" />;
+  const {siteConfig} = useDocusaurusContext();
+  return (
+    <div>
+      <Hero />
+      <main>
+        <Features />
+        <Architecture />
+      </main>
+    </div>
+  );
 }

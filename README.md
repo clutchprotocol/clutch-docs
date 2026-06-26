@@ -22,7 +22,7 @@ npm run serve
 
 Pushes to `main` trigger automatic deployment to GitHub Pages via [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
-**URL:** https://docs.clutchprotocol.io (after configuring custom domain)
+**URL:** https://docs.clutchprotocol.io
 
 ## Custom Domain Setup
 

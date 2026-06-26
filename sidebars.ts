@@ -24,6 +24,7 @@ const sidebars: SidebarsConfig = {
         'clutch-node/running',
         'clutch-node/transaction-types',
         'clutch-node/clt-economics',
+        'clutch-node/json-rpc',
       ],
     },
     {
@@ -33,6 +34,7 @@ const sidebars: SidebarsConfig = {
         'clutch-hub-api/overview',
         'clutch-hub-api/authentication',
         'clutch-hub-api/graphql',
+        'clutch-hub-api/errors',
         'clutch-hub-api/subscriptions',
         'clutch-hub-api/faucet',
         'clutch-hub-api/configuration',

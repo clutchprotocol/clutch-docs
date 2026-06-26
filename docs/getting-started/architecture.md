@@ -6,23 +6,22 @@ sidebar_position: 3
 
 ## High-Level Flow
 
+```mermaid
+flowchart LR
+    App["Demo App / Your dApp + SDK"] -->|"1. build unsigned tx"| Hub["Clutch Hub API (GraphQL/WS + /faucet)"]
+    App -->|"2. sign client-side"| App
+    App -->|"3. submit signed tx"| Hub
+    Hub -->|"forward to node"| Node["Clutch Node (Blockchain, WebSocket RPC)"]
+    Node -->|"validate & mine"| Node
+    Node -->|"index blocks/txs"| Explorer["Clutch Explorer (indexer + UI)"]
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   Demo App /    │     │  Clutch Hub API  │     │  Clutch Node    │
-│   Your dApp     │────►│  (GraphQL/WS)    │────►│  (Blockchain)   │
-│   + SDK         │     │  + /faucet       │     │  WebSocket RPC  │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-        │                          │                        │
-        │                          │                        │
-        │                          │                        ▼
-        │                          │               ┌─────────────────┐
-        │                          │               │ Clutch Explorer │
-        │                          │               │ (indexer + UI)  │
-        │                          │               └─────────────────┘
-        │ 1. Build unsigned tx     │ 2. Forward to node     │ 3. Validate
-        │ 2. Sign client-side      │ 3. Return receipt      │    & mine
-        │ 3. Submit signed tx      │                        │
-```
+
+### Transaction steps
+
+1. **Build unsigned tx** — the app asks the Hub API for an unsigned transaction payload
+2. **Sign client-side** — the user signs the hash locally with their private key (keys never sent to server)
+3. **Submit signed tx** — the app sends the signed RLP hex to the Hub, which forwards it to the node
+4. **Validate & mine** — the node verifies signature/nonce, applies it to state, and includes it in a block
 
 ## Component Roles
 

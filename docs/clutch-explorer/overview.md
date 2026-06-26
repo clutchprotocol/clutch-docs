@@ -8,13 +8,25 @@ sidebar_position: 1
 
 ## Architecture
 
-```
-Clutch Node  ──poll──►  Explorer Indexer  ──►  PostgreSQL
-                              │
-                              └── REST API  ──►  React Frontend
+```mermaid
+flowchart LR
+    Node["Clutch Node"] -->|"poll"| Indexer["Explorer Indexer"]
+    Indexer --> Postgres[("PostgreSQL")]
+    Indexer --> Api["REST API"]
+    Api --> Ui["React Frontend"]
 ```
 
 Unlike the Hub API (GraphQL for app developers), the explorer is read-only infrastructure for browsing chain history.
+
+## Screenshots
+
+![Block view](/img/explorer-block.png)
+
+![Account view](/img/explorer-account.png)
+
+:::note
+Screenshots are captured from the running explorer frontend. To regenerate, start the stack via [clutch-deploy](/deployment/clutch-deploy) and save the screens to `static/img/`.
+:::
 
 ## Components
 

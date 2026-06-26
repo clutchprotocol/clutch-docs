@@ -39,6 +39,16 @@ The **Clutch Hub Demo App** is a React + Vite application demonstrating blockcha
 | Stage | https://app-stage.clutchprotocol.io |
 | Local | http://localhost:5173 |
 
+## Screenshots
+
+![Request a ride screen](/img/demo-request-ride.png)
+
+![Active ride list](/img/demo-ride-list.png)
+
+:::note
+Screenshots are captured from the running stage demo. To regenerate, run the app locally or open https://app-stage.clutchprotocol.io and save the screens to `static/img/`.
+:::
+
 ## Documentation
 
 - [Getting Started](/demo-app/getting-started)

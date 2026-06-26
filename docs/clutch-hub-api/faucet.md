@@ -66,6 +66,10 @@ faucet_private_key = "d2c446110cfcecbdf05b2be528e72483de5b6f7ef9c7856df2f81f48e9
 faucet_amount_clt = 1000
 ```
 
+:::warning Test-only key
+The `faucet_private_key` shown above is the public testnet genesis faucet key. It is for **testnet experimentation only** — never reuse it on any production or value-bearing network. For a private deployment, generate a fresh secp256k1 keypair and fund that account in your genesis. Never commit a production faucet key to source control.
+:::
+
 The faucet account must be funded in the node's genesis configuration.
 
 ## Address formats
