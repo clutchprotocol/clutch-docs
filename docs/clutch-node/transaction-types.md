@@ -16,9 +16,9 @@ Clutch Node supports custom non-EVM transaction types encoded with RLP tags.
 | 3 | `RideAcceptance` | Yes | Passenger accepts an offer |
 | 4 | `RidePay` | Yes | Passenger pays driver (partial OK) |
 | 5 | `RideCancel` | Yes | Cancel active trip, refund unpaid fare |
-| 6 | `ConfirmArrival` | No | Stub — no state changes yet |
-| 7 | `ComplainArrival` | No | Stub — no state changes yet |
 | 8 | `RideRequestCancel` | Yes | Cancel pending request |
+
+RLP tags 6 and 7 are reserved and not accepted by current nodes.
 
 Apps interact with types 1–5 and 8 via the Hub API and SDK. Type 0 is used internally by the faucet.
 
@@ -66,10 +66,6 @@ The node exposes these methods at `ws://host:port/ws`:
 | `author_new_block` | Validator block production |
 
 Apps typically use the Hub API instead of calling the node directly.
-
-## Future types
-
-`ConfirmArrival` and `ComplainArrival` exist in the node codebase as stubs. They are not exposed through the Hub API or SDK yet.
 
 ## Related
 

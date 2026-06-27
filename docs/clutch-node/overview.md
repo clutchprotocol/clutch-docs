@@ -53,7 +53,7 @@ Apps do not call the node RPC directly in most cases — they go through the [Hu
 ## Status and limitations
 
 - **Alpha testnet only** — no mainnet, small validator set on the public testnet
-- `ConfirmArrival` and `ComplainArrival` exist as stubs (see [Transaction Types](/clutch-node/transaction-types))
+- Progressive `RidePay` releases after `RideAcceptance`; the chain does not attest physical arrival
 - DAO / governance is on the roadmap and not yet implemented
 
 ## Source
