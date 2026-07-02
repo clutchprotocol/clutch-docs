@@ -194,14 +194,22 @@ query AccountBalance($publicKey: String) {
 
 ### generateToken
 
-Public. Returns JWT for wallet address.
+Public (no JWT), but requires proof of key ownership: a recoverable secp256k1 signature over the challenge `clutch-auth:{publicKey}:{timestamp}`, with `timestamp` within ±120s of server time. See [Authentication](/clutch-hub-api/authentication) for the exact signing rules.
 
 ```graphql
-mutation GenerateToken($publicKey: String!) {
-  generateToken(publicKey: $publicKey) {
+mutation GenerateToken($publicKey: String!, $timestamp: Int!, $signature: AuthSignatureInput!) {
+  generateToken(publicKey: $publicKey, timestamp: $timestamp, signature: $signature) {
     token
     expiresAt
   }
+}
+```
+
+```graphql
+input AuthSignatureInput {
+  r: String!
+  s: String!
+  v: Int!
 }
 ```
 

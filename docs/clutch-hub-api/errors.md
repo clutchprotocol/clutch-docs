@@ -29,6 +29,7 @@ Apps should key off `extensions.code` (stable) rather than the human-readable `m
 | `UNAUTHENTICATED` | Missing/invalid JWT on a protected field | Call `generateToken`, then retry |
 | `INVALID_JWT` | Malformed or expired token | Re-authenticate |
 | `INVALID_PUBLIC_KEY` | `generateToken` called with a bad public key | Validate key format before calling |
+| — (`Proof of key ownership failed: …` message) | `generateToken` challenge rejected: timestamp outside the ±120s window or signature doesn't recover to the public key | Sync the client clock; re-sign the challenge with the correct private key |
 
 Protected fields include all `createUnsigned*` mutations, `sendRawTransaction`, and `accountBalance` / `accountBalanceUpdated`.
 

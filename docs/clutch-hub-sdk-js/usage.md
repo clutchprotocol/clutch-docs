@@ -17,11 +17,12 @@ import { ClutchHubSdk } from 'clutch-hub-sdk-js';
 
 const API_URL = 'http://localhost:3000';
 const publicKey = '0xYourPublicKey';
+const privateKey = '0xYourPrivateKey';
 
-const sdk = new ClutchHubSdk(API_URL, publicKey);
+const sdk = new ClutchHubSdk(API_URL, publicKey, privateKey);
 ```
 
-The constructor requires both the API URL and the wallet public key. The SDK automatically obtains a JWT via `generateToken` when you call authenticated methods.
+The constructor requires the API URL and the wallet public key. Pass the private key as the third argument (or later via `sdk.setPrivateKey(privateKey)`) if you will call authenticated methods: the SDK automatically obtains a JWT via `generateToken`, which requires signing a proof-of-key-ownership challenge (`clutch-auth:{publicKey}:{timestamp}`) with the private key. The key is used locally for signing only and is never sent to the API. Read-only usage (public `list*` queries and subscriptions) works without it.
 
 ## Basic transaction flow
 

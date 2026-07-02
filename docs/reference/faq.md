@@ -29,7 +29,7 @@ Grafana uses 3030 to avoid clash with API on 3000. Explorer frontend uses 5174 (
 ## Authentication
 
 **How do I authenticate?**  
-Call GraphQL `generateToken(publicKey)`. No username/password. The SDK does this automatically.
+Call GraphQL `generateToken(publicKey, timestamp, signature)`, where `signature` is a secp256k1 signature over the challenge `clutch-auth:{publicKey}:{timestamp}` proving you hold the private key. No username/password. The SDK does this automatically when given the private key.
 
 **Do subscriptions need auth?**  
 Public list subscriptions work without JWT. `accountBalance` and mutations require JWT.

@@ -37,13 +37,13 @@ npm view clutch-hub-sdk-js versions --json
 
 ## Constructor
 
-Both arguments are required:
+The first two arguments are required:
 
 ```typescript
-new ClutchHubSdk(apiUrl: string, publicKey: string)
+new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string)
 ```
 
-The SDK automatically obtains a JWT via `generateToken` when calling authenticated methods.
+The SDK automatically obtains a JWT via `generateToken` when calling authenticated methods. `generateToken` requires a signed proof-of-key-ownership challenge, so pass the wallet's private key (or call `setPrivateKey` later) before using authenticated methods; it stays local and is never sent to the API.
 
 ## Next steps
 

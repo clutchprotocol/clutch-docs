@@ -35,7 +35,9 @@ sequenceDiagram
     participant Hub as Hub_API
     participant Node as Clutch_Node
 
-    App->>Hub: generateToken(publicKey)
+    App->>App: sign challenge clutch-auth publicKey timestamp
+    App->>Hub: generateToken(publicKey, timestamp, signature)
+    Hub->>Hub: verify signature + timestamp window
     Hub-->>App: JWT
     App->>Hub: createUnsignedRideRequest (JWT)
     Hub->>Node: get_next_nonce

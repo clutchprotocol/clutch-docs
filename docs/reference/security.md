@@ -14,7 +14,8 @@ sidebar_position: 1
 ## Wallet authentication
 
 - Identity is a blockchain public key — no passwords
-- JWT proves wallet ownership via `generateToken(publicKey)`
+- JWT issuance requires **proof of key ownership**: `generateToken(publicKey, timestamp, signature)` verifies a secp256k1 signature over the challenge `clutch-auth:{publicKey}:{timestamp}` before minting a token
+- The challenge timestamp must be within ±120s of server time (stateless replay window)
 - Change `jwt_secret` in production; tokens expire after `jwt_expiration_hours`
 
 ### JWT best practices

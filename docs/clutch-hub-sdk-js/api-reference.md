@@ -11,7 +11,7 @@ Package: [`clutch-hub-sdk-js`](https://www.npmjs.com/package/clutch-hub-sdk-js) 
 ### Constructor
 
 ```typescript
-new ClutchHubSdk(apiUrl: string, publicKey: string)
+new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string)
 ```
 
 ### Authentication
@@ -19,9 +19,10 @@ new ClutchHubSdk(apiUrl: string, publicKey: string)
 | Method | Description |
 |--------|-------------|
 | `getPublicKey()` | Returns the wallet public key for this instance |
+| `setPrivateKey(privateKey)` | Provide/replace the private key used to sign auth challenges |
 | `isAuthenticated()` | True if a cached JWT exists and is not near expiry |
 
-Token generation is automatic. The SDK caches JWTs globally per public key.
+Token generation is automatic, but requires the wallet's private key (constructor or `setPrivateKey`): `generateToken` demands a recoverable secp256k1 signature over the challenge `clutch-auth:{publicKey}:{timestamp}` (timestamp within ±120s of server time). The key is used for local signing only and never leaves the client. The SDK caches JWTs globally per public key. Standalone helpers `buildAuthChallengeMessage(publicKey, timestamp)`, `authChallengeHashHex(publicKey, timestamp)`, and `signAuthChallenge(publicKey, timestamp, privateKey)` are exported for custom clients.
 
 ### Unsigned transaction builders
 
