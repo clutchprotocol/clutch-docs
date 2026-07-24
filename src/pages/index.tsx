@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 import styles from './index.module.css';
@@ -128,14 +129,14 @@ function ArchitectureSteps(): ReactNode {
 }
 
 export default function Home(): ReactNode {
-  useDocusaurusContext();
+  const {siteConfig} = useDocusaurusContext();
   return (
-    <div>
+    <Layout title={siteConfig.title} description={siteConfig.tagline}>
       <Hero />
       <main>
         <Features />
         <ArchitectureSteps />
       </main>
-    </div>
+    </Layout>
   );
 }

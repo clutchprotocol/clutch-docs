@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Clutch Protocol Docs',
   tagline: 'Decentralized ride-sharing blockchain - developer documentation',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   future: {
     v4: true,
@@ -19,9 +19,13 @@ const config: Config = {
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
+  onBrokenAnchors: 'throw',
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
   },
 
   themes: ['@docusaurus/theme-mermaid'],
@@ -39,6 +43,9 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
           editUrl: 'https://github.com/clutchprotocol/clutch-docs/tree/main/',
+          // Needs fetch-depth: 0 in .github/workflows/deploy.yml, else every page
+          // reports the deploy commit's date.
+          showLastUpdateTime: true,
         },
         blog: false,
         theme: {
@@ -50,6 +57,19 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/clutch-social-card.jpg',
+    metadata: [
+      {
+        name: 'keywords',
+        content:
+          'clutch protocol, ride-sharing blockchain, decentralized ride-sharing, aura consensus, graphql api, secp256k1, web3 mobility',
+      },
+    ],
+    announcementBar: {
+      id: 'alpha',
+      content:
+        'Alpha software on a live testnet — APIs may change without notice.',
+      isCloseable: true,
+    },
     colorMode: {
       defaultMode: 'light',
       respectPrefersColorScheme: true,
@@ -119,7 +139,7 @@ const config: Config = {
           title: 'Project',
           items: [
             {label: 'Website', href: 'https://clutchprotocol.io'},
-            {label: 'Demo', href: 'https://demo.clutchprotocol.io'},
+            {label: 'Stage Demo', href: 'https://app-stage.clutchprotocol.io'},
             {label: 'GitHub', href: 'https://github.com/clutchprotocol'},
             {label: 'Deploy', href: 'https://github.com/clutchprotocol/clutch-deploy'},
           ],
@@ -127,11 +147,13 @@ const config: Config = {
         {
           title: 'Community',
           items: [
-            {label: 'Discussions', href: 'https://github.com/clutchprotocol/clutch-node/discussions'},
+            {label: 'Issues', href: 'https://github.com/clutchprotocol/clutch-node/issues'},
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Clutch Protocol. Open source under MIT License.`,
+      // Licensing is per-repo: clutch-node is Apache-2.0, the JS/TS repos are MIT.
+      // Don't claim a single license here.
+      copyright: `Copyright © ${new Date().getFullYear()} Clutch Protocol. Open source — see each repository for its license.`,
     },
     prism: {
       theme: prismThemes.github,
