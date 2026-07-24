@@ -107,14 +107,28 @@ Both formats work for pickup/dropoff:
 { lat: 35.7, lng: 51.4 }
 ```
 
-## Demo private key
+## Creating a wallet
 
-The demo app uses a well-known test key for local development only. **Never use demo keys or store production keys in browser localStorage.**
+The SDK does not generate keys — it signs with a key you supply. Derive one with `@noble/secp256k1`, the same library and derivation the node and Hub API use:
 
 ```javascript
-// LOCAL TESTNET ONLY — do not use in production
-const privateKey = '0883ddd3d07303b87c954b0c9383f7b78f45e002520fc03a8adc80595dbf6509';
+import * as secp from '@noble/secp256k1';
+import { keccak_256 } from '@noble/hashes/sha3';
+import { bytesToHex } from '@noble/hashes/utils';
+
+const privateKeyBytes = secp.utils.randomPrivateKey();
+const privateKey = '0x' + bytesToHex(privateKeyBytes);
+
+// Uncompressed public key minus its 0x04 prefix, keccak-256'd; address is the last 20 bytes
+const publicKeyBytes = secp.getPublicKey(privateKeyBytes, false);
+const address = '0x' + bytesToHex(keccak_256(publicKeyBytes.slice(1)).slice(12, 32));
 ```
+
+Fund the new address from the [faucet](/clutch-hub-api/faucet) before submitting transactions.
+
+:::danger Never reuse a key from this repo
+Config files in `clutch-node` and `clutch-hub-api` ship real private keys so the local stack runs out of the box — including validator `author_secret_key` values and the faucet key. Those keys are public, so anyone can sign as those accounts. Generate your own for anything beyond a throwaway local chain, and **never** store a production key in browser `localStorage`.
+:::
 
 ## Security
 
