@@ -91,7 +91,7 @@ block_reward_amount = 50
 
 ## Alpha / testnet notes
 
-- Genesis allocates test supply to the faucet account (`u64::MAX` CLT) for development
+- Genesis allocates test supply to the faucet account (`i64::MAX` CLT, ~9.2 × 10^18) for development — balance deltas travel as `i64`, so the allocation stays inside that range
 - There is no on-chain supply cap or emission schedule beyond `block_reward_amount`
 - CLT has no fixed fiat peg; fares are denominated in CLT
 

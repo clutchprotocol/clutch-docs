@@ -62,10 +62,8 @@ The node exposes these methods at `ws://host:port/ws`:
 | `list_active_trips` | In-progress trips |
 | `list_completed_trips` | Fully paid trips |
 | `list_recent_trips` | Completed + cancelled |
-| `import_block` | Validator / dev ops |
-| `author_new_block` | Validator block production |
 
-Apps typically use the Hub API instead of calling the node directly.
+That is the complete list — any other method name returns a method-not-found error. Apps typically use the Hub API instead of calling the node directly.
 
 ## Related
 

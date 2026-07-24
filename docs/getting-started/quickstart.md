@@ -19,7 +19,31 @@ git clone https://github.com/clutchprotocol/clutch-deploy.git
 cd clutch-deploy
 
 cp .env.example .env
+```
 
+`.env.example` ships a placeholder `JWT_SECRET`, and the Hub API refuses to start on an empty, placeholder, or shorter-than-32-character secret — so generate a real one:
+
+```powershell
+# PowerShell
+$bytes = New-Object byte[] 32
+[System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+($bytes | ForEach-Object { $_.ToString('x2') }) -join ''
+```
+
+```bash
+# bash
+openssl rand -hex 32
+```
+
+Replace the `JWT_SECRET=your-super-secret-jwt-key-here` line in `.env` with the generated value:
+
+```bash
+JWT_SECRET=<paste the 64-character value here>
+```
+
+The remaining values in `.env.example` start the stack as shipped. Now bring it up:
+
+```bash
 docker compose up -d
 ```
 
@@ -33,8 +57,8 @@ This starts nodes, Hub API, demo app, explorer, Prometheus, Grafana, and Seq.
 | GraphQL | http://localhost:3000/graphql |
 | Demo app | http://localhost:5173 |
 | Explorer | http://localhost:5174 |
-| Grafana | http://localhost:3030 (admin/admin) |
-| Seq logs | http://localhost:5341 |
+| Grafana | http://localhost:3030 (`admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`) |
+| Seq logs | http://localhost:5341 (`SEQ_ADMIN_USERNAME` / `SEQ_ADMIN_PASSWORD` from `.env`) |
 
 ## 3. Try the demo app
 

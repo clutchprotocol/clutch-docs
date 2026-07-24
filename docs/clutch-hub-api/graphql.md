@@ -20,10 +20,10 @@ curl -X POST http://localhost:3000/graphql \
 |-------|------|
 | `generateToken` | Public |
 | `listRideRequests`, `listRideOffers`, `listActiveTrips`, `listCompletedTrips`, `listRecentTrips` | Public |
-| `accountBalance` | JWT |
+| `accountBalance`, `userRideRequests` | JWT |
 | All `createUnsigned*` mutations, `sendRawTransaction` | JWT |
 | Subscription list fields | Public |
-| `accountBalanceUpdated` | JWT recommended |
+| `accountBalanceUpdated` | Public — **not enforced**; no guard on any subscription |
 
 See [Authentication](/clutch-hub-api/authentication) for token usage.
 
@@ -188,7 +188,7 @@ query AccountBalance($publicKey: String) {
 
 ### Stub queries (do not use)
 
-`userRideRequest` and `rideRequest` return hardcoded placeholder data. Use `listRideRequests` instead.
+`userRideRequests` (requires JWT) and `rideRequest` (public) return hardcoded placeholder data. Use `listRideRequests` instead.
 
 ## Mutations
 

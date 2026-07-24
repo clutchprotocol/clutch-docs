@@ -49,7 +49,7 @@ seq_url                = "http://seq:80"
 | `author_secret_key` | Validator secret (keep secure) | — |
 | `websocket_addr` | WebSocket JSON-RPC bind | `0.0.0.0:8081` |
 | `listen_addrs` | libp2p listen addresses | `["/ip4/0.0.0.0/tcp/4001"]` |
-| `bootstrap_nodes` | Peers to dial on startup | `["/dns4/node1/tcp/4001"]` (node2/3) |
+| `bootstrap_nodes` | Peers to dial on startup | `["/ip4/127.0.0.1/tcp/4001"]` (node2/3) |
 | `authorities` | Ordered list of validator public keys | Must match across nodes |
 | `block_reward_amount` | CLT minted to block author per non-genesis block | `50` |
 | `ride_request_referrer_fee_percent` | Request referrer fee on each `RidePay` | `2` |
@@ -60,7 +60,7 @@ seq_url                = "http://seq:80"
 ## Validator and bootstrap guidance
 
 - **Node 1 (bootstrap)**: leave `bootstrap_nodes = []`. It is the seed other nodes dial.
-- **Node 2 / Node 3**: set `bootstrap_nodes = ["/dns4/node1/tcp/4001"]` (or the multiaddr that resolves to node1).
+- **Node 2 / Node 3**: point `bootstrap_nodes` at node1. The checked-in `node2.toml` / `node3.toml` use `["/ip4/127.0.0.1/tcp/4001"]` for all three nodes on one host; the container variants `node2-docker.toml` / `node3-docker.toml` use `["/dns4/node1/tcp/4001"]` so Docker DNS resolves the peer.
 - **`authorities` must be identical** on every node, in the same order. Aura schedules block authors by position in this list.
 - **Validator keys**: generate a secp256k1 keypair per node. `author_public_key` goes in `authorities` for every node; `author_secret_key` stays on the node that authors.
 - **Genesis**: testnet genesis allocates the faucet account supply. Do not change `blockchain_name` on a running chain — it would fork.

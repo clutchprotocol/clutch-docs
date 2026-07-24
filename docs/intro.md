@@ -34,8 +34,7 @@ Community governance (DAO) is on the roadmap and described on the [marketing sit
 | Resource | URL |
 |----------|-----|
 | Documentation | https://docs.clutchprotocol.io |
-| Demo app | https://demo.clutchprotocol.io |
-| Stage demo | https://app-stage.clutchprotocol.io |
+| Stage demo app | https://app-stage.clutchprotocol.io |
 | npm SDK | https://www.npmjs.com/package/clutch-hub-sdk-js |
 | Docker packages | [Docker images](/reference/docker-images) · [GHCR org](https://github.com/orgs/clutchprotocol/packages) · [Docker Hub](https://hub.docker.com/u/9194010019) |
 

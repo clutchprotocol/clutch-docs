@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Environments
@@ -16,6 +16,8 @@ cd clutch-deploy
 cp .env.example .env
 docker compose up -d
 ```
+
+Replace the placeholder `JWT_SECRET` in `.env` first — the Hub API refuses to start on it. See [Quick Start](/getting-started/quickstart) for the generation command.
 
 | Service | URL |
 |---------|-----|
@@ -70,10 +72,11 @@ The demo app auto-detects stage URLs: when served from `app-stage.clutchprotocol
 |---------|-----|
 | Marketing site | https://clutchprotocol.io |
 | Documentation | https://docs.clutchprotocol.io |
-| Demo app | https://demo.clutchprotocol.io |
+
+There is no production demo app yet — `demo.clutchprotocol.io` is not deployed. Use the stage demo app above, or run the stack locally.
 
 :::warning Alpha
-Stage and demo environments are for testing. APIs and endpoints may change.
+The stage environment is for testing. APIs and endpoints may change.
 :::
 
 ## Environment variables

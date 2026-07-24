@@ -72,7 +72,7 @@ Send the JWT in the `connection_init` payload:
 }
 ```
 
-Public list subscriptions work **without** a token. The SDK sends a token when available but still connects if token generation fails.
+**All** subscriptions work without a token — none of them carry an auth guard, including `accountBalanceUpdated`. The SDK sends a token when available but still connects if token generation fails.
 
 ## Auth requirements by operation
 
@@ -81,10 +81,11 @@ Public list subscriptions work **without** a token. The SDK sends a token when a
 | `generateToken` | No JWT (requires a signed proof-of-key-ownership challenge instead) |
 | `listRideRequests`, `listRideOffers`, `listActiveTrips`, `listCompletedTrips`, `listRecentTrips` | No |
 | `rideRequestsUpdated`, `rideOffersUpdated`, `activeTripsUpdated`, `completedTripsUpdated`, `recentTripsUpdated` | No |
-| `accountBalance`, `accountBalanceUpdated` | Yes |
+| `accountBalance` (query) | Yes |
+| `accountBalanceUpdated` (subscription) | No — **no guard on this subscription**; any client can stream any address's balance by passing its `publicKey` |
 | All `createUnsigned*` mutations | Yes |
 | `sendRawTransaction` | Yes |
-| `userRideRequest`, `rideRequest` | Yes / No (stubs — do not use) |
+| `userRideRequests`, `rideRequest` | Yes / No (stubs — do not use) |
 
 :::note
 `POST /faucet` does not require a JWT. It is gated by server config (`faucet_enabled`) instead.

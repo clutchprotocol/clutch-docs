@@ -35,9 +35,10 @@ The **Clutch Hub Demo App** is a React + Vite application demonstrating blockcha
 
 | Environment | URL |
 |-------------|-----|
-| Production demo | https://demo.clutchprotocol.io |
 | Stage | https://app-stage.clutchprotocol.io |
 | Local | http://localhost:5173 |
+
+The stage deployment is the only hosted demo; there is no production demo app yet.
 
 ## Screenshots
 
