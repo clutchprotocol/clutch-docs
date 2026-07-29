@@ -30,6 +30,10 @@ Public list subscriptions work without a token. `accountBalanceUpdated` should i
 
 The SDK handles connection setup automatically via `subscribe*` methods.
 
+:::info fare, farePaid, and balance are String
+As in the [GraphQL reference](/clutch-hub-api/graphql), every fare/balance field emitted by a subscription is a `String`, not an `Int` — the peg (1 USD = 1,000,000 CLT) can push a fare past 32-bit `Int` range. Parse into a `bigint` (or your language's arbitrary-precision integer) rather than a native number.
+:::
+
 ## How subscriptions work
 
 Subscriptions are **poll-based snapshots** from the node, not push events from the chain:

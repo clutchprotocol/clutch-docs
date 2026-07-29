@@ -141,14 +141,15 @@ Code examples for cancellation are in [Cancellation](#cancellation) below.
 import { ClutchHubSdk } from 'clutch-hub-sdk-js';
 
 const API_URL = 'http://localhost:3000';
+const CHAIN_ID = 2077; // from your own app config, never from the hub
 
 const passengerKey = '0x...'; // passenger public key
 const driverKey = '0x...';    // driver public key
 const passengerPrivateKey = '...'; // keep secret
 const driverPrivateKey = '...';
 
-const passengerSdk = new ClutchHubSdk(API_URL, passengerKey);
-const driverSdk = new ClutchHubSdk(API_URL, driverKey);
+const passengerSdk = new ClutchHubSdk(API_URL, passengerKey, undefined, CHAIN_ID);
+const driverSdk = new ClutchHubSdk(API_URL, driverKey, undefined, CHAIN_ID);
 ```
 
 ## 2. Fund wallets
@@ -157,8 +158,8 @@ const driverSdk = new ClutchHubSdk(API_URL, driverKey);
 await passengerSdk.requestFaucet(passengerKey);
 await driverSdk.requestFaucet(driverKey);
 
-const balance = await passengerSdk.getAccountBalance();
-console.log('Passenger balance:', balance, 'CLT');
+const balance = await passengerSdk.getAccountBalance(); // bigint
+console.log('Passenger balance:', formatUsd(balance));
 ```
 
 ## 3. Passenger creates a ride request
@@ -170,12 +171,14 @@ async function submitTx(sdk, unsigned, privateKey) {
   return signed.txHash;
 }
 
+const FARE = 5_000_000n; // $5.00 at 1 USD = 1,000,000 CLT
+
 const requestTx = await submitTx(
   passengerSdk,
   await passengerSdk.createUnsignedRideRequest({
     pickup: { latitude: 35.6892, longitude: 51.3890 },
     dropoff: { latitude: 35.7219, longitude: 51.3347 },
-    fare: 1000,
+    fare: FARE,
   }),
   passengerPrivateKey
 );
@@ -194,7 +197,7 @@ const offerTx = await submitTx(
   driverSdk,
   await driverSdk.createUnsignedRideOffer({
     rideRequestTxHash: requestTx,
-    fare: 1000,
+    fare: FARE,
   }),
   driverPrivateKey
 );
@@ -234,7 +237,7 @@ await submitTx(
   passengerSdk,
   await passengerSdk.createUnsignedRidePay({
     rideAcceptanceTxHash: acceptanceTx,
-    fare: 500, // first partial payment
+    fare: 2_500_000n, // first partial payment ($2.50)
   }),
   passengerPrivateKey
 );
@@ -243,7 +246,7 @@ await submitTx(
   passengerSdk,
   await passengerSdk.createUnsignedRidePay({
     rideAcceptanceTxHash: acceptanceTx,
-    fare: 500, // completes payment
+    fare: 2_500_000n, // completes payment
   }),
   passengerPrivateKey
 );
@@ -257,7 +260,7 @@ passengerSdk.subscribeActiveTrips(
   {
     onData: (trips) => {
       trips.forEach((t) => {
-        console.log(`Trip ${t.txHash}: paid ${t.farePaid}/${t.fare}`);
+        console.log(`Trip ${t.txHash}: paid ${formatUsd(t.farePaid)}/${formatUsd(t.fare)}`);
       });
     },
   }
@@ -299,7 +302,7 @@ Each SDK method maps to a GraphQL mutation. Example for ride request:
 ```graphql
 mutation CreateUnsignedRideRequest(
   $pickupLatitude: Float!, $pickupLongitude: Float!,
-  $dropoffLatitude: Float!, $dropoffLongitude: Float!, $fare: Int!
+  $dropoffLatitude: Float!, $dropoffLongitude: Float!, $fare: String!
 ) {
   createUnsignedRideRequest(
     pickupLatitude: $pickupLatitude,
@@ -311,7 +314,7 @@ mutation CreateUnsignedRideRequest(
 }
 ```
 
-Then sign client-side and call `sendRawTransaction`. See [GraphQL reference](/clutch-hub-api/graphql).
+`fare` is a `String` — see [GraphQL reference](/clutch-hub-api/graphql) for why. Then sign client-side and call `sendRawTransaction`.
 
 ## State machine
 

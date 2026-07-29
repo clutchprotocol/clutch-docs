@@ -30,8 +30,10 @@ Keys are stored per role: `clutch_passenger_*`, `clutch_driver_*` in localStorag
 | Pay fare | `createUnsignedRidePay` → sign → submit (partial OK) |
 | Cancel pending request | `createUnsignedRideRequestCancel` → sign → submit |
 | Cancel active trip | `createUnsignedRideCancel` → sign → submit |
-| View balance | `getAccountBalance` / `subscribeAccountBalance` |
+| View balance | `getAccountBalance` / `subscribeAccountBalance` (both `bigint`) |
 | Transaction history | localStorage per address |
+
+Balances and fares displayed in the UI are formatted with the SDK's `formatUsd()` helper (CLT is a micro-dollar — 1 USD = 1,000,000 CLT — so raw amounts are not meant to be shown directly).
 
 Components: `PassengerView.jsx`, `RideForm.jsx`, `ActiveTripCard.jsx`, `BalanceDisplay.jsx`.
 

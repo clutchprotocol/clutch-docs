@@ -4,15 +4,16 @@ sidebar_position: 1
 
 # Introduction
 
-**Clutch Protocol** is a decentralized ride-sharing blockchain with on-chain ride lifecycle, client-side signing, and instant CLT payouts to drivers. Built on a custom non-EVM blockchain.
+**Clutch Protocol** is a decentralized ride-sharing blockchain with on-chain ride lifecycle, client-side signing, and instant CLT payouts to drivers. Built on a custom non-EVM blockchain, and the settlement layer for CLT: a **fully-reserved, redeemable token** pegged **1 USD = 1,000,000 CLT** — every CLT in circulation is backed 1:1 by off-chain reserve.
 
 ## Key Features
 
-- **Driver-first payments** — Drivers receive most of each fare; optional referrer fees up to 4% (default 2%+2%) on `RidePay`
+- **Fully-reserved CLT** — 1 USD = 1,000,000 CLT (CLT is an integer micro-dollar, no decimals). The only two operations that change total supply are the authority-gated `Mint` and the permissionless `Burn` — see [CLT Economics](/clutch-node/clt-economics)
+- **Driver-first payments** — Drivers receive most of each fare; optional referrer fees up to 400 bps (4%; default 200+200 bps) on `RidePay`
 - **Instant payouts** — Drivers receive CLT as passengers pay via on-chain transactions
-- **Transparent & secure** — On-chain transactions with cryptographic security and full auditability
+- **Transparent & secure** — On-chain transactions with cryptographic security, chain-bound signatures, and full auditability
 - **Developer-friendly** — JavaScript SDK, GraphQL API, Docker deployment, block explorer
-- **Decentralized** — Aura consensus with distributed validator nodes
+- **Decentralized** — Aura consensus with distributed validator nodes, compensated by a flat per-transaction fee rather than block rewards
 
 :::info Governance
 Community governance (DAO) is on the roadmap and described on the [marketing site](https://clutchprotocol.io). It is not yet implemented in the current codebase.
@@ -40,16 +41,16 @@ Community governance (DAO) is on the roadmap and described on the [marketing sit
 
 ## CLT economics
 
-Ride payments and validator rewards are separate:
+CLT is fully reserved: **1 USD = 1,000,000 CLT**, and every CLT is backed 1:1 by off-chain reserve. Ride payments and validator compensation are separate, and neither one changes total supply — only `Mint` (authority-gated, on-ramp) and `Burn` (permissionless, redemption) do that.
 
 | Layer | Mechanism | Default |
 |-------|-----------|---------|
-| **RidePay** | Referrer fees + driver remainder | 2% request + 2% offer per payment |
-| **Blocks** | Fixed reward to block author | 50 CLT per block |
+| **RidePay** | Referrer fees + driver remainder | 200 bps (2%) request + 200 bps (2%) offer per payment |
+| **Every transaction** | Flat fee to the block author | `tx_fee` = 1000 CLT ($0.001) |
 
-**Example:** 10 CLT fare, one full `RidePay`, both referrers set → request referrer 1 CLT, offer referrer 1 CLT, driver 8 CLT.
+**Example:** a $5.00 fare (5,000,000 CLT), one full `RidePay`, both referrers set → request referrer 100,000 CLT ($0.10), offer referrer 100,000 CLT ($0.10), driver 4,800,000 CLT ($4.80).
 
-Validators are **not** paid from ride fares; they earn `block_reward_amount` when authoring blocks.
+Validators are **not** paid from ride fares or block rewards — block rewards don't exist, because minting unbacked CLT to pay them would break the 1:1 reserve invariant. They earn the flat `tx_fee` paid by (almost) every transaction instead.
 
 Full details: [CLT Economics](/clutch-node/clt-economics)
 

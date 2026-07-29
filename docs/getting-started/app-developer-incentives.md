@@ -12,13 +12,13 @@ When a passenger pays a driver via `RidePay`, the node splits each payment insta
 
 | Recipient | Share (default) | Source |
 |-----------|-----------------|--------|
-| Request referrer | 2% of installment | `RideRequest.referrer` |
-| Offer referrer | 2% of installment | `RideOffer.referrer` |
+| Request referrer | 200 bps (2%) of installment | `RideRequest.referrer` |
+| Offer referrer | 200 bps (2%) of installment | `RideOffer.referrer` |
 | Driver | Remainder | Fare minus referrer fees |
 
-Fees are credited in **CLT** on-chain. If the same wallet is referrer on both request and offer, it can receive up to **4%** of each `RidePay` installment (with default node config).
+Fees are credited in **CLT** on-chain — CLT is a micro-dollar (1 USD = 1,000,000 CLT), so a "2% referrer fee" on a $5.00 fare is 100,000 CLT ($0.10), not 2 whole CLT. If the same wallet is referrer on both request and offer, it can receive up to **400 bps (4%)** of each `RidePay` installment (with default node config).
 
-Referrer fees use **ceiling rounding** (e.g. 2% of 3 CLT = 1 CLT).
+Referrer fees are configured in **basis points** and use **floor rounding**: `floor(fare × bps / 10_000)`. The driver's share is always the exact remainder, so the three shares (request referrer + offer referrer + driver) sum to the fare precisely, for every fare.
 
 ## When you get paid
 
@@ -32,15 +32,15 @@ Your earnings scale with **ride volume and fares** on transactions where your wa
 
 ## Earnings example
 
-Default config, **10 CLT** fare, one full `RidePay`, both referrers set to your app wallet:
+Default config, a **$5.00** fare (`5 × 1,000,000 = 5,000,000 CLT`), one full `RidePay`, both referrers set to your app wallet:
 
-| Recipient | CLT |
-|-----------|-----|
-| Your wallet (request referrer) | 1 |
-| Your wallet (offer referrer) | 1 |
-| Driver | 8 |
+| Recipient | CLT | USD |
+|-----------|-----|-----|
+| Your wallet (request referrer) | 100,000 | $0.10 |
+| Your wallet (offer referrer) | 100,000 | $0.10 |
+| Driver | 4,800,000 | $4.80 |
 
-If you set the same address for both `default_ride_request_referrer` and `default_ride_offer_referrer`, you receive **2 CLT** on this ride.
+If you set the same address for both `default_ride_request_referrer` and `default_ride_offer_referrer`, you receive **200,000 CLT ($0.20)** on this ride.
 
 With **no** referrers configured, the driver receives the full installment and app builders earn nothing from that ride.
 
@@ -100,15 +100,15 @@ Clutch is experimental. CLT on testnet has no fiat value. APIs and economics may
 - **Your Hub, your referrers** — Earnings go to whoever owns the Hub config. Apps using someone else's shared Hub do not automatically get a share unless that operator sets your wallet as referrer.
 - **No per-app registry** — There is no on-chain app ID or automatic revenue split across multiple third-party apps on one Hub today.
 - **No grants or dev fund** — Referrer fees on rides are the only built-in app-builder revenue mechanism.
-- **Validators are separate** — Block rewards (`block_reward_amount`, default 50 CLT/block) go to **validator** block authors, not app developers.
+- **Validators are separate** — Validators are compensated from the flat `tx_fee` paid by every non-exempt transaction, not from referrer fees or ride fares. There are no block rewards anymore; see [CLT Economics](/clutch-node/clt-economics#validator-compensation-flat-transaction-fee).
 
-## Node-side fee percents
+## Node-side fee rates
 
-Referrer **percentages** are set on each node (must match across validators):
+Referrer **rates** are set on each node, as basis points (must match across validators — see [why](/clutch-node/configuration#consensus-parameters-must-match-across-every-node)):
 
 ```toml
-ride_request_referrer_fee_percent = 2
-ride_offer_referrer_fee_percent = 2
+ride_request_referrer_fee_bps = 200
+ride_offer_referrer_fee_bps = 200
 ```
 
 See [Node configuration](/clutch-node/configuration) and [CLT Economics](/clutch-node/clt-economics).

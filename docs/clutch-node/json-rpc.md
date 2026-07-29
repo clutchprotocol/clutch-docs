@@ -34,7 +34,7 @@ Submit a signed, RLP-encoded transaction as hex.
 }
 ```
 
-**Result:** the literal string `"Transaction imported"` — the node returns no hash or inclusion info; compute the transaction hash client-side. The node verifies the secp256k1 signature, nonce, and that the sender has sufficient balance for `RideAcceptance` debits before pooling the transaction.
+**Result:** the literal string `"Transaction imported"` — the node returns no hash or inclusion info; compute the transaction hash client-side. The node verifies the secp256k1 signature, nonce, `chain_id` against its own, and that the sender's balance covers the transaction's direct debit plus the flat `tx_fee` (transactions are no longer free — see [CLT Economics](/clutch-node/clt-economics#validator-compensation-flat-transaction-fee)) before pooling it.
 
 ### `send_transaction`
 
@@ -69,6 +69,25 @@ Returns the ordered history of balance changes (credits/debits) for an account. 
 ```
 
 **Result:** block at the given height, including transactions.
+
+### `get_chain_info`
+
+No params. Returns the consensus parameters committed by the genesis `ChainInit` transaction, plus current chain totals:
+
+```json
+{
+  "chain_id": 2077,
+  "is_testnet": true,
+  "tx_fee": 1000,
+  "ride_request_referrer_fee_bps": 200,
+  "ride_offer_referrer_fee_bps": 200,
+  "mint_authority": "0x...",
+  "total_supply": "1000000000000000",
+  "latest_block_index": 42
+}
+```
+
+**`total_supply` is a decimal string; every other field is a bare JSON number.** At this release's peg (1 USD = 1,000,000 CLT), `total_supply` is the one field that can realistically exceed `2^53` (roughly $9B circulating) — a JSON number would silently round past that, and a reconciliation process treats a rounded supply as a serious incident. `chain_id`, `tx_fee`, both referrer-fee rates, and `latest_block_index` can't approach that magnitude (a block a second would need hundreds of millions of years), so there's no reason to pay the string-parsing cost on those fields too.
 
 ## List methods
 
@@ -123,7 +142,8 @@ Finished trips: completed (full fare paid) or cancelled. Includes `trip_status`.
 |-------|------------------|
 | Invalid signature | Tx rejected before mempool |
 | Stale nonce | Rejected; fetch fresh nonce via `get_next_nonce` |
-| Insufficient balance for `RideAcceptance` debit | Rejected during mempool admission, before pooling |
+| Wrong `chain_id` | Rejected during mempool admission — the transaction was signed for a different chain |
+| Insufficient balance for the transaction's debit plus `tx_fee` | Rejected during mempool admission, before pooling |
 | Unknown method | JSON-RPC `error` with method-not-found code |
 | Malformed params | JSON-RPC `error` with invalid-params code |
 
