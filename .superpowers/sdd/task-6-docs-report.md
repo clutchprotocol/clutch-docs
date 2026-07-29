@@ -99,4 +99,4 @@ Node v24.13.1 (>=20 satisfied), run on host per instructions (docs build, not a 
 
 ## Commit
 
-Not yet committed — see final report to the user for the exact SHA/subject once created.
+`28f07c7` — "docs: update for the treasury-break release (peg, Mint/Burn, chain_id, fees)". 22 files changed (21 doc files + this report), 708 insertions / 156 deletions. On branch `treasury-break`, not pushed.
