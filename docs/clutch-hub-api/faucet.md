@@ -37,6 +37,10 @@ Content-Type: application/json
 
 No JWT required. The faucet is gated by server configuration and a built-in rate limiter instead.
 
+:::danger Refuses to start on a non-testnet chain
+At startup, the Hub API reads the node's chain info and checks `is_testnet`. If `faucet_enabled = true` against a non-testnet chain, **the process panics and does not start** — this is deliberately the one place in this codebase that fails hard instead of returning an error, because a faucet that survives onto a real, value-bearing network could mint real-looking transfers from an account that is never actually funded from reserve. This is a boot-time check, not a per-request one; there is no runtime path that re-verifies `is_testnet` on every `/faucet` call.
+:::
+
 ## SDK
 
 ```javascript
@@ -65,6 +69,10 @@ faucet_enabled = true
 faucet_private_key = "d2c446110cfcecbdf05b2be528e72483de5b6f7ef9c7856df2f81f48e9f2748f"
 faucet_amount_clt = 1000
 ```
+
+:::caution Check this value against the current peg
+`1000` CLT is **$0.001** at 1 USD = 1,000,000 CLT — a drip too small to fund even a single transaction's `tx_fee` (also 1000 CLT). This value predates the peg and reads like it was sized for an earlier, unpegged notion of CLT; confirm the intended drip amount before relying on the checked-in default for anything beyond exercising the faucet endpoint itself.
+:::
 
 :::warning Test-only key
 The `faucet_private_key` shown above is the public testnet genesis faucet key. It is for **testnet experimentation only** — never reuse it on any production or value-bearing network. For a private deployment, generate a fresh secp256k1 keypair and fund that account in your genesis. Never commit a production faucet key to source control.

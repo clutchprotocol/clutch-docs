@@ -33,7 +33,7 @@ dispose();
 | `subscribeActiveTrips(options, handlers)` | `{ driverAddress?, passengerAddress? }` | `AvailableActiveTrip[]` |
 | `subscribeCompletedTrips(options, handlers)` | filter options | `AvailableCompletedTrip[]` |
 | `subscribeRecentTrips(options, handlers)` | filter options | `AvailableRecentTrip[]` |
-| `subscribeAccountBalance(options, handlers)` | `{ publicKey? }` | `number` (CLT balance) |
+| `subscribeAccountBalance(options, handlers)` | `{ publicKey? }` | `bigint` (CLT balance) |
 
 ## Connection sharing
 

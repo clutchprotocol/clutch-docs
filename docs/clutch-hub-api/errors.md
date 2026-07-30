@@ -37,7 +37,7 @@ There is no `extensions.code` field. The only way to distinguish failures progra
 | `Proof of key ownership failed: Invalid hex format for public key: …` | `publicKey` contains non-hex characters | Validate key format before calling |
 | `Failed to generate token: …` | JWT signing failed server-side | Retry; check API logs |
 
-Guarded fields (those that can return `Unauthorized: Authentication required`) are all `createUnsigned*` mutations, `sendRawTransaction`, and the `accountBalance` and `userRideRequests` queries. Every subscription and every `list*` query is public — see [Authentication](/clutch-hub-api/authentication) for the full table.
+Guarded fields (those that can return `Unauthorized: Authentication required`) are all `createUnsigned*` mutations (including `createUnsignedBurn`), `sendRawTransaction`, and the `accountBalance` and `userRideRequests` queries. `chainInfo` is public, alongside every subscription and every `list*` query — see [Authentication](/clutch-hub-api/authentication) for the full table.
 
 An invalid token is **not** rejected at the transport level: the handler simply does not attach an authenticated user, so the request only fails if it reaches a guard.
 
@@ -77,6 +77,10 @@ When a transaction is rejected by the node, the nonce may be stale — re-fetch 
 | 400 | `node rejected faucet tx: …` | Node unreachable or rejected the transfer |
 
 Rate limiting **is** built in: the Hub enforces a 30-second cooldown per client IP and a 1-hour cooldown per recipient address, returning HTTP 429 with a `Retry-After` header. See [Faucet](/clutch-hub-api/faucet) for details, and [Security](/reference/security#faucet-abuse-controls) for additional proxy-level hardening on public testnets.
+
+:::note Non-testnet faucet is a boot-time failure, not a request error
+None of the errors above cover a faucet enabled against a non-testnet chain — that case never reaches request handling. The Hub API checks `is_testnet` (from the node's chain info) once at process startup, and if `faucet_enabled = true` on a non-testnet chain, **the whole process refuses to start**. There is no per-request re-check of `is_testnet` — by the time `/faucet` is serving traffic, that condition has already been ruled out at boot.
+:::
 
 ## Input validation errors
 

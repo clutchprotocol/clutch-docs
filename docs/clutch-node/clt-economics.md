@@ -4,24 +4,51 @@ sidebar_position: 5
 
 # CLT Economics
 
-CLT (Clutch token) is the native unit on the Clutch blockchain. Ride payments and validator rewards follow the rules below — all enforced in `clutch-node`.
+CLT (Clutch token) is the native unit on the Clutch blockchain. Clutch's chain is the settlement layer for a **fully-reserved, redeemable token**: every CLT in circulation is backed 1:1 by off-chain reserve. That single design decision drives everything on this page — the peg, the fee model, and why block rewards no longer exist.
 
-## Overview
+## The peg
 
-Two separate mechanisms:
+**1 USD = 1,000,000 CLT.** CLT is an integer micro-dollar — there are **no decimals**; the smallest unit is one micro-dollar. A $5.00 fare is `5 × 1,000,000 = 5,000,000 CLT`. A $0.001 fee is `0.001 × 1,000,000 = 1,000 CLT`.
 
-| Layer | Mechanism | Default |
-|-------|-----------|---------|
-| **Ride payments** | Referrer fees on each `RidePay`, driver gets the remainder | 2% request + 2% offer |
-| **Network** | Fixed block reward minted to the block author | 50 CLT per block |
+Because every CLT must be backed 1:1, the chain cannot mint CLT out of nothing without breaking that invariant — which is why block rewards were removed (see below) and why the only two operations that change total supply are `Mint` and `Burn`, both deliberately narrow.
 
-Ride fares do **not** fund validators directly. Validators earn block rewards only.
+:::warning What the chain can and cannot guarantee
+The chain enforces mint authority (only the configured `mint_authority` may mint) and exact supply accounting (`total_supply` moves by exactly the minted or burned amount, once per block). It **cannot** verify that off-chain reserve actually exists to back a mint, or that a burn actually triggers an off-chain payout. Those guarantees are the job of an off-chain reconciliation process and the treasury's operational controls — not consensus. If you are building against this chain, do not treat "the chain accepted my Mint" as proof that the equivalent dollars are held in reserve; that assurance comes from the treasury operator, not the protocol.
+:::
+
+## Supply-changing operations: Mint and Burn
+
+These are the **only** two transaction types that change total CLT supply. Everything else (`Transfer`, ride transactions) moves existing CLT between accounts.
+
+### Mint (on-ramp)
+
+`Mint` credits CLT to an address. Only the address recorded as `mint_authority` in genesis may sign one — any other sender is rejected outright. Each `Mint` carries a `credit_ref`: the hash of an off-chain deposit intent (e.g. a bank transfer or card charge that funded the mint). The chain records that ref permanently, so if the same deposit intent is retried — a webhook fires twice, a worker restarts mid-request — the second `Mint` with the same `credit_ref` is rejected. A deposit can credit CLT exactly once, never twice, no matter how many times the request is retried.
+
+### Burn (redemption)
+
+`Burn` destroys CLT from the caller's own balance. Unlike `Mint`, it is **permissionless** — anyone may burn their own balance, with no authority check. `Burn` carries an **optional** `redemption_ref`: the hash of an off-chain redemption intent, used by an off-chain payout worker to match a confirmed burn to the withdrawal it should trigger. The ref is optional because a burn is a complete, final action on its own — the destruction of CLT does not require a corresponding off-chain payout to be meaningful (a user might simply want to reduce their on-chain holding).
+
+The ordering here is deliberate: **burn first, pay second.** The on-chain leg (destroying CLT) is final the moment it's included in a block. The off-chain leg (wiring dollars back to the user) can fail transiently and be retried against the recorded ref. Reversing that order — paying out before the burn is confirmed — would let a user get paid and then have their burn transaction fail or reorg away, which the fully-reserved model cannot tolerate.
+
+See [Signing and Encoding — Mint](/reference/signing-and-encoding#mint-tag-6) and [Burn](/reference/signing-and-encoding#burn-tag-7) for the exact RLP shapes, and [Transaction Types](/clutch-node/transaction-types) for validation details.
+
+## Validator compensation: flat transaction fee
+
+Block rewards are gone. There is no `block_reward_amount`, and no CLT is minted per block — minting unbacked CLT to pay validators would permanently break the 1:1 reserve invariant this whole model exists to protect.
+
+Instead, every non-exempt transaction pays a flat fee (`tx_fee`, currently **1000 CLT = $0.001**) credited to the author of the block it lands in. This is a straightforward transfer of already-existing, already-backed CLT from sender to block author — it does not touch total supply.
+
+This also gives the chain its first real cost per transaction. Previously, transactions were free; a flat fee means submitting a transaction now costs something, which is what makes spamming the network non-free.
+
+`Mint` and the genesis-only `ChainInit` are fee-exempt (a mint authority crediting a new user should not need CLT of its own to do so). Every other transaction type — including `Burn` — pays the fee. If the sender of a transaction happens to be the block's own author, no fee is charged (there is nothing to transfer to itself).
 
 ## Ride payment flow
 
+Ride payments are a separate mechanism layered on top of ordinary CLT transfers — referrer fees on each `RidePay`, with the driver receiving the remainder.
+
 ```mermaid
 flowchart TB
-    Accept[RideAcceptance] -->|"Debit full fare from passenger"| PassengerBal[Passenger balance]
+    Accept[RideAcceptance] -->|"Debit fare + tx_fee from passenger"| PassengerBal[Passenger balance]
     Pay[RidePay installment] -->|"Credit referrers"| Referrers[Referrer accounts]
     Pay -->|"Credit remainder"| Driver[Driver account]
     Cancel[RideCancel] -->|"Refund unpaid remainder"| PassengerBal
@@ -29,35 +56,37 @@ flowchart TB
 
 ### Step 1: RideAcceptance
 
-When a passenger accepts an offer, the full offer fare is debited from the passenger (`RideAcceptanceDebit`). No funds are credited to the driver yet.
+When a passenger accepts an offer, the full offer fare **plus the flat transaction fee** is debited from the passenger. No funds are credited to the driver yet.
 
 ### Step 2: RidePay
 
 Each `RidePay` transaction distributes that payment installment:
 
-- **Request referrer** — `ceil(ride_request_referrer_fee_percent × amount / 100)` (default **2%**)
-- **Offer referrer** — `ceil(ride_offer_referrer_fee_percent × amount / 100)` (default **2%**)
-- **Driver** — installment amount minus total referrer fees
+- **Request referrer** — `floor(ride_request_referrer_fee_bps × amount / 10_000)` (default **200 bps = 2%**)
+- **Offer referrer** — `floor(ride_offer_referrer_fee_bps × amount / 10_000)` (default **200 bps = 2%**)
+- **Driver** — installment amount minus total referrer fees (the exact remainder)
 
-The passenger is not debited again on `RidePay`; payment comes from the fare already reserved at acceptance.
+The passenger is not debited again on `RidePay`; payment comes from the fare already reserved at acceptance. `RidePay` itself also pays the flat `tx_fee` to the block author, from the passenger's balance.
 
-Referrer fees use **ceiling rounding** (e.g. 2% of 3 CLT = 1 CLT).
+Referrer fees use **floor rounding**, and the three shares (request referrer + offer referrer + driver) always sum to exactly the fare — no rounding remainder is lost or invented.
 
-If the same address is referrer on both request and offer, both fees are credited to that address (up to 4% of the installment when defaults apply).
+:::info Why floor rounding replaced ceiling rounding
+The old model used ceiling rounding on a percent-based fee: 2% of a 3-unit fare rounded *up* to 1 whole unit, which is 33% of the fare — a wildly wrong result that only existed because the old CLT had no small denomination to express "2% of 3" precisely. Now that CLT is a micro-dollar, fees are basis points with floor rounding, so a fee that rounds to zero on a tiny fare simply *is* zero, rather than being inflated to the smallest nonzero unit. The driver's share is always defined as the remainder, so the three shares still add up to the fare exactly, for every input.
+:::
 
 ### Step 3: RideCancel
 
-If a trip is cancelled before the full fare is paid, the unpaid remainder is refunded to the passenger.
+If a trip is cancelled before the full fare is paid, the unpaid remainder is refunded to the passenger. If the passenger initiates the cancellation, the flat `tx_fee` is also deducted from that refund; if the driver initiates it, the driver pays the fee separately and the passenger's refund is untouched.
 
 ### Example
 
-Default config, **10 CLT** fare, one full `RidePay`, both referrers set:
+Default config, a **$5.00** fare (`5 × 1,000,000 = 5,000,000 CLT`), one full `RidePay`, both referrers set:
 
-| Recipient | CLT |
-|-----------|-----|
-| Request referrer | 1 |
-| Offer referrer | 1 |
-| Driver | 8 |
+| Recipient | CLT | USD |
+|-----------|-----|-----|
+| Request referrer | `floor(5,000,000 × 200 / 10,000)` = 100,000 | $0.10 |
+| Offer referrer | `floor(5,000,000 × 200 / 10,000)` = 100,000 | $0.10 |
+| Driver | 4,800,000 | $4.80 |
 
 With no referrers, the driver receives the full installment.
 
@@ -70,34 +99,30 @@ Referrer addresses are attached to `RideRequest` and `RideOffer` at creation tim
 
 See [Hub API configuration](/clutch-hub-api/configuration).
 
-## Validator block reward
+## Node configuration keys
 
-Configured per node:
-
-```toml
-block_reward_amount = 50
-```
-
-- Minted to the block author on every **non-genesis** block
-- Independent of ride volume and fare amounts
-
-## Configuration keys
-
-| Setting | Description | Default |
+| Setting | Description | This testnet's value |
 |---------|-------------|---------|
-| `ride_request_referrer_fee_percent` | Request-side referrer fee on each `RidePay` | `2` |
-| `ride_offer_referrer_fee_percent` | Offer-side referrer fee on each `RidePay` | `2` |
-| `block_reward_amount` | CLT minted to block author per block | `50` |
+| `chain_id` | Network identifier, signed into every transaction | `2077` |
+| `is_testnet` | Gates the faucet allocation and faucet startup | `true` |
+| `tx_fee` | Flat CLT fee per non-exempt transaction, paid to the block author | `1000` (= $0.001) |
+| `mint_authority` | The only address permitted to sign `Mint` | testnet dev key |
+| `faucet_address` / `faucet_allocation` | Genesis-funded faucet account and its starting balance | `1,000,000,000,000,000` (= $1B) |
+| `ride_request_referrer_fee_bps` | Request-side referrer fee on each `RidePay`, in basis points | `200` (2%) |
+| `ride_offer_referrer_fee_bps` | Offer-side referrer fee on each `RidePay`, in basis points | `200` (2%) |
 
-## Alpha / testnet notes
+All of these are committed into state at genesis by the `ChainInit` transaction (tag 9) and must be **identical across every node** — see [Node Configuration](/clutch-node/configuration) for why a mismatch prevents peers from connecting at all, rather than silently forking.
 
-- Genesis allocates test supply to the faucet account (`i64::MAX` CLT, ~9.2 × 10^18) for development — balance deltas travel as `i64`, so the allocation stays inside that range
-- There is no on-chain supply cap or emission schedule beyond `block_reward_amount`
-- CLT has no fixed fiat peg; fares are denominated in CLT
+## Testnet notes
+
+- Genesis allocates the faucet account `faucet_allocation` CLT (currently $1B) — but only when `is_testnet = true`. On a non-testnet chain, faucet allocation is forced to zero: a faucet pre-mint surviving onto a real network would destroy the peg immediately, since that CLT would exist without any backing reserve.
+- Balances are `u64`, deltas `i64` — supply is kept within `i64::MAX` by a boot-time check on `faucet_allocation` and a runtime check after every `Mint`/`Burn`.
+- CLT's fiat peg exists specifically because the chain now backs a redeemable token; on prior testnets CLT had no fixed value. Treat all CLT figures on this testnet as backed at the stated peg, subject to the reserve caveat above.
 
 ## Related
 
 - [App Developer Incentives](/getting-started/app-developer-incentives) — Earn CLT as an app builder via referrer fees
-- [Transaction Types — Referrer fees](/clutch-node/transaction-types#referrer-fees)
+- [Transaction Types](/clutch-node/transaction-types) — Mint, Burn, ChainInit, and referrer fees
+- [Signing and Encoding](/reference/signing-and-encoding) — RLP shapes for Mint/Burn/ChainInit
 - [Ride Lifecycle](/getting-started/ride-lifecycle)
 - [Node Configuration](/clutch-node/configuration)

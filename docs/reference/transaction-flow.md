@@ -35,13 +35,14 @@ sequenceDiagram
     participant Hub as Hub_API
     participant Node as Clutch_Node
 
-    App->>App: sign challenge clutch-auth publicKey timestamp
+    App->>App: sign challenge clutch-auth chain_id publicKey timestamp
     App->>Hub: generateToken(publicKey, timestamp, signature)
     Hub->>Hub: verify signature + timestamp window
     Hub-->>App: JWT
     App->>Hub: createUnsignedRideRequest (JWT)
     Hub->>Node: get_next_nonce
-    Hub-->>App: unsigned tx JSON
+    Hub-->>App: unsigned tx JSON (includes chain_id)
+    App->>App: verifyUnsignedTransaction (optional, pre-sign check)
     App->>App: signTransaction (client-side)
     App->>Hub: sendRawTransaction (JWT)
     Hub->>Node: send_raw_transaction
@@ -70,6 +71,7 @@ App ──► SDK ──► Hub API ──► Clutch Node (WebSocket JSON-RPC)
 | RidePay | `ride_acceptance_transaction_hash` |
 | RideCancel | `ride_acceptance_transaction_hash` |
 | RideRequestCancel | `ride_request_transaction_hash` |
+| Burn | `redemption_ref` (optional — matches an off-chain redemption intent, not a prior transaction) |
 
 Store each `txHash` returned after submission — the next step needs it.
 
