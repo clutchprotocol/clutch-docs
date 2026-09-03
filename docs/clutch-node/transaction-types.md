@@ -40,10 +40,10 @@ Mint { to: address, amount: u64, credit_ref: 64-hex-chars }
 ```
 
 - Only the address recorded as `mint_authority` in genesis may sign a `Mint` — any other sender is rejected before it reaches the pool.
-- `credit_ref` is the hash of an off-chain deposit intent (e.g. a specific bank transfer or card charge). The node records every `credit_ref` it has processed and rejects a repeat — so a retried or duplicated deposit request can never credit twice, no matter how many times the caller retries it.
+- `credit_ref` is the hash of an off-chain deposit intent (a specific USDT-on-Tron transfer, matched and verified by the treasury). The node records every `credit_ref` it has processed and rejects a repeat — so a retried or duplicated deposit request can never credit twice, no matter how many times the caller retries it.
 - `Mint` is fee-exempt: the mint authority is not required to hold CLT of its own in order to credit users.
 
-Not exposed via the Hub API or SDK — it is constructed and signed directly against the node by whoever holds the mint authority key. See [CLT Economics](/clutch-node/clt-economics) for why this operation exists and what guarantees the chain does (and does not) provide around it.
+Not exposed via the Hub API or SDK — it is constructed and signed directly against the node by whoever holds the mint authority key, which in practice is `treasury-service` (see [Clutch Treasury](/clutch-treasury/overview)). See [CLT Economics](/clutch-node/clt-economics) for why this operation exists and what guarantees the chain does (and does not) provide around it.
 
 ## Burn (tag 7)
 

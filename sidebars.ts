@@ -29,6 +29,16 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Clutch Treasury',
+      items: [
+        'clutch-treasury/overview',
+        'clutch-treasury/deposits',
+        'clutch-treasury/reserves-and-reconciliation',
+        'clutch-treasury/redemptions',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Clutch Hub API',
       items: [
         'clutch-hub-api/overview',
