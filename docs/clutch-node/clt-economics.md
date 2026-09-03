@@ -22,7 +22,7 @@ These are the **only** two transaction types that change total CLT supply. Every
 
 ### Mint (on-ramp)
 
-`Mint` credits CLT to an address. Only the address recorded as `mint_authority` in genesis may sign one — any other sender is rejected outright. Each `Mint` carries a `credit_ref`: the hash of an off-chain deposit intent (e.g. a bank transfer or card charge that funded the mint). The chain records that ref permanently, so if the same deposit intent is retried — a webhook fires twice, a worker restarts mid-request — the second `Mint` with the same `credit_ref` is rejected. A deposit can credit CLT exactly once, never twice, no matter how many times the request is retried.
+`Mint` credits CLT to an address. Only the address recorded as `mint_authority` in genesis may sign one — any other sender is rejected outright. Each `Mint` carries a `credit_ref`: the hash of an off-chain deposit intent (a specific USDT transfer on Tron, verified by the treasury before it ever signs a `Mint` — see [Clutch Treasury](/clutch-treasury/overview)). The chain records that ref permanently, so if the same deposit intent is retried — a verifier re-runs, a worker restarts mid-request — the second `Mint` with the same `credit_ref` is rejected. A deposit can credit CLT exactly once, never twice, no matter how many times the request is retried.
 
 ### Burn (redemption)
 
