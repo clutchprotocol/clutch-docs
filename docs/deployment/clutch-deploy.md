@@ -29,6 +29,8 @@ docker compose -p clutch-dev -f docker-compose.yml -f docker-compose.dev.yml up 
 | clutch-hub-demo-app | 5173 | Reference React demo |
 | clutch-explorer-backend | 8088 | Block explorer REST API |
 | clutch-explorer-frontend | 5174 | Block explorer UI |
+| clutch-explorer-indexer | — | Poll → fetch → upsert loop into Postgres; same image as clutch-explorer-backend, run as its own process |
+| clutch-explorer-postgres | — (internal network only) | Indexed chain data for the explorer API |
 | node1 | 8081, 4001, 3001 | Bootstrap validator |
 | node2 | 8082, 4002, 3002 | Validator 2 |
 | node3 | 8083, 4003, 3003 | Validator 3 |
@@ -36,6 +38,8 @@ docker compose -p clutch-dev -f docker-compose.yml -f docker-compose.dev.yml up 
 | Grafana | 3030 | Dashboards (`admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`) |
 | Seq | 5341 | Structured logs |
 | nginx | 80 | Reverse proxy (optional — see [Nginx](/deployment/nginx)) |
+
+The indexer being a separate process from the API is why the explorer can keep serving reads even while indexing falls behind the chain tip — see the [FAQ](/reference/faq#explorer).
 
 ## Verify
 

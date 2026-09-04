@@ -31,11 +31,25 @@ Keys are stored per role: `clutch_passenger_*`, `clutch_driver_*` in localStorag
 | Cancel pending request | `createUnsignedRideRequestCancel` → sign → submit |
 | Cancel active trip | `createUnsignedRideCancel` → sign → submit |
 | View balance | `getAccountBalance` / `subscribeAccountBalance` (both `bigint`) |
+| Top up (deposit) | `sdk.getAuthHeaders()` only — the deposit calls themselves go straight to `payment-orchestrator`, not the SDK |
 | Transaction history | localStorage per address |
 
 Balances and fares displayed in the UI are formatted with the SDK's `formatUsd()` helper (CLT is a micro-dollar — 1 USD = 1,000,000 CLT — so raw amounts are not meant to be shown directly).
 
 Components: `PassengerView.jsx`, `RideForm.jsx`, `ActiveTripCard.jsx`, `BalanceDisplay.jsx`.
+
+## Top up (deposit)
+
+Opened from the app menu (☰ → **Top up with USDT**) once a wallet exists — available to either role, not just passengers, though funding a passenger wallet to pay fares is the common case. `DepositPanel.jsx` calls `payment-orchestrator` directly (`POST`/`GET /api/v1/deposits`), bypassing the Hub API and the SDK entirely except for `sdk.getAuthHeaders()`, which attaches the same Hub-issued JWT as a bearer token. See [Architecture — Deposit Flow](/getting-started/architecture#deposit-flow) for why the path is separate.
+
+| Panel state | What it means |
+|-------------|----------------|
+| Loading | The address request is in flight |
+| Address shown | Your permanent deposit address, plus a list of your recent deposits |
+| Unavailable | The orchestrator returned `503` — deposits are temporarily switched off |
+| Error | The address or deposit-list request failed |
+
+Each row in the recent-deposits list shows an amount, an age, a truncated transaction id, and a status label — `Detected`, `Minting`, `Credited`, or `Needs review` — the same vocabulary documented in [Deposits — Status vocabulary](/clutch-treasury/deposits#status-vocabulary). The list refreshes every 10 seconds while the panel stays open.
 
 ## Driver flows
 
