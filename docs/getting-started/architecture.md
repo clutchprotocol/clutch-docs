@@ -23,6 +23,19 @@ flowchart LR
 3. **Submit signed tx** — the app sends the signed RLP hex to the Hub, which forwards it to the node
 4. **Validate & mine** — the node verifies signature/nonce, applies it to state, and includes it in a block
 
+## Deposit Flow
+
+Turning USDT into CLT is a second, independent way into the chain — it does not join the flow above at any point:
+
+```mermaid
+flowchart LR
+    Browser["Demo App / Your dApp"] -->|"1. POST/GET /api/v1/deposits"| Orch["payment-orchestrator"]
+    Orch -->|"2. deposit evidence: address, amount, tx id"| Treasury["treasury-service"]
+    Treasury -->|"3. send_raw_transaction (Mint)"| Node["Clutch Node"]
+```
+
+This flow deliberately bypasses the Hub API and the SDK on both legs: the browser calls `payment-orchestrator` directly rather than asking the Hub for an unsigned transaction, because a deposit address and Tron-side detection have nothing to do with the Clutch chain's transaction format; and `treasury-service`, once a deposit is approved, submits the resulting `Mint` straight to the node's own WebSocket RPC (`send_raw_transaction`) rather than through the Hub. The only thing the two paths share is identity — the orchestrator accepts the same Hub-issued JWT the SDK already holds, because both services check it against the same secret. Once the `Mint` lands, the CLT it created is ordinary chain state, indistinguishable from CLT that arrived any other way. See [Clutch Treasury Overview](/clutch-treasury/overview) for the three services behind this box and [Deposits](/clutch-treasury/deposits) for what a depositor actually sees.
+
 ## Component Roles
 
 ### Clutch Node
@@ -65,3 +78,5 @@ Apps receive live updates via GraphQL subscriptions. The API polls the node and 
 - [Ride Lifecycle](/getting-started/ride-lifecycle)
 - [Transaction Flow](/reference/transaction-flow)
 - [Environments](/getting-started/environments)
+- [Deposits](/clutch-treasury/deposits) — the treasury side of the deposit flow above
+- [Clutch Treasury Overview](/clutch-treasury/overview)

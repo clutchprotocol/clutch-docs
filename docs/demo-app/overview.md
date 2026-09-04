@@ -14,6 +14,7 @@ The **Clutch Hub Demo App** is a React + Vite application demonstrating blockcha
 - **Full ride lifecycle** — Request, offer, accept, pay, cancel
 - **Real-time updates** — GraphQL subscriptions with polling fallback
 - **Faucet integration** — One-click test CLT funding
+- **USDT deposits** — Top up CLT by paying USDT (TRC-20) straight to the treasury, independent of the Hub API and SDK
 - **Transaction history** — Persistent list per wallet address
 - **Stage auto-detect** — Maps `app-stage.*` hostname to `api-stage.*`
 

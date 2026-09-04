@@ -100,6 +100,11 @@ See [API Configuration](/clutch-hub-api/configuration).
 |----------|-------------|
 | `VITE_API_URL` | Hub API base URL |
 | `VITE_PUBLIC_NODE_ENDPOINTS` | Comma-separated node WS URLs for network info tab |
+| `VITE_CHAIN_ID` | Chain id pinned client-side for auth/signing (default `2077`) |
+| `VITE_ORCHESTRATOR_URL` | `payment-orchestrator` base URL for the deposit panel (default `/payment`, a proxied same-origin path — see the note below) |
+| `VITE_CARTO_API_KEY` | CARTO basemap API key; unset falls back to OpenStreetMap tiles |
+
+`VITE_ORCHESTRATOR_URL`'s default assumes nginx is proxying `/payment/` to the orchestrator, which is true for the full compose stack but not for a standalone `npm run dev` — see [Demo App Getting Started](/demo-app/getting-started#environment-variables) for the local workaround.
 
 ### Explorer
 

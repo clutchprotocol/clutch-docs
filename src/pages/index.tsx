@@ -49,6 +49,12 @@ const features: Feature[] = [
     description: 'Fully-reserved CLT, referrer fees on ride payments, and a flat per-transaction fee to the block author.',
     to: '/clutch-node/clt-economics',
   },
+  {
+    title: 'Clutch Treasury',
+    icon: '🏦',
+    description: 'USDT deposits and redemptions split across three services, so no single one can both decide to mint and move the money behind it.',
+    to: '/clutch-treasury/overview',
+  },
 ];
 
 function Hero(): ReactNode {

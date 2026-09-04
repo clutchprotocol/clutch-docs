@@ -16,6 +16,8 @@ Pre-built images are published to [GHCR and Docker Hub](/reference/docker-images
 | clutch-hub-demo-app | 5173 | Reference React demo |
 | clutch-explorer-backend | 8088 | Block explorer REST API |
 | clutch-explorer-frontend | 5174 | Block explorer UI |
+| clutch-explorer-indexer | — | Poll → fetch → upsert loop into Postgres; the same image as clutch-explorer-backend, run as a separate process via its own `command:` |
+| clutch-explorer-postgres | — (internal network only) | Indexed chain data for the explorer API |
 | node1 | 8081, 4001, 3001 | Bootstrap node (WebSocket, libp2p, metrics) |
 | node2 | 8082, 4002, 3002 | Node 2 |
 | node3 | 8083, 4003, 3003 | Node 3 |
@@ -23,6 +25,8 @@ Pre-built images are published to [GHCR and Docker Hub](/reference/docker-images
 | Grafana | 3030 | Dashboards (`admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`) |
 | Seq | 5341 | Structured logging |
 | nginx | 80 | Reverse proxy (optional — see [Nginx](/deployment/nginx)) |
+
+`clutch-explorer-indexer` being its own process, separate from `clutch-explorer-backend`, is why the explorer API can keep answering requests even while indexing lags behind the chain tip — restarting or slowing one does not affect the other. See the [FAQ](/reference/faq#explorer).
 
 ## Configuration
 

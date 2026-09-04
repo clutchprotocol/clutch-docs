@@ -133,6 +133,7 @@ const config: Config = {
             {label: 'SDK', to: '/clutch-hub-sdk-js/overview'},
             {label: 'Demo App', to: '/demo-app/overview'},
             {label: 'Explorer', to: '/clutch-explorer/overview'},
+            {label: 'Treasury', to: '/clutch-treasury/overview'},
           ],
         },
         {
