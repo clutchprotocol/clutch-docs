@@ -49,7 +49,7 @@ Every party in a ride is paid and the protocol keeps none of it: the driver take
 The intended answer is a **redemption fee**, charged on the payout leg and never on chain: burn *N* CLT, receive *N* minus a fee in USDT, with the difference staying in the reserve. The chain needs no change to support that. `Burn` destroys exactly the amount it is handed and knows nothing about the off-chain leg, and reconciliation reads `ok` whenever reserve *covers* liability — so a reserve running slightly ahead of liability is a state it already accepts, not a mismatch. Sized to at least cover the Tron cost of a payout, such a fee makes each redemption self-funding instead of subsidised. The same argument is what would size a minimum deposit.
 
 :::info Not charged today
-Redemption converts CLT to USDT at par, and redemptions are disabled in any case ([Redemptions](/clutch-treasury/redemptions)). The fee described above is an open decision, not behaviour to code against — the payout rail's design deliberately leaves spread and fee modelling to `payment-orchestrator`, which is where it would land. Read every figure on this page as gross of a fee that does not exist yet.
+Redemption converts CLT to USDT at par ([Redemptions](/clutch-treasury/redemptions)). The fee described above is an open decision, not behaviour to code against — the payout rail's design deliberately leaves spread and fee modelling to `payment-orchestrator`, which is where it would land. Read every figure on this page as gross of a fee that does not exist yet.
 :::
 
 ## Ride payment flow
