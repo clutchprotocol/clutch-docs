@@ -20,9 +20,9 @@ Pre-built images are published to [GHCR and Docker Hub](/reference/docker-images
 | node2 | 8082, 4002, 3002 | Node 2 |
 | node3 | 8083, 4003, 3003 | Node 3 |
 | Prometheus | 9090 | Metrics |
-| Grafana | 3030 | Dashboards (admin/admin) |
+| Grafana | 3030 | Dashboards (`admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`) |
 | Seq | 5341 | Structured logging |
-| nginx | 80 | Reverse proxy (optional, `--profile proxy`) |
+| nginx | 80 | Reverse proxy (optional — see [Nginx](/deployment/nginx)) |
 
 ## Configuration
 
@@ -32,14 +32,19 @@ Pre-built images are published to [GHCR and Docker Hub](/reference/docker-images
 | `config/api/default.toml` | API bind, WebSocket URL, Seq |
 | `config/monitoring/prometheus/prometheus.yml` | Scrape targets |
 | `config/monitoring/grafana/` | Datasources, dashboards |
-| `config/nginx/nginx.conf` | Proxy (when using `--profile proxy`) |
+| `config/nginx/nginx.conf` | Proxy config, local/dev only — see [Nginx](/deployment/nginx) |
 | `.env` | SEQ_API_KEY, JWT_SECRET, ALLOWED_ORIGINS |
 
 ## Optional: Nginx Proxy
 
+Not a compose profile — none is defined anywhere in this stack, so `docker compose --profile proxy up -d` starts everything except nginx, silently. It's a separate compose file that joins the main stack's network from outside, and needs the main stack running under project name `clutch-dev` specifically:
+
 ```bash
-docker compose --profile proxy up -d
+docker compose -p clutch-dev -f docker-compose.yml -f docker-compose.dev.yml up -d
+docker compose -p clutch-nginx -f docker-compose.nginx.yml up -d
 ```
+
+See [Nginx](/deployment/nginx) for why the project name matters and what it routes.
 
 ## Common Commands
 

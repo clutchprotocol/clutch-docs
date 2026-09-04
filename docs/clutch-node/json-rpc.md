@@ -72,7 +72,7 @@ Returns the ordered history of balance changes (credits/debits) for an account. 
 
 ### `get_chain_info`
 
-No params. Returns the consensus parameters committed by the genesis `ChainInit` transaction, plus current chain totals:
+No params. Returns the consensus parameters committed by the genesis `ChainInit` transaction, plus current chain totals and this node's own sync state:
 
 ```json
 {
@@ -83,11 +83,18 @@ No params. Returns the consensus parameters committed by the genesis `ChainInit`
   "ride_offer_referrer_fee_bps": 200,
   "mint_authority": "0x...",
   "total_supply": "1000000000000000",
-  "latest_block_index": 42
+  "latest_block_index": 42,
+  "is_syncing": false,
+  "best_peer_block_index": 42,
+  "blocks_behind": 0
 }
 ```
 
-**`total_supply` is a decimal string; every other field is a bare JSON number.** At this release's peg (1 USD = 1,000,000 CLT), `total_supply` is the one field that can realistically exceed `2^53` (roughly $9B circulating) — a JSON number would silently round past that, and a reconciliation process treats a rounded supply as a serious incident. `chain_id`, `tx_fee`, both referrer-fee rates, and `latest_block_index` can't approach that magnitude (a block a second would need hundreds of millions of years), so there's no reason to pay the string-parsing cost on those fields too.
+**`total_supply` is a decimal string; every other field is a bare JSON number.** At this release's peg (1 USD = 1,000,000 CLT), `total_supply` is the one field that can realistically exceed `2^53` (roughly $9B circulating) — a JSON number would silently round past that, and a reconciliation process treats a rounded supply as a serious incident. `chain_id`, `tx_fee`, both referrer-fee rates, and the block/sync fields can't approach that magnitude (a block a second would need hundreds of millions of years), so there's no reason to pay the string-parsing cost on those fields too.
+
+`is_syncing`, `best_peer_block_index`, and `blocks_behind` describe this node's own position relative to its peers, not a consensus parameter — without them, a node that's still catching up answers `get_chain_info` indistinguishably from one that's fully synced, and a caller has no way to tell it's reading a partial chain. `best_peer_block_index` is `0` when no peer has been heard from yet, meaning *unknown*, not "the tip is at block zero"; a lone node reports `is_syncing: false` in that case because it has no peer to be behind, not because it's caught up to anything.
+
+The node has no HTTP health endpoint — only `/metrics` on `serve_metric_addr` (see [Configuration](/clutch-node/configuration)), which is a Prometheus scrape target, not a simple up/down check. `get_chain_info`'s sync fields are the closest thing to a liveness and sync check available over JSON-RPC, and the only one that tells you whether the node you're talking to is actually caught up.
 
 ## List methods
 

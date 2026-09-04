@@ -46,7 +46,7 @@ const features: Feature[] = [
   {
     title: 'CLT Economics',
     icon: '💰',
-    description: 'Driver-first payments with referrer fees and fixed validator block rewards.',
+    description: 'Fully-reserved CLT, referrer fees on ride payments, and a flat per-transaction fee to the block author.',
     to: '/clutch-node/clt-economics',
   },
 ];

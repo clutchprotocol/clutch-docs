@@ -22,7 +22,7 @@ Content-Type: application/json
 ```json
 {
   "ok": true,
-  "amount_clt": 1000,
+  "amount_clt": 100000000,
   "node": { }
 }
 ```
@@ -60,22 +60,22 @@ In `config/{env}.toml` (or `APP_*` environment overrides):
 |---------|-------------|
 | `faucet_enabled` | Enable/disable the endpoint |
 | `faucet_private_key` | Hex secp256k1 key for the faucet account (must hold CLT) |
-| `faucet_amount_clt` | CLT sent per request (default: 1000) |
+| `faucet_amount_clt` | CLT sent per request (shipped default: `100000000` = $100) |
 
-Example from clutch-deploy:
+Example from clutch-hub-api's own local `config/default.toml` — **not** clutch-deploy, which ships `faucet_private_key` empty by design (see the warning below):
 
 ```toml
 faucet_enabled = true
-faucet_private_key = "d2c446110cfcecbdf05b2be528e72483de5b6f7ef9c7856df2f81f48e9f2748f"
-faucet_amount_clt = 1000
+faucet_private_key = "<your funded testnet key>"
+faucet_amount_clt = 100000000
 ```
 
-:::caution Check this value against the current peg
-`1000` CLT is **$0.001** at 1 USD = 1,000,000 CLT — a drip too small to fund even a single transaction's `tx_fee` (also 1000 CLT). This value predates the peg and reads like it was sized for an earlier, unpegged notion of CLT; confirm the intended drip amount before relying on the checked-in default for anything beyond exercising the faucet endpoint itself.
+:::info Code fallback differs from the shipped config
+If `faucet_amount_clt` is left out of config entirely, the Rust default (`default_faucet_amount()` in `configuration.rs`) is `1000` CLT ($0.001) — a leftover from before the 1,000,000-CLT-per-dollar peg. Every shipped TOML (clutch-hub-api's own `config/default.toml` and clutch-deploy's `config/api/default.toml`) sets it explicitly to `100000000` ($100), so the smaller number only shows up if you remove the setting.
 :::
 
 :::warning Test-only key
-The `faucet_private_key` shown above is the public testnet genesis faucet key. It is for **testnet experimentation only** — never reuse it on any production or value-bearing network. For a private deployment, generate a fresh secp256k1 keypair and fund that account in your genesis. Never commit a production faucet key to source control.
+Replace `<your funded testnet key>` with your own secp256k1 private key, funded in your own genesis — never a key already used on a production or value-bearing network. Never commit a real private key to source control, even a testnet-only one.
 :::
 
 The faucet account must be funded in the node's genesis configuration.
@@ -105,7 +105,7 @@ Either cooldown being active rejects the request with HTTP **429**, a `Retry-Aft
 }
 ```
 
-A rejected request does **not** refresh the cooldown. The client IP is read from `X-Forwarded-For` / `X-Real-IP` when present, falling back to the socket peer — so a public deployment must sit behind a trusted reverse proxy, or callers can spoof the header and bypass the per-IP limit. The per-address cooldown still applies regardless.
+A rejected request does **not** refresh the cooldown. The client IP is read from `X-Forwarded-For` / `X-Real-IP` when present, falling back to the socket peer — so a public deployment must sit behind a trusted reverse proxy, or callers can spoof the header and bypass the per-IP limit. The per-address cooldown keys on the submitted `address` string exactly as received, **before** the normalization the send path applies to it — so the 20-byte-address form and the 130-char-public-key form of the same recipient cool down as two unrelated keys, and alternating between them bypasses the per-address limit entirely. Treat it as a courtesy, not a control: a public deployment needs its own rate limiting at the proxy in front, not just these built-in cooldowns.
 
 The cooldown windows are compile-time constants and cannot be tuned via config.
 

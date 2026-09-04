@@ -14,9 +14,11 @@ npm install clutch-hub-sdk-js
 
 | Use case | Package spec | Example |
 |----------|--------------|---------|
-| Production | Pinned version | `"1.22.1"` |
-| Development | Caret range | `"^1.22.0"` |
+| Production | Pinned version | `"3.0.0"` |
+| Development | Caret range | `"^3.0.0"` |
 | Canary | Tag | `@canary` |
+
+Upgrading from a `1.x` or `2.x` install is not a drop-in bump — see [v3 breaking changes](/clutch-hub-sdk-js/api-reference#v3-breaking-changes) first.
 
 ```bash
 # Install latest
@@ -37,11 +39,13 @@ npm view clutch-hub-sdk-js versions --json
 
 ## Constructor
 
-The first two arguments are required:
+The first two arguments are required; `privateKey` and `chainId` are optional:
 
 ```typescript
-new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string)
+new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string, chainId?: number)
 ```
+
+`chainId` is new in v3 — see [v3 breaking changes](/clutch-hub-sdk-js/api-reference#v3-breaking-changes). Pin it to your own app config; the SDK never reads it back from the hub. Omitting it still works for read-only queries, but you lose the ability to verify a hub-returned transaction before signing it.
 
 The SDK automatically obtains a JWT via `generateToken` when calling authenticated methods. `generateToken` requires a signed proof-of-key-ownership challenge, so pass the wallet's private key (or call `setPrivateKey` later) before using authenticated methods; it stays local and is never sent to the API.
 

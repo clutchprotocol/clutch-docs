@@ -60,7 +60,7 @@ It checks a hub-returned unsigned transaction (type, fare/amount, references, `f
 Set `faucet_enabled = true` and configure `faucet_private_key` with a funded account.
 
 **How much CLT per request?**  
-Default 1000 CLT (`faucet_amount_clt` in config) — that's $0.001 at the current peg, not $1000; check the config value rather than assuming.
+`100000000` CLT (`faucet_amount_clt` in config) — that's $100 at the current peg. If the setting is left out of config entirely, the Rust code-level fallback is `1000` CLT ($0.001), but every shipped config sets the real value explicitly.
 
 **Does the faucet work on a non-testnet chain?**  
 No — the Hub API refuses to even start if `faucet_enabled = true` against a chain where `is_testnet = false`. This is a boot-time failure, not a per-request one.
