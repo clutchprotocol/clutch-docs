@@ -28,7 +28,7 @@ This is `clutch-deploy`'s actual `config/nginx/nginx.conf` (the local/dev one �
 | `/explorer/api/` | `clutch-explorer-backend:8088/api/v1/` | Explorer REST, path-rewritten |
 | `/explorer/` | `clutch-explorer-frontend:80/` | Explorer UI |
 | `/payment/` | `payment-orchestrator:8091` | Deposit REST, rewritten (`^/payment(/api/.*)$` → `$1`) — the demo app's `DepositPanel` calls `/payment/api/v1/deposits` by default and **404s without this route** |
-| `/` (catch-all) | `clutch-hub-api:3000/` | Everything else, including `/faucet` |
+| `/` (catch-all) | `clutch-hub-api:3000/` | Everything else |
 
 `/api/` routing to the Hub API rather than the explorer backend is easy to get backwards from the name alone — the explorer's own REST API is `/explorer/api/`. There's no dedicated route for Grafana or Seq: both are published directly on their own host ports (`3030`, `5341`) instead of being proxied here.
 
@@ -178,7 +178,6 @@ For production, terminate TLS at Nginx with Let's Encrypt:
 ## Production notes
 
 - Set a real `server_name`; avoid the default `_` for public deployments.
-- Add rate limiting on `/faucet` (`limit_req_zone`) to deter testnet abuse.
 - Grafana and Seq bypass this proxy entirely (published directly on `3030`/`5341` — see [Routes](#routes)); restrict them at the host firewall or put your own authenticated proxy in front for any public deployment.
 - Forward `X-Forwarded-Proto` so the Hub API sees the original scheme.
 - Keep `ALLOWED_ORIGINS` in the API config in sync with the domains Nginx serves.

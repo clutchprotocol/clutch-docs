@@ -60,7 +60,7 @@ seq_url                = "http://seq:80"
 | `authorities` | Ordered list of validator public keys | Must match across nodes |
 | `block_authoring_enabled` | Whether this node runs the block-authoring job (participates as an active validator) | `true` |
 | `chain_id` | Network identifier, signed into every transaction | `2077` |
-| `is_testnet` | Gates faucet allocation and startup | `true` |
+| `is_testnet` | Gates the genesis faucet allocation, and node startup with one configured | `true` |
 | `tx_fee` | Flat CLT fee per non-exempt transaction, paid to the block author | `1000` (= $0.001) |
 | `mint_authority` | The only address permitted to sign a `Mint` transaction | validator or dedicated treasury key |
 | `faucet_address` | Address the genesis faucet allocation is credited to | `0xdeb4cfb6...` |

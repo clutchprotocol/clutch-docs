@@ -25,7 +25,7 @@ Community governance (DAO) is on the roadmap and described on the [marketing sit
 |-----------|-------------|
 | **Clutch Node** | Blockchain core with Aura consensus, custom transaction format |
 | **Clutch Treasury** | Fully-reserved USDT deposits and redemptions, split across three services so none can both decide and move funds |
-| **Clutch Hub API** | Application-to-node bridge (GraphQL + faucet) |
+| **Clutch Hub API** | Application-to-node bridge (GraphQL) |
 | **Clutch Hub SDK** | JavaScript/TypeScript SDK for client-side signing |
 | **Clutch Explorer** | Block indexer, REST API, and web UI |
 | **Clutch Deploy** | Full-stack Docker Compose deployment |

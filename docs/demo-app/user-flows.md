@@ -22,7 +22,6 @@ Keys are stored per role: `clutch_passenger_*`, `clutch_driver_*` in localStorag
 
 | UI action | SDK calls |
 |-----------|-----------|
-| Request CLT | `requestFaucet(publicKey)` |
 | Pick pickup/dropoff on map | — |
 | Submit ride request | `createUnsignedRideRequest` → `signTransaction` → `submitTransaction` |
 | View open offers | `subscribeRideOffers(requestTxHash)` or `listRideOffers` |
@@ -55,7 +54,7 @@ Each row in the recent-deposits list shows an amount, an age, a truncated transa
 
 | UI action | SDK calls |
 |-----------|-----------|
-| Request CLT | `requestFaucet(publicKey)` |
+| Top up (deposit) | `sdk.getAuthHeaders()` only — the deposit calls go straight to `payment-orchestrator`, not the SDK |
 | View ride requests | `subscribeRideRequests` or `listRideRequests` |
 | Submit offer | `createUnsignedRideOffer` → sign → submit |
 | View active trips | `subscribeActiveTrips({ driverAddress })` |

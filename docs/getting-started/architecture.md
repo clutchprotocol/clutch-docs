@@ -8,7 +8,7 @@ sidebar_position: 3
 
 ```mermaid
 flowchart LR
-    App["Demo App / Your dApp + SDK"] -->|"1. build unsigned tx"| Hub["Clutch Hub API (GraphQL/WS + /faucet)"]
+    App["Demo App / Your dApp + SDK"] -->|"1. build unsigned tx"| Hub["Clutch Hub API (GraphQL/WS)"]
     App -->|"2. sign client-side"| App
     App -->|"3. submit signed tx"| Hub
     Hub -->|"forward to node"| Node["Clutch Node (Blockchain, WebSocket RPC)"]
@@ -48,7 +48,7 @@ This flow deliberately bypasses the Hub API and the SDK on both legs: the browse
 ### Clutch Hub API
 
 - **Role**: Bridge between applications and the node
-- **Exposes**: GraphQL at `/graphql`, subscriptions at `/graphql/ws`, faucet at `/faucet`, health at `/health`
+- **Exposes**: GraphQL at `/graphql`, subscriptions at `/graphql/ws`, health at `/health`
 - **Responsibilities**: Build unsigned transactions, submit signed transactions, wallet JWT auth, poll-based subscriptions
 
 ### Clutch Hub SDK

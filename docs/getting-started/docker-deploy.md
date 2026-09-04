@@ -12,7 +12,7 @@ Pre-built images are published to [GHCR and Docker Hub](/reference/docker-images
 
 | Service | Ports | Description |
 |---------|-------|-------------|
-| clutch-hub-api | 3000 | GraphQL API, /health, /faucet |
+| clutch-hub-api | 3000 | GraphQL API, /health |
 | clutch-hub-demo-app | 5173 | Reference React demo |
 | clutch-explorer-backend | 8088 | Block explorer REST API |
 | clutch-explorer-frontend | 5174 | Block explorer UI |

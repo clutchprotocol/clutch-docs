@@ -104,10 +104,10 @@ See [Hub API configuration](/clutch-hub-api/configuration).
 | Setting | Description | This testnet's value |
 |---------|-------------|---------|
 | `chain_id` | Network identifier, signed into every transaction | `2077` |
-| `is_testnet` | Gates the faucet allocation and faucet startup | `true` |
+| `is_testnet` | Gates the genesis faucet allocation; a non-testnet chain configured with a nonzero allocation refuses to boot | `true` |
 | `tx_fee` | Flat CLT fee per non-exempt transaction, paid to the block author | `1000` (= $0.001) |
 | `mint_authority` | The only address permitted to sign `Mint` | testnet dev key |
-| `faucet_address` / `faucet_allocation` | Genesis-funded faucet account and its starting balance | `1,000,000,000,000,000` (= $1B) |
+| `faucet_address` / `faucet_allocation` | Genesis-funded account and its starting balance — a chain parameter, not a live service (see below) | `1,000,000,000,000,000` (= $1B) |
 | `ride_request_referrer_fee_bps` | Request-side referrer fee on each `RidePay`, in basis points | `200` (2%) |
 | `ride_offer_referrer_fee_bps` | Offer-side referrer fee on each `RidePay`, in basis points | `200` (2%) |
 
@@ -115,7 +115,8 @@ All of these are committed into state at genesis by the `ChainInit` transaction 
 
 ## Testnet notes
 
-- Genesis allocates the faucet account `faucet_allocation` CLT (currently $1B) — but only when `is_testnet = true`. On a non-testnet chain, faucet allocation is forced to zero: a faucet pre-mint surviving onto a real network would destroy the peg immediately, since that CLT would exist without any backing reserve.
+- Genesis allocates the faucet account `faucet_allocation` CLT (currently $1B) — but only when `is_testnet = true`. On a non-testnet chain, faucet allocation is forced to zero: a genesis pre-mint surviving onto a real network would destroy the peg immediately, since that CLT would exist without any backing reserve.
+- **Nothing hands that genesis balance out.** `faucet_address` and `faucet_allocation` stay in config because they are committed into the genesis hash — changing either would fork the chain — but the endpoint that used to transfer CLT out of that account has been removed. It *transferred* rather than minted, so the CLT it distributed had no reserve behind it and was excluded from liability by construction; once burns became redeemable for USDT, and with nothing in the burn path asking where the CLT came from, that account became a route from unbacked supply to real payout. CLT is obtained by [depositing USDT](/clutch-treasury/deposits).
 - Balances are `u64`, deltas `i64` — supply is kept within `i64::MAX` by a boot-time check on `faucet_allocation` and a runtime check after every `Mint`/`Burn`.
 - CLT's fiat peg exists specifically because the chain now backs a redeemable token; on prior testnets CLT had no fixed value. Treat all CLT figures on this testnet as backed at the stated peg, subject to the reserve caveat above.
 

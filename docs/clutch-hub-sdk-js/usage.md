@@ -90,18 +90,9 @@ await sdk.submitTransaction(signed.rawTransaction);
 
 Burning is permissionless — any wallet may destroy its own CLT. `redemptionRef` is optional: supply it (a hex-encoded hash of an off-chain redemption intent) when an operator's payout process needs to match this burn to a withdrawal request; omit it for a burn with no off-chain counterpart. There is no corresponding `createUnsignedMint` — minting is restricted to the chain's `mint_authority` and isn't exposed through this SDK. See [CLT Economics](/clutch-node/clt-economics) for why mint/burn are the only two operations that change total supply.
 
-## Get test CLT (faucet)
+## Get CLT
 
-On test networks with faucet enabled:
-
-```javascript
-const res = await sdk.requestFaucet(publicKey);
-if (res.ok) {
-  console.log('Received', res.amount_clt, 'CLT');
-} else {
-  console.error(res.error);
-}
-```
+There is no SDK call that hands out CLT — `requestFaucet()` was removed along with the faucet it called. CLT is issued against a USDT deposit instead: send USDT (TRC-20) to your permanent deposit address, and the treasury mints the matching CLT to the wallet that owns that address. Those endpoints are plain REST on `payment-orchestrator` and accept the same Hub-issued JWT this SDK already holds, so there is no second login. See [Deposits](/clutch-treasury/deposits).
 
 ## Full ride lifecycle (passenger + driver)
 
@@ -181,10 +172,10 @@ const publicKeyBytes = secp.getPublicKey(privateKeyBytes, false);
 const address = '0x' + bytesToHex(keccak_256(publicKeyBytes.slice(1)).slice(12, 32));
 ```
 
-Fund the new address from the [faucet](/clutch-hub-api/faucet) before submitting transactions.
+Fund the new address by [depositing USDT](/clutch-treasury/deposits) before submitting transactions.
 
 :::danger Never reuse a key from this repo
-Config files in `clutch-node` and `clutch-hub-api` ship real private keys so the local stack runs out of the box — including validator `author_secret_key` values and the faucet key. Those keys are public, so anyone can sign as those accounts. Generate your own for anything beyond a throwaway local chain, and **never** store a production key in browser `localStorage`.
+Config files in `clutch-node` and `clutch-hub-api` ship real private keys so the local stack runs out of the box — including validator `author_secret_key` values. Those keys are public, so anyone can sign as those accounts. Generate your own for anything beyond a throwaway local chain, and **never** store a production key in browser `localStorage`.
 :::
 
 ## Security

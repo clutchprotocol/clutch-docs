@@ -4,14 +4,13 @@ sidebar_position: 1
 
 # Clutch Hub API Overview
 
-Clutch Hub API bridges applications to the Clutch Node blockchain. It builds unsigned transactions, submits signed transactions, exposes chain state via GraphQL, and provides a testnet faucet.
+Clutch Hub API bridges applications to the Clutch Node blockchain. It builds unsigned transactions, submits signed transactions, and exposes chain state via GraphQL.
 
 ## HTTP endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/health` | GET | Liveness check |
-| `/faucet` | POST | Testnet CLT drip (when enabled) |
 | `/graphql` | POST | GraphQL queries and mutations |
 | `/graphql/ws` | GET | GraphQL subscriptions (WebSocket) |
 
@@ -24,7 +23,6 @@ There is **no** REST user registration or login. Authentication is wallet-based 
 - Signed transaction submission to the node
 - GraphQL queries for ride lists and account balance
 - GraphQL subscriptions (poll-based snapshots from the node)
-- Testnet faucet (`Transfer` signed server-side)
 - Seq integration for structured logging
 - Prometheus metrics sidecar (configurable)
 
@@ -51,5 +49,4 @@ Or use [clutch-deploy](/deployment/clutch-deploy) for the full stack.
 
 - [GraphQL reference](/clutch-hub-api/graphql)
 - [Subscriptions](/clutch-hub-api/subscriptions)
-- [Faucet](/clutch-hub-api/faucet)
 - [Configuration](/clutch-hub-api/configuration)

@@ -67,7 +67,7 @@ Tags are **deliberately non-contiguous** — 6 and 7 were reserved for Mint/Burn
 
 | Tag | Type | Notes |
 |-----|------|-------|
-| 0 | `Transfer` | Faucet only; not exposed via Hub API for apps |
+| 0 | `Transfer` | Not exposed via the Hub API or the SDK |
 | 1 | `RideRequest` | |
 | 2 | `RideOffer` | |
 | 3 | `RideAcceptance` | |
@@ -147,7 +147,7 @@ Burn's ordering relative to the off-chain payout is deliberate: the transaction 
 [0, [toAddress, value]]
 ```
 
-Used by the faucet server-side. Not exposed via Hub API for apps.
+A node-level transaction type. Not exposed via the Hub API or the SDK, so apps never construct one.
 
 ### ChainInit (tag 9) — genesis only
 

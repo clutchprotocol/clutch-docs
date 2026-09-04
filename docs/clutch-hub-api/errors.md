@@ -63,25 +63,6 @@ Resolvers wrap that text in a prefix identifying the operation, so the message y
 
 When a transaction is rejected by the node, the nonce may be stale — re-fetch it with a fresh `createUnsigned*` call before retrying.
 
-## Faucet errors
-
-`POST /faucet` is plain REST, not GraphQL: it returns a `{"error": "…"}` JSON body with a real HTTP status, not a GraphQL `errors[]` array.
-
-| Status | Message | Trigger |
-|--------|---------|---------|
-| 503 | `Faucet is disabled (set faucet_enabled = true in config for test networks)` | `faucet_enabled = false` |
-| 503 | `Faucet is not configured (set faucet_private_key to a funded account private key)` | `faucet_private_key` empty |
-| 400 | `Invalid public key length. Expected 40 or 130 characters, got …` | Malformed recipient address |
-| 429 | `faucet cooldown active, try again later` (plus `retry_after_secs`) | Rate limit hit |
-| 400 | `faucet account 0x… has insufficient balance (have N, need M)` | Faucet account underfunded in genesis |
-| 400 | `node rejected faucet tx: …` | Node unreachable or rejected the transfer |
-
-Rate limiting **is** built in: the Hub enforces a 30-second cooldown per client IP and a 1-hour cooldown per recipient address, returning HTTP 429 with a `Retry-After` header. See [Faucet](/clutch-hub-api/faucet) for details, and [Security](/reference/security#faucet-abuse-controls) for additional proxy-level hardening on public testnets.
-
-:::note Non-testnet faucet is a boot-time failure, not a request error
-None of the errors above cover a faucet enabled against a non-testnet chain — that case never reaches request handling. The Hub API checks `is_testnet` (from the node's chain info) once at process startup, and if `faucet_enabled = true` on a non-testnet chain, **the whole process refuses to start**. There is no per-request re-check of `is_testnet` — by the time `/faucet` is serving traffic, that condition has already been ruled out at boot.
-:::
-
 ## Input validation errors
 
 The API does almost no hand-written input validation — argument types are enforced by the GraphQL schema itself, and malformed queries fail async-graphql's own parsing/validation before any resolver runs. The only explicit check in a resolver is:
@@ -130,7 +111,7 @@ Authentication is handled inside the SDK — `ensureAuth()` is private and runs 
 ## Notes
 
 - Error messages are **not** stable across releases, and there are no error codes — see the warning above
-- GraphQL returns HTTP 200 for resolver errors; `POST /faucet` uses real status codes (400/429/503)
+- GraphQL returns HTTP 200 even for resolver errors — the failure is in the `errors[]` array, never in the status code
 - Subscriptions emit errors on the same WebSocket stream — handle them in your subscription client. Because the polling loops re-query the node each tick, a transient node failure surfaces as one error payload and the stream keeps running.
 
 ## Related

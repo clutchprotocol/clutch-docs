@@ -54,16 +54,16 @@ A `number` silently loses precision above `2^53`, which is a reachable CLT amoun
 **What does `verifyUnsignedTransaction` protect against?**  
 It checks a hub-returned unsigned transaction (type, fare/amount, references, `from`, and `chain_id` pinned from your own app config) before you sign it, closing the gap where the SDK previously signed whatever the hub returned without checking it matched what you asked for. Pass it as `signTransaction`'s third argument. It cannot verify the `referrer` field — the hub injects that server-side with no signed-quote mechanism yet, so it's surfaced for display only.
 
-## Faucet
+## Getting CLT
 
-**Faucet returns "disabled"?**  
-Set `faucet_enabled = true` and configure `faucet_private_key` with a funded account.
+**How do I get CLT?**  
+Deposit USDT. Every wallet has one permanent Tron address; send USDT (TRC-20) to it and the treasury mints the matching CLT to that wallet. In the demo app that's ☰ → **Top up with USDT**. See [Deposits](/clutch-treasury/deposits).
 
-**How much CLT per request?**  
-`100000000` CLT (`faucet_amount_clt` in config) — that's $100 at the current peg. If the setting is left out of config entirely, the Rust code-level fallback is `1000` CLT ($0.001), but every shipped config sets the real value explicitly.
+**There used to be a faucet — where did it go?**  
+Removed, along with `POST /faucet` and the SDK's `requestFaucet()`. It *transferred* CLT out of a genesis-funded account rather than minting it, so what it handed out had no USDT behind it and was excluded from the reserve liability by construction. That was harmless while CLT only ever flowed one way. Redemptions shipped on 2026-09-04, and nothing in the burn path asks where the burned CLT came from — which turned the faucet into a route from unbacked genesis CLT to real USDT out of the payout float.
 
-**Does the faucet work on a non-testnet chain?**  
-No — the Hub API refuses to even start if `faucet_enabled = true` against a chain where `is_testnet = false`. This is a boot-time failure, not a per-request one.
+**How much USDT do I need to deposit?**  
+Whatever you want. There is no minimum, no expected amount, and no expiry — the address alone identifies who paid, and whatever lands is credited in full at the peg (1 USD = 1,000,000 CLT). See [Deposits](/clutch-treasury/deposits).
 
 ## Explorer
 
