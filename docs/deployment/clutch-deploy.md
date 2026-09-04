@@ -67,6 +67,7 @@ docker compose up -d
 
 ## Related
 
+- [Treasury Stack](/deployment/treasury-stack) — the treasury overlay: three more services, one more network
 - [Monitoring](/deployment/monitoring)
 - [Nginx](/deployment/nginx)
 - [Environments](/getting-started/environments)

@@ -38,6 +38,12 @@ This means detection is quick in the common case — someone who just opened the
 
 ## The API
 
+### Authentication
+
+Every route below requires `Authorization: Bearer <token>` — the same JWT the Hub API issues via `generateToken` (see [Hub API Authentication](/clutch-hub-api/authentication)), not a token this service mints itself. The orchestrator decodes it as HS256 with claims `{pk, exp}` — the identical shape the hub issues — using the **same** `jwt_secret` the hub signs with; `Bearer` is stripped from the header before decoding. If the two secrets ever disagree, every route here fails closed with a plain `401`, not an error that would hint at the mismatch.
+
+This is why the browser calls this service directly instead of going through the Hub API or the SDK: a token obtained from the hub is already valid here, because both services check it against the same secret.
+
 ### `POST /api/v1/deposits`
 
 Takes no body. Returns the caller's deposit address, deriving and storing it on first call:
@@ -69,6 +75,18 @@ Your own recent deposits, newest first, capped at twenty rows:
 
 `amount_usdt` here reports what actually arrived, not what was once expected — there is nothing left to expect. You can only ever see your own deposits; the query is scoped to your identity, not filtered afterward. This is a panel, not a ledger: there is no pagination, and an old, never-paid legacy invoice (from before permanent addresses existed) is excluded entirely rather than shown as noise.
 
+### `GET /api/v1/deposits/:id`
+
+A single deposit, by id:
+
+```json
+{ "id": "…", "clt_address": "0x...", "amount_usdt": 50000000,
+  "pay_amount_usdt": 50000000, "status": "credited",
+  "invoice_id": "…", "expires_at": null }
+```
+
+Owner-checked: an id that exists but belongs to a different `user_pk` returns `404`, identical to an id that does not exist at all — never `403`. Confirming that a deposit exists for someone else's account would itself be information a caller has no business getting.
+
 ## Status vocabulary
 
 The API returns the deposit's raw status; the table below is what each one means and how the reference demo app's deposit panel presents it.
@@ -91,3 +109,4 @@ A deposit large enough to exceed the treasury's per-transaction mint cap does no
 - [Overview](/clutch-treasury/overview) — the three services and why the split exists
 - [Reserves and Reconciliation](/clutch-treasury/reserves-and-reconciliation) — caps, sweeping, and the breaker
 - [CLT Economics](/clutch-node/clt-economics) — what `Mint` guarantees on-chain, and what it does not
+- [Hub API Authentication](/clutch-hub-api/authentication) — how the JWT sent to this API is issued

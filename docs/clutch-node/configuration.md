@@ -83,6 +83,14 @@ The escape hatch is the `DB_PATH` environment variable: if it's set, the node tr
 There is no `block_reward_amount` key anymore, and no CLT is minted per block. Validators are compensated from `tx_fee` revenue instead — see [CLT Economics](/clutch-node/clt-economics#validator-compensation-flat-transaction-fee). A config file left over from before this release that still sets `block_reward_amount` will simply have that key ignored; the node no longer reads it.
 :::
 
+## JSON-RPC exposure
+
+:::danger Open by design, not a bug to patch
+`websocket_addr` binds `0.0.0.0` in every shipped config, and the WebSocket JSON-RPC server performs no authentication and no `Origin` check: any caller that can reach the port can call `send_raw_transaction`, every read method, and everything else on the RPC surface with no credential at all. It also never inspects the request path before completing the WebSocket handshake — `/ws` in this doc and in [JSON-RPC Reference](/clutch-node/json-rpc) is a convention the examples follow, not a route the server enforces; any path completes the same handshake.
+
+That is the right default for a testnet whose entire purpose is letting anyone submit transactions freely. It stops being safe the moment the port is reachable from anywhere untrusted — at that point it needs a reverse proxy or a firewall in front of it, because the node itself enforces nothing at this layer. See [Security — Threat model](/reference/security#threat-model).
+:::
+
 ## Consensus parameters must match across every node
 
 `chain_id`, `is_testnet`, `tx_fee`, `mint_authority`, `faucet_address`, `faucet_allocation`, and the two referrer-fee bps rates are not just per-node preferences — they are written into the chain's state by a single `ChainInit` transaction (RLP tag 9) at block 0, and that transaction's hash feeds the genesis block hash. Peers compare genesis hashes during the p2p handshake: a node whose config produces a *different* genesis hash is refused outright, not silently allowed to fork.
@@ -118,3 +126,4 @@ Practically, this means:
 - [Overview](/clutch-node/overview)
 - [CLT Economics](/clutch-node/clt-economics) — the peg, fee model, and Mint/Burn
 - [Transaction Types](/clutch-node/transaction-types)
+- [Security — Threat model](/reference/security#threat-model) — the RPC exposure threat and its mitigation
