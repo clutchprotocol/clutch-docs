@@ -112,12 +112,6 @@ Each returns a **dispose function** — call it to unsubscribe and release the s
 
 Handlers: `{ onData, onError? }`.
 
-### Faucet
-
-| Method | Description |
-|--------|-------------|
-| `requestFaucet(recipientAddress)` | `POST /faucet` — returns `FaucetResponse` |
-
 ### Utilities
 
 | Export | Description |
@@ -280,13 +274,6 @@ interface ChainInfo {
   txFee: bigint;
   totalSupply: bigint;
   mintAuthority: string;
-}
-
-interface FaucetResponse {
-  ok: boolean;
-  amount_clt?: number;
-  node?: unknown;
-  error?: string;
 }
 ```
 

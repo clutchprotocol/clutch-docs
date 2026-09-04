@@ -47,7 +47,6 @@ const sidebars: SidebarsConfig = {
         'clutch-hub-api/graphql',
         'clutch-hub-api/errors',
         'clutch-hub-api/subscriptions',
-        'clutch-hub-api/faucet',
         'clutch-hub-api/configuration',
       ],
     },

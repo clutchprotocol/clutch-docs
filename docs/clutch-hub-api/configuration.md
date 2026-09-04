@@ -29,9 +29,6 @@ Environment variables use the `APP_` prefix: `APP_LOG_LEVEL=debug` maps to `log_
 | `jwt_secret` | JWT signing secret — see rules below | 32+ random chars |
 | `jwt_expiration_hours` | Token lifetime (hours) | `6` |
 | `log_level` | Logging level | `info` |
-| `faucet_enabled` | Enable POST /faucet | `true` (testnet) |
-| `faucet_private_key` | Faucet signing key | hex secp256k1 |
-| `faucet_amount_clt` | CLT per faucet request | `100000000` ($100) |
 | `default_ride_request_referrer` | Injected referrer on requests | address or empty |
 | `default_ride_offer_referrer` | Injected referrer on offers | address or empty |
 
@@ -58,7 +55,6 @@ $bytes = New-Object byte[] 32
 ```bash
 APP_CLUTCH_NODE_WS_URL=ws://localhost:8081
 APP_JWT_SECRET=<64 hex chars from the command above>
-APP_FAUCET_ENABLED=false
 ```
 
 ## Docker (clutch-deploy)
@@ -73,7 +69,6 @@ ALLOWED_ORIGINS=http://localhost:5173
 ## Production checklist
 
 - [ ] Set strong `jwt_secret`
-- [ ] Disable faucet (`faucet_enabled = false`)
 - [ ] Configure CORS / `ALLOWED_ORIGINS`
 - [ ] Use HTTPS via nginx reverse proxy
 - [ ] Set `SEQ_API_KEY` if Seq is exposed

@@ -15,7 +15,7 @@ Overview of how **passenger** and **driver** apps interact through the Hub API a
 ```mermaid
 flowchart TB
     subgraph PassengerLane [Passenger]
-        P1[Fund wallet via faucet]
+        P1[Fund wallet by depositing USDT]
         P2[RideRequest]
         P3[Watch offers]
         P4[RideAcceptance]
@@ -25,7 +25,7 @@ flowchart TB
     end
 
     subgraph DriverLane [Driver]
-        D1[Fund wallet via faucet]
+        D1[Fund wallet by depositing USDT]
         D2[Subscribe or list requests]
         D3[RideOffer]
         D4[Active trip]
@@ -49,10 +49,7 @@ sequenceDiagram
     participant HubAPI as Hub_API
     participant Node as Clutch_Node
 
-    Note over Passenger,Driver: Setup testnet wallets
-    Passenger->>HubAPI: requestFaucet
-    Driver->>HubAPI: requestFaucet
-    HubAPI->>Node: signed Transfer tx
+    Note over Passenger,Driver: Setup wallets and fund them by depositing USDT
 
     Note over Passenger: Step 1 — RideRequest
     Passenger->>HubAPI: createUnsignedRideRequest
@@ -133,7 +130,7 @@ Code examples for cancellation are in [Cancellation](#cancellation) below.
 
 - Clutch stack running locally ([Quick Start](/getting-started/quickstart)) or use [Stage environment](/getting-started/environments)
 - Two wallets: one passenger, one driver
-- Test CLT via the [faucet](/clutch-hub-api/faucet)
+- CLT in both wallets — fund each one by [depositing USDT](/clutch-treasury/deposits)
 
 ## 1. Setup wallets and SDK
 
@@ -154,10 +151,11 @@ const driverSdk = new ClutchHubSdk(API_URL, driverKey, undefined, CHAIN_ID);
 
 ## 2. Fund wallets
 
-```javascript
-await passengerSdk.requestFaucet(passengerKey);
-await driverSdk.requestFaucet(driverKey);
+Both wallets need CLT before they can transact, and CLT is issued against a USDT deposit. Each wallet has one permanent Tron address; USDT (TRC-20) sent to it is minted as CLT to that wallet. Get the address from `POST /api/v1/deposits` on `payment-orchestrator`, or from the demo app's ☰ → **Top up with USDT** panel — see [Deposits](/clutch-treasury/deposits).
 
+Confirm the CLT arrived before going on:
+
+```javascript
 const balance = await passengerSdk.getAccountBalance(); // bigint
 console.log('Passenger balance:', formatUsd(balance));
 ```

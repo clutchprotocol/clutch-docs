@@ -91,7 +91,3 @@ Send the JWT in the `connection_init` payload:
 | All `createUnsigned*` mutations (including `createUnsignedBurn`) | Yes |
 | `sendRawTransaction` | Yes |
 | `userRideRequests`, `rideRequest` | Yes / No (stubs — do not use) |
-
-:::note
-`POST /faucet` does not require a JWT. It is gated by server config (`faucet_enabled`) instead.
-:::

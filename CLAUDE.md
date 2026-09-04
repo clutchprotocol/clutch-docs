@@ -23,7 +23,7 @@ npm run typecheck  # tsc over config/src
 | Introduction | `docs/intro.md` | Landing doc, key features, CLT payments |
 | Getting Started | `docs/getting-started/` | quickstart, docker-deploy, architecture, ride-lifecycle, app-developer-incentives, environments |
 | Clutch Node | `docs/clutch-node/` | overview, configuration, running, transaction-types, clt-economics, json-rpc (WebSocket JSON-RPC reference) |
-| Clutch Hub API | `docs/clutch-hub-api/` | overview, authentication (JWT), graphql (schema reference), errors, subscriptions, faucet, configuration |
+| Clutch Hub API | `docs/clutch-hub-api/` | overview, authentication (JWT), graphql (schema reference), errors, subscriptions, configuration |
 | Clutch Hub SDK | `docs/clutch-hub-sdk-js/` | overview, installation, usage, api-reference, subscriptions |
 | Demo App | `docs/demo-app/` | overview, getting-started, user-flows (passenger/driver) |
 | Clutch Explorer | `docs/clutch-explorer/` | overview, getting-started, api-reference (REST) |
@@ -70,7 +70,7 @@ Docs also carry `sidebar_position` front-matter, but with an explicit sidebar th
 ## When to Update These Docs (cross-repo)
 
 - `clutch-node` RPC or transaction changes → `docs/clutch-node/json-rpc.md`, `transaction-types.md`, `docs/reference/signing-and-encoding.md`
-- `clutch-hub-api` GraphQL schema/auth/faucet changes → `docs/clutch-hub-api/*`
+- `clutch-hub-api` GraphQL schema/auth changes → `docs/clutch-hub-api/*`
 - `clutch-hub-sdk-js` API changes → `docs/clutch-hub-sdk-js/*` (npm SDK link in navbar)
 - `clutch-explorer` REST changes → `docs/clutch-explorer/api-reference.md`
 - `clutch-deploy` compose/port changes → `docs/deployment/*`, `docs/getting-started/docker-deploy.md`

@@ -12,7 +12,6 @@ JavaScript/TypeScript SDK for client-side transaction signing and Clutch Hub API
 - **Full ride lifecycle** — Request, offer, accept, pay, cancel; plus **Burn** for CLT redemption
 - **Chain-bound and verifiable** — `chain_id` in every signature; `verifyUnsignedTransaction` checks a hub-returned transaction before you sign it
 - **GraphQL integration** — Queries, mutations, and WebSocket subscriptions
-- **Faucet helper** — `requestFaucet()` for testnet CLT
 - **TypeScript** — Type-safe interfaces for all methods; amounts are `bigint`
 
 :::warning v3: breaking changes
@@ -33,8 +32,6 @@ import { ClutchHubSdk } from 'clutch-hub-sdk-js';
 const CHAIN_ID = 2077; // from your app config — never from the hub
 
 const sdk = new ClutchHubSdk('http://localhost:3000', publicKey, undefined, CHAIN_ID);
-
-await sdk.requestFaucet(publicKey);
 
 const tx = await sdk.createUnsignedRideRequest({
   pickup: { latitude: 35.7, longitude: 51.4 },

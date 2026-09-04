@@ -22,7 +22,7 @@ const features: Feature[] = [
   {
     title: 'Hub API',
     icon: '🔌',
-    description: 'GraphQL bridge between apps and the node, with wallet JWT auth and a testnet faucet.',
+    description: 'GraphQL bridge between apps and the node, with wallet JWT auth.',
     to: '/clutch-hub-api/overview',
   },
   {
@@ -116,7 +116,7 @@ function ArchitectureSteps(): ReactNode {
       <div className={styles.archBlock}>
         <p>
           <strong>Demo App / Your dApp + SDK</strong> → <strong>Clutch Hub API</strong>{' '}
-          (GraphQL / WS + faucet) → <strong>Clutch Node</strong> (blockchain,
+          (GraphQL / WS) → <strong>Clutch Node</strong> (blockchain,
           WebSocket RPC) → <strong>Clutch Explorer</strong> (indexer + UI)
         </p>
         <ol>

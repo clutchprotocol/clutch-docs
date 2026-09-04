@@ -56,7 +56,7 @@ VITE_API_URL=http://localhost:3000 npm run dev
 
 1. Select **Passenger** or **Driver**
 2. Generate a wallet or import existing keys
-3. Request test CLT from the faucet
+3. Fund the wallet: ☰ → **Top up with USDT**, then send USDT (TRC-20) to the address shown
 4. Follow the [User Flows](/demo-app/user-flows) for each role
 
 ## localStorage keys

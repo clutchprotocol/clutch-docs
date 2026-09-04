@@ -89,7 +89,6 @@ Loaded from `config/{env}.toml` with `APP_` prefix overrides. Key settings:
 |---------|-----------------|-------------|
 | `ws_addr` | `0.0.0.0:3000` | HTTP bind address |
 | `clutch_node_ws_url` | `ws://127.0.0.1:8081/ws` | Node WebSocket |
-| `faucet_enabled` | `true` (deploy) | Enable `/faucet` |
 | `jwt_secret` | — | JWT signing secret |
 
 See [API Configuration](/clutch-hub-api/configuration).
@@ -112,15 +111,9 @@ See [API Configuration](/clutch-hub-api/configuration).
 |----------|-------------|
 | `VITE_EXPLORER_API_URL` | Explorer backend URL (default `http://localhost:8088`) |
 
-## Faucet
+## Funding a wallet
 
-On test networks, fund wallets before creating ride requests:
-
-```javascript
-await sdk.requestFaucet(publicKey);
-```
-
-Requires `faucet_enabled = true` and a funded faucet account on the server. See [Faucet](/clutch-hub-api/faucet).
+Every environment funds a wallet the same way: deposit USDT. Each wallet gets one permanent Tron address from `payment-orchestrator`, and USDT (TRC-20) sent to it is minted as CLT to that wallet — there is no environment where CLT is handed out for free. See [Deposits](/clutch-treasury/deposits).
 
 ## Choosing an environment
 

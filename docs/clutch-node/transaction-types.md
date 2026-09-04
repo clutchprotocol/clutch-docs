@@ -10,7 +10,7 @@ Clutch Node supports custom non-EVM transaction types encoded with RLP tags.
 
 | Tag | Type | Hub API / SDK | Description |
 |-----|------|---------------|-------------|
-| 0 | `Transfer` | Faucet only | Standard CLT transfer |
+| 0 | `Transfer` | No — not exposed | Standard CLT transfer |
 | 1 | `RideRequest` | Yes | Passenger requests a ride |
 | 2 | `RideOffer` | Yes | Driver offers to fulfill a request |
 | 3 | `RideAcceptance` | Yes | Passenger accepts an offer |
@@ -21,7 +21,7 @@ Clutch Node supports custom non-EVM transaction types encoded with RLP tags.
 | 8 | `RideRequestCancel` | Yes | Cancel pending request |
 | 9 | `ChainInit` | No — genesis only | Carries consensus parameters into state at block 0 |
 
-Tags are **not contiguous** by design: 6 and 7 were reserved ahead of time for Mint/Burn, and 9 was left open for `ChainInit`, added later still. Apps interact with types 1–5, 7, and 8 via the Hub API and SDK. Type 0 is used internally by the faucet. Types 6 and 9 never appear in application code — see below.
+Tags are **not contiguous** by design: 6 and 7 were reserved ahead of time for Mint/Burn, and 9 was left open for `ChainInit`, added later still. Apps interact with types 1–5, 7, and 8 via the Hub API and SDK. Type 0 is a valid node-level transaction but is not exposed by the Hub API or the SDK. Types 6 and 9 never appear in application code — see below.
 
 ## Ride lifecycle
 
