@@ -60,7 +60,7 @@ It checks a hub-returned unsigned transaction (type, fare/amount, references, `f
 Deposit USDT. Every wallet has one permanent Tron address; send USDT (TRC-20) to it and the treasury mints the matching CLT to that wallet. In the demo app that's ☰ → **Top up with USDT**. See [Deposits](/clutch-treasury/deposits).
 
 **There used to be a faucet — where did it go?**  
-Removed, along with `POST /faucet` and the SDK's `requestFaucet()`. It *transferred* CLT out of a genesis-funded account rather than minting it, so what it handed out had no USDT behind it and was excluded from the reserve liability by construction. That was harmless while CLT only ever flowed one way. Redemptions shipped on 2026-09-04, and nothing in the burn path asks where the burned CLT came from — which turned the faucet into a route from unbacked genesis CLT to real USDT out of the payout float.
+Removed, along with `POST /faucet` and the SDK's `requestFaucet()`. It *transferred* CLT out of a genesis-funded account rather than minting it, so what it handed out had no USDT behind it and was excluded from the reserve liability by construction. That was harmless while CLT only ever flowed one way. The redemption rail landed on 2026-09-04 (disabled by flag today, but the code path exists), and nothing in the burn path asks where the burned CLT came from — which turned the faucet into a route from unbacked genesis CLT to real USDT out of the payout float.
 
 **How much USDT do I need to deposit?**  
 Whatever you want. There is no minimum, no expected amount, and no expiry — the address alone identifies who paid, and whatever lands is credited in full at the peg (1 USD = 1,000,000 CLT). See [Deposits](/clutch-treasury/deposits).

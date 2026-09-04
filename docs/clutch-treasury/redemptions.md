@@ -10,6 +10,8 @@ sidebar_position: 4
 
 Redeeming reverses a deposit: burn CLT on the Clutch chain, receive USDT on Tron. The two legs happen in a fixed order, and that order is the whole safety argument.
 
+Conversion is at par, and no redemption fee is charged — though a fee on exactly this leg is the intended answer to who pays the treasury's running costs (see [Who pays for the network](/clutch-node/clt-economics#who-pays-for-the-network)).
+
 ## Burn first, pay second
 
 The `Burn` transaction is the authorization. Once it is mined, it is final — the CLT is gone, permanently and unconditionally, whether or not the payout that follows ever succeeds. The payout, by contrast, can fail transiently and be retried against the recorded reference, because nothing about retrying a *payment* is dangerous the way retrying a *burn* would be.

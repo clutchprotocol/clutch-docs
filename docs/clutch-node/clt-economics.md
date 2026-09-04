@@ -42,6 +42,16 @@ This also gives the chain its first real cost per transaction. Previously, trans
 
 `Mint` and the genesis-only `ChainInit` are fee-exempt (a mint authority crediting a new user should not need CLT of its own to do so). Every other transaction type — including `Burn` — pays the fee. If the sender of a transaction happens to be the block's own author, no fee is charged (there is nothing to transfer to itself).
 
+## Who pays for the network
+
+Every party in a ride is paid and the protocol keeps none of it: the driver takes the remainder, the referrers take their basis points, the block author takes the flat `tx_fee`, and those three sum to exactly the fare plus the fee. There is no protocol cut, no development fund, and no seigniorage — a fully-reserved token mints at par and redeems at par, so by construction nothing is left over. That leaves the treasury as the one participant carrying real costs and earning nothing. Every sweep of a deposit address into custody and every payout out of the float spends TRX for energy, and a fresh deposit address holds no TRX at all — it has only ever received tokens — so each one has to be funded first, against a 30 TRX preflight floor. Deposits have no minimum, so a deposit that costs more to sweep than it moves is an ordinary case rather than a hypothetical, which is what the sweep threshold and its age escape valve exist to manage ([Sweeping](/clutch-treasury/reserves-and-reconciliation#sweeping)). Today the operator absorbs all of it.
+
+The intended answer is a **redemption fee**, charged on the payout leg and never on chain: burn *N* CLT, receive *N* minus a fee in USDT, with the difference staying in the reserve. The chain needs no change to support that. `Burn` destroys exactly the amount it is handed and knows nothing about the off-chain leg, and reconciliation reads `ok` whenever reserve *covers* liability — so a reserve running slightly ahead of liability is a state it already accepts, not a mismatch. Sized to at least cover the Tron cost of a payout, such a fee makes each redemption self-funding instead of subsidised. The same argument is what would size a minimum deposit.
+
+:::info Not charged today
+Redemption converts CLT to USDT at par, and redemptions are disabled in any case ([Redemptions](/clutch-treasury/redemptions)). The fee described above is an open decision, not behaviour to code against — the payout rail's design deliberately leaves spread and fee modelling to `payment-orchestrator`, which is where it would land. Read every figure on this page as gross of a fee that does not exist yet.
+:::
+
 ## Ride payment flow
 
 Ride payments are a separate mechanism layered on top of ordinary CLT transfers — referrer fees on each `RidePay`, with the driver receiving the remainder.
@@ -118,7 +128,7 @@ All of these are committed into state at genesis by the `ChainInit` transaction 
 - Genesis allocates the faucet account `faucet_allocation` CLT (currently $1B) — but only when `is_testnet = true`. On a non-testnet chain, faucet allocation is forced to zero: a genesis pre-mint surviving onto a real network would destroy the peg immediately, since that CLT would exist without any backing reserve.
 - **Nothing hands that genesis balance out.** `faucet_address` and `faucet_allocation` stay in config because they are committed into the genesis hash — changing either would fork the chain — but the endpoint that used to transfer CLT out of that account has been removed. It *transferred* rather than minted, so the CLT it distributed had no reserve behind it and was excluded from liability by construction; once burns became redeemable for USDT, and with nothing in the burn path asking where the CLT came from, that account became a route from unbacked supply to real payout. CLT is obtained by [depositing USDT](/clutch-treasury/deposits).
 - Balances are `u64`, deltas `i64` — supply is kept within `i64::MAX` by a boot-time check on `faucet_allocation` and a runtime check after every `Mint`/`Burn`.
-- CLT's fiat peg exists specifically because the chain now backs a redeemable token; on prior testnets CLT had no fixed value. Treat all CLT figures on this testnet as backed at the stated peg, subject to the reserve caveat above.
+- **The peg is an accounting rule here, not a claim on dollars.** CLT on this testnet is genuinely backed 1:1 — but by *Nile testnet* USDT, a token a public faucet gives away and which has no fiat value of its own. Everything mechanical on this page is real and enforced: a $5.00 fare is exactly 5,000,000 CLT, every mint is gated on reserve covering liability, and reconciliation really does halt minting on a shortfall. What is not real is the money at the bottom of the stack. Read a dollar figure anywhere in these docs as a unit of account rather than a redeemable dollar. Nothing about the mechanism changes when real USDT replaces testnet USDT; only the value behind it does.
 
 ## Related
 
