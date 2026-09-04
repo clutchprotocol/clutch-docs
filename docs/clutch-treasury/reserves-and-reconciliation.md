@@ -20,7 +20,9 @@ An address moving from "unswept deposit" to "custody" during a sweep does not ch
 
 ## Sweeping
 
-Once a deposit is credited, its USDT still sits at that user's own derived address until it is swept into custody. Sweeping happens once an address's balance crosses a threshold, or once it has been waiting long enough regardless of balance — the age rule exists so a small deposit under the threshold does not sit at its own address forever, fragmenting the reserve across addresses nobody ever revisits again.
+Once a deposit is credited, its USDT still sits at that user's own derived address until it is swept into custody. Sweeping happens once an address's balance crosses a threshold, or once it has been waiting long enough — the age rule exists so a small deposit under the threshold does not sit at its own address forever, fragmenting the reserve across addresses nobody ever revisits again.
+
+Under the age rule sits a floor, and it is there for the opposite reason. A sweep is a TRC-20 transfer that costs TRX for energy, so on a small enough balance it spends more than it recovers. An age rule with no lower bound eventually does exactly that, once per dust address, forever. Below the floor an address is simply left alone, which costs nothing by comparison: an unswept address is already counted in the reserve, so the total is identical either way, and since deposit addresses are permanent per user, the balance sweeps by itself the moment that user's next deposit lifts it over the line. The floor gates the threshold as well as the age rule — spending more than the balance is wrong whichever of the two asked for the sweep.
 
 `treasury-service` decides *when* to sweep; it does not hold a key to do it. It asks `tron-signer` to sweep by deposit **index only** — never a destination, never an amount. The destination is baked into `tron-signer`'s own configuration, so nothing a caller sends can redirect a sweep. That means the worst outcome of a fully compromised `treasury-service` asking for sweeps is a real deposit reaching the real treasury slightly earlier than it otherwise would have — which is where it was going anyway.
 
