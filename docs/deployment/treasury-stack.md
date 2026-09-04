@@ -89,7 +89,7 @@ None of what follows is documented in `clutch-deploy`'s `.env.example` today —
 | `DEPOSIT_HOT_WINDOW_HOURS` | Defaulted | How long an address stays on the fast poll tier after the deposit panel is opened — see [Deposits](/clutch-treasury/deposits#detection-hot-and-cold). |
 | `PERMANENT_DEPOSIT_ADDRESSES_ENABLED` | Defaulted, on | Rollout gate for issuing *new* deposit addresses. Off does not un-issue the ones already handed out. |
 
-`APP_REDEMPTIONS_ENABLED` isn't in either table because it isn't sourced from `.env` at all — the compose file sets it to `false` directly. Turning it on means editing `docker-compose.treasury.yml` itself, not `.env`; see [Redemptions](/clutch-treasury/redemptions) for why it's off.
+`APP_REDEMPTIONS_ENABLED` isn't in either table because it isn't sourced from `.env` at all — the compose file sets it to `true` directly. Changing it means editing `docker-compose.treasury.yml` itself, not `.env`, which is deliberate: a switch that turns an irreversible burn into a live user-facing route should require a reviewed commit, not a line someone adds to a host file at 2am. See [Redemptions](/clutch-treasury/redemptions).
 
 ## Related
 

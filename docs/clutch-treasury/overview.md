@@ -50,7 +50,7 @@ This is a testnet system. The mint authority and the deposit mnemonic are both e
 
 - [Deposits](/clutch-treasury/deposits) — how USDT becomes CLT
 - [Reserves and Reconciliation](/clutch-treasury/reserves-and-reconciliation) — how the peg is kept honest
-- [Redemptions](/clutch-treasury/redemptions) — how CLT becomes USDT again (currently disabled)
+- [Redemptions](/clutch-treasury/redemptions) — how CLT becomes USDT again
 - [Operating the Treasury](/clutch-treasury/operations) — the workflows an operator actually runs
 - [Treasury Stack](/deployment/treasury-stack) — how to bring these three services up
 - [CLT Economics](/clutch-node/clt-economics) — what the chain itself guarantees around Mint and Burn

@@ -4,8 +4,12 @@ sidebar_position: 4
 
 # Redemptions
 
-:::danger Redemptions are currently disabled
-`APP_REDEMPTIONS_ENABLED` is `false`. This is not because the payout rail is a stub — it is a real TRC-20 transfer, described below — but because its rollout checklist has not finished: the payout float still needs funding, and reconciliation needs to confirm it reads `ok` with the float counted (see [Reserves and Reconciliation](/clutch-treasury/reserves-and-reconciliation)). This page describes the design as it exists in code today, not a live feature. `POST /api/v1/redemptions` and `GET /api/v1/redemptions/:id` both return `503` while the flag is off.
+:::info Redemptions are live on this testnet
+`APP_REDEMPTIONS_ENABLED` is `true`, set directly in `docker-compose.treasury.yml` rather than read from `.env`. Payouts are USDT on the Nile testnet.
+
+A single redemption is bounded twice, in two services that do not share the value. `payment-orchestrator` refuses a request above `APP_MAX_REDEMPTION_CLT` before any burn happens, and `tron-signer` independently refuses a payout above its own per-transaction cap. Both stand at $25 today, deliberately equal so a request the signer would reject can never become a burn nobody can pay. A rolling 24-hour ceiling in `treasury-service` sits above both.
+
+A redemption that finds the float dry is returned to the queue and retried, because a dry float proves nothing was broadcast. Every other unclear outcome stops and pages a human instead. The CLT is already gone by then either way — which is what the next section is about.
 :::
 
 Redeeming reverses a deposit: burn CLT on the Clutch chain, receive USDT on Tron. The two legs happen in a fixed order, and that order is the whole safety argument.
