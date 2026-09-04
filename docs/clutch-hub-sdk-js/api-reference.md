@@ -76,9 +76,26 @@ See [chain_id and verifyUnsignedTransaction](#chain_id-and-verifyunsignedtransac
 | `listCompletedTrips(options?)` | Fully paid trips |
 | `listRecentTrips(options?)` | Completed or cancelled trips |
 | `getAccountBalance(publicKey?)` | CLT balance, as `bigint` (requires auth) |
-| `getChainInfo()` | Genesis-committed chain parameters — see the `ChainInfo` type under [Types](#types) |
 
 Filter options: `{ driverAddress?, passengerAddress? }`.
+
+:::note No getChainInfo
+The SDK has no chain-info method — `ChainInfo` under [Types](#types) is exported for typing a manual query, but nothing in the SDK produces one. Query the hub's `chainInfo` GraphQL field directly if you need genesis-committed parameters for display:
+
+```graphql
+query {
+  chainInfo {
+    chainId
+    isTestnet
+    txFee
+    totalSupply
+    mintAuthority
+  }
+}
+```
+
+Don't use the result to set the SDK's `chainId`: as [above](#chain_id-and-verifyunsignedtransaction), that value must come from your own app configuration, never read back from the hub.
+:::
 
 ### Subscriptions
 

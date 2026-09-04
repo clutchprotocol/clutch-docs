@@ -127,8 +127,18 @@ const requests = await sdk.listRideRequests();
 const offers = await sdk.listRideOffers(requestTxHash);
 const active = await sdk.listActiveTrips({ passengerAddress: publicKey });
 const balance = await sdk.getAccountBalance(); // bigint
-const info = await sdk.getChainInfo();
-console.log(`chain ${info.chainId}, tx_fee ${formatUsd(info.txFee)}, supply ${formatUsd(info.totalSupply)}`);
+```
+
+The SDK has no chain-info method. Query the hub's `chainInfo` GraphQL field directly if you need genesis-committed parameters, and keep getting the constructor's `chainId` from your own app config — never from this response:
+
+```javascript
+const res = await fetch(`${API_URL}/graphql`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ query: '{ chainInfo { chainId isTestnet txFee totalSupply mintAuthority } }' }),
+});
+const { data } = await res.json();
+console.log(`chain ${data.chainInfo.chainId}, tx_fee ${data.chainInfo.txFee}`);
 ```
 
 ## Real-time updates

@@ -53,10 +53,12 @@ seq_url                = "http://seq:80"
 | `blockchain_name` | Chain identifier | `clutch-node-test-1` |
 | `author_public_key` | Validator public key | `0x9b6e8af...` |
 | `author_secret_key` | Validator secret (keep secure) | — |
+| `developer_mode` | **Deletes the on-disk database on every graceful shutdown** — see the danger note below | `true` in every shipped config |
 | `websocket_addr` | WebSocket JSON-RPC bind | `0.0.0.0:8081` |
 | `listen_addrs` | libp2p listen addresses | `["/ip4/0.0.0.0/tcp/4001"]` |
 | `bootstrap_nodes` | Peers to dial on startup | `["/ip4/127.0.0.1/tcp/4001"]` (node2/3) |
 | `authorities` | Ordered list of validator public keys | Must match across nodes |
+| `block_authoring_enabled` | Whether this node runs the block-authoring job (participates as an active validator) | `true` |
 | `chain_id` | Network identifier, signed into every transaction | `2077` |
 | `is_testnet` | Gates faucet allocation and startup | `true` |
 | `tx_fee` | Flat CLT fee per non-exempt transaction, paid to the block author | `1000` (= $0.001) |
@@ -65,8 +67,17 @@ seq_url                = "http://seq:80"
 | `faucet_allocation` | CLT credited to `faucet_address` at genesis, only if `is_testnet = true` | `1000000000000000` (= $1B) |
 | `ride_request_referrer_fee_bps` | Request referrer fee on each `RidePay`, in basis points | `200` (2%) |
 | `ride_offer_referrer_fee_bps` | Offer referrer fee on each `RidePay`, in basis points | `200` (2%) |
+| `sync_enabled` | Whether this node runs the peer-sync job (pulls blocks from peers) | `true` |
+| `serve_metric_enabled` | Whether the Prometheus `/metrics` endpoint is served at all | `true` |
 | `serve_metric_addr` | Prometheus metrics bind | `0.0.0.0:3001` |
+| `log_level` | Tracing log verbosity | `info` |
 | `seq_url` | Seq logging URL | `http://seq:80` |
+
+:::danger developer_mode deletes the database
+`developer_mode = true` — the value in every shipped config, including `default.toml` — makes the node delete its entire on-disk database on every **graceful** shutdown (`shutdown_blockchain` → `cleanup_db` in `blockchain.rs`). That's the intended behavior for a scratch chain that starts fresh each run, and catastrophic for one whose data is meant to survive a restart: a month of stage outages were mistakenly blamed on volumes and the deploy script before anyone traced the actual cause to this flag.
+
+The escape hatch is the `DB_PATH` environment variable: if it's set, the node treats that as a sign the data is meant to outlive the process, logs a warning, and **refuses to delete** rather than honoring `developer_mode`. Set `DB_PATH` (or `developer_mode = false`) before running against any volume whose contents you care about.
+:::
 
 :::danger block_reward_amount is removed
 There is no `block_reward_amount` key anymore, and no CLT is minted per block. Validators are compensated from `tx_fee` revenue instead — see [CLT Economics](/clutch-node/clt-economics#validator-compensation-flat-transaction-fee). A config file left over from before this release that still sets `block_reward_amount` will simply have that key ignored; the node no longer reads it.

@@ -33,9 +33,9 @@ docker compose -p clutch-dev -f docker-compose.yml -f docker-compose.dev.yml up 
 | node2 | 8082, 4002, 3002 | Validator 2 |
 | node3 | 8083, 4003, 3003 | Validator 3 |
 | Prometheus | 9090 | Metrics collection |
-| Grafana | 3030 | Dashboards (admin/admin) |
+| Grafana | 3030 | Dashboards (`admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`) |
 | Seq | 5341 | Structured logs |
-| nginx | 80 | Reverse proxy (optional, `--profile proxy`) |
+| nginx | 80 | Reverse proxy (optional — see [Nginx](/deployment/nginx)) |
 
 ## Verify
 

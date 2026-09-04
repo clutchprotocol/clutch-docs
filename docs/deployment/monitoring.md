@@ -17,7 +17,7 @@ Prometheus scrapes each node's `/metrics` endpoint on a fixed interval and store
 ## Grafana
 
 - **URL**: http://localhost:3030 (port 3030 to avoid conflict with the API)
-- **Login**: admin / admin
+- **Login**: `admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`
 - **Dashboards**: Clutch Node dashboard (state, block index, latest blocks)
 - **Config**: `config/monitoring/grafana/`
 

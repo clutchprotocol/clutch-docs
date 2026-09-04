@@ -31,7 +31,7 @@ Environment variables use the `APP_` prefix: `APP_LOG_LEVEL=debug` maps to `log_
 | `log_level` | Logging level | `info` |
 | `faucet_enabled` | Enable POST /faucet | `true` (testnet) |
 | `faucet_private_key` | Faucet signing key | hex secp256k1 |
-| `faucet_amount_clt` | CLT per faucet request | `1000` |
+| `faucet_amount_clt` | CLT per faucet request | `100000000` ($100) |
 | `default_ride_request_referrer` | Injected referrer on requests | address or empty |
 | `default_ride_offer_referrer` | Injected referrer on offers | address or empty |
 

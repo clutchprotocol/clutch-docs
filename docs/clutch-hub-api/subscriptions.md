@@ -26,7 +26,7 @@ Optional JWT in `connection_init`:
 }
 ```
 
-Public list subscriptions work without a token. `accountBalanceUpdated` should include a token.
+Public list subscriptions work without a token — and so does `accountBalanceUpdated`. No subscription has a guard: passing a JWT here does nothing, and any client can stream any address's balance just by passing its `publicKey`. See [Authentication](/clutch-hub-api/authentication#auth-requirements-by-operation).
 
 The SDK handles connection setup automatically via `subscribe*` methods.
 
