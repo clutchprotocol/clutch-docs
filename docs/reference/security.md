@@ -9,7 +9,7 @@ sidebar_position: 1
 - Private keys **never** leave the user's device
 - All transaction signing happens in the browser or mobile app via the SDK
 - The API only receives already-signed RLP hex via `sendRawTransaction`
-- The faucet is the only server-side signer (testnet `Transfer` only)
+- Three services sign on the server side, and each is scoped narrowly: the faucet (testnet `Transfer` only), `treasury-service` (`Mint`, only once four-eyes approval and the mint gate both pass), and `tron-signer` (signs and broadcasts on Tron — sweeps into custody and, once enabled, redemption payouts from a bounded float). No other transaction type is ever signed anywhere but the client — see [Clutch Treasury Overview](/clutch-treasury/overview) for what each of the other two may and may not do.
 
 ## Wallet authentication
 
@@ -65,8 +65,14 @@ On a public testnet, an open faucet invites scripted drain attempts. Layer these
 | User private key | Client device (browser/mobile) | Never transmitted; optionally cached in localStorage with explicit user consent |
 | Validator `author_secret_key` | Node host / secret manager | Environment or secret manager; never in git; restrict file permissions |
 | `mint_authority` secret key | Dedicated treasury signer (never a validator host) | Highest-value key in the system — it is the only key that can create new CLT; use a key-ceremony-generated key, not a dev/validator key, in any deployment beyond local testing |
+| Deposit mnemonic | `tron-signer` only — never `payment-orchestrator` | Derives every Tron key the stack uses (deposit addresses, the fee account, the payout float). The orchestrator holds only the derived account **xpub**, which can derive receive addresses and cannot sign — see [Clutch Treasury Overview](/clutch-treasury/overview) |
+| Payout float key | Derived by `tron-signer` at its own path, separate from every deposit address | Not a general treasury key — spendable only through `tron-signer`'s `/internal/payout`, and bounded by the float's own balance plus a per-transaction cap, so exposure is capped by the float, not by a permission system — see [Redemptions](/clutch-treasury/redemptions) |
 | API `jwt_secret` | Hub API host / env var | Random 32+ bytes; rotated; not logged |
 | `faucet_private_key` | Hub API host (testnet only) | Disabled in prod; never sent to clients |
+
+:::danger Still environment variables, not production custody
+Every key above — including the two treasury rows — is an environment variable today, not a key behind a KMS or a hardware boundary. That is a stated, tracked gap, not an oversight: `ChainSigner` (the mint key) and `PayoutSigner` (the payout key) are both already written as swap boundaries for a future signer, and the named mainnet blocker is an AWS-KMS-backed signer, a real key ceremony, and tested recovery — all before any of this holds real funds. See [Clutch Treasury Overview — Testnet posture](/clutch-treasury/overview#testnet-posture).
+:::
 
 ### Recommendations
 
@@ -80,6 +86,7 @@ On a public testnet, an open faucet invites scripted drain attempts. Layer these
 | Threat | Mitigation |
 |--------|------------|
 | MITM on transaction submission | Client-side signing; signed payload is tamper-evident |
+| Node JSON-RPC is unauthenticated, path-blind, and bound to `0.0.0.0` | No mitigation at the protocol layer — front it with a reverse proxy or firewall before it is reachable beyond trusted operators; see [Node Configuration — JSON-RPC exposure](/clutch-node/configuration#json-rpc-exposure) |
 | Replay of a submitted tx | Per-account nonce enforced on-chain |
 | Cross-chain replay of a tx or auth challenge | `chain_id` signed into both; a node rejects a mismatched `chain_id` |
 | Hub returns a transaction that doesn't match what the app asked for | SDK's `verifyUnsignedTransaction` checks type/amount/references/from/chain_id before signing (does not cover `referrer`, which is display-only) |
@@ -88,6 +95,7 @@ On a public testnet, an open faucet invites scripted drain attempts. Layer these
 | Faucet surviving onto a real network | Hub API refuses to start if enabled against a non-testnet chain |
 | Compromised validator key | Rotate keys; limit validator set; audit block authorship |
 | Compromised mint authority key | Restrict to a dedicated treasury key (never a validator key); the chain enforces authority + exactly-once `credit_ref`, but cannot verify reserve exists — that's a process/reconciliation control, not consensus |
+| A single compromised treasury service moves money | Structural, not a permission check: `payment-orchestrator` holds an xpub and no signing key at all, `treasury-service`'s key only ever signs a Clutch-chain `Mint` — a different chain — and `tron-signer`'s sweep endpoint takes an index only, never a destination. No one service holds both the authority to decide and the means to move funds — see [Clutch Treasury Overview](/clutch-treasury/overview) |
 | CORS abuse | Restrict `ALLOWED_ORIGINS` to known frontends |
 | Replay via stale config | Validate config at startup; fail fast on missing secrets |
 
@@ -110,3 +118,5 @@ On a public testnet, an open faucet invites scripted drain attempts. Layer these
 - [SDK Usage](/clutch-hub-sdk-js/usage)
 - [Nginx](/deployment/nginx)
 - [Faucet](/clutch-hub-api/faucet)
+- [Clutch Treasury Overview](/clutch-treasury/overview) — key management for the mint authority, the deposit mnemonic, and the payout float
+- [Node Configuration](/clutch-node/configuration) — the JSON-RPC exposure note

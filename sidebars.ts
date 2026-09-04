@@ -35,6 +35,7 @@ const sidebars: SidebarsConfig = {
         'clutch-treasury/deposits',
         'clutch-treasury/reserves-and-reconciliation',
         'clutch-treasury/redemptions',
+        'clutch-treasury/operations',
       ],
     },
     {
@@ -86,6 +87,7 @@ const sidebars: SidebarsConfig = {
         'deployment/clutch-deploy',
         'deployment/monitoring',
         'deployment/nginx',
+        'deployment/treasury-stack',
       ],
     },
     {
