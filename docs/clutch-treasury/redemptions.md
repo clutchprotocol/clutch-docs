@@ -14,7 +14,7 @@ A redemption that finds the float dry is returned to the queue and retried, beca
 
 Redeeming reverses a deposit: burn CLT on the Clutch chain, receive USDT on Tron. The two legs happen in a fixed order, and that order is the whole safety argument.
 
-Conversion is at par, and no redemption fee is charged — though a fee on exactly this leg is the intended answer to who pays the treasury's running costs (see [Who pays for the network](/clutch-node/clt-economics#who-pays-for-the-network)).
+A redemption fee is charged on this leg, and it is the only revenue the protocol takes ([Who pays for the network](/clutch-node/clt-economics#who-pays-for-the-network)). You burn the full amount and receive that much less in USDT; the difference stays in the reserve. Both numbers are quoted back when the redemption is created — `amount_clt` is what to burn, `payout_amount_usdt` is what arrives — and the quote is stored at that moment rather than recomputed later, so a fee change can never land between what you accepted and what you are paid.
 
 ## Burn first, pay second
 
@@ -44,7 +44,7 @@ Even a successful reply is not the end of it: the payout only completes once its
 
 ## Caps
 
-Two independent caps bound a single payout, in different services and different units — they happen to be numerically equal at par, but they are not the same configuration value, on purpose:
+Two independent caps bound a single payout, in different services and different units. They are numerically equal today, but they are not the same configuration value, and with a fee set they no longer even measure the same amount — the treasury's counts the burn, the signer's counts the payout:
 
 - A **per-transaction cap**, enforced in `tron-signer` in micro-USDT, checked before anything is signed.
 - A **rolling 24-hour cap**, enforced in `treasury-service` in CLT base units, mirroring the mint side's daily cap.
