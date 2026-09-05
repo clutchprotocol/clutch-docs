@@ -36,7 +36,7 @@ is_testnet                        = true
 tx_fee                            = 1000
 mint_authority                    = "0x9b6e8af0c70..."
 faucet_address                    = "0xdeb4cfb63db134698e1879ea24904df074726cc0"
-faucet_allocation                 = 1000000000000000
+faucet_allocation                 = 0
 ride_request_referrer_fee_bps    = 200
 ride_offer_referrer_fee_bps      = 200
 
@@ -64,7 +64,7 @@ seq_url                = "http://seq:80"
 | `tx_fee` | Flat CLT fee per non-exempt transaction, paid to the block author | `1000` (= $0.001) |
 | `mint_authority` | The only address permitted to sign a `Mint` transaction | validator or dedicated treasury key |
 | `faucet_address` | Address the genesis faucet allocation is credited to | `0xdeb4cfb6...` |
-| `faucet_allocation` | CLT credited to `faucet_address` at genesis, only if `is_testnet = true` | `1000000000000000` (= $1B) |
+| `faucet_allocation` | CLT credited to `faucet_address` at genesis, only if `is_testnet = true` | `0` — genesis pre-mints nothing |
 | `ride_request_referrer_fee_bps` | Request referrer fee on each `RidePay`, in basis points | `200` (2%) |
 | `ride_offer_referrer_fee_bps` | Offer referrer fee on each `RidePay`, in basis points | `200` (2%) |
 | `sync_enabled` | Whether this node runs the peer-sync job (pulls blocks from peers) | `true` |
@@ -108,7 +108,7 @@ Practically, this means:
 - **`authorities` must be identical** on every node, in the same order. Aura schedules block authors by position in this list.
 - **Validator keys**: generate a secp256k1 keypair per node. `author_public_key` goes in `authorities` for every node; `author_secret_key` stays on the node that authors.
 - **`mint_authority`** does not need to be a validator key — a production deployment should use a dedicated treasury key from a proper key ceremony, never a validator's `author_secret_key`. The checked-in testnet config reuses node1's dev key purely for local convenience.
-- **Genesis**: testnet genesis allocates `faucet_allocation` CLT to `faucet_address`, but only when `is_testnet = true` — on any other chain, faucet allocation is forced to zero regardless of what `faucet_allocation` says, and the node refuses to boot at all if `is_testnet = false` with a nonzero `faucet_allocation` configured. Do not change `blockchain_name` on a running chain — it would fork.
+- **Genesis**: testnet genesis allocates `faucet_allocation` CLT to `faucet_address`, but only when `is_testnet = true` — on any other chain, faucet allocation is forced to zero regardless of what `faucet_allocation` says, and the node refuses to boot at all if `is_testnet = false` with a nonzero `faucet_allocation` configured. This deployment sets it to `0` anyway, so genesis pre-mints nothing on any chain: see [CLT Economics — Testnet notes](/clutch-node/clt-economics#testnet-notes) for why an unbacked genesis balance stopped being acceptable once redemptions went live. Do not change `blockchain_name` on a running chain — it would fork.
 - **Secret management**: store `author_secret_key` via environment or a secret manager in production; never commit it to git.
 
 ## Multi-node checklist
