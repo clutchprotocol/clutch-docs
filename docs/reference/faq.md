@@ -60,7 +60,9 @@ It checks a hub-returned unsigned transaction (type, fare/amount, references, `f
 Deposit USDT. Every wallet has one permanent Tron address; send USDT (TRC-20) to it and the treasury mints the matching CLT to that wallet. In the demo app that's ☰ → **Top up with USDT**. See [Deposits](/clutch-treasury/deposits).
 
 **There used to be a faucet — where did it go?**  
-Removed, along with `POST /faucet` and the SDK's `requestFaucet()`. It *transferred* CLT out of a genesis-funded account rather than minting it, so what it handed out had no USDT behind it and was excluded from the reserve liability by construction. That was harmless while CLT only ever flowed one way. Redemptions went live on 2026-09-04, and nothing in the burn path asks where the burned CLT came from — which turned the faucet into a route from unbacked genesis CLT to real USDT out of the payout float.
+Gone, in two stages. First the endpoint: `POST /faucet` and the SDK's `requestFaucet()` were removed, because the faucet *transferred* CLT out of a genesis-funded account rather than minting it, so what it handed out had no USDT behind it and was excluded from reserve liability by construction. That was harmless while CLT only ever flowed one way. Redemptions went live on 2026-09-04, and nothing in the burn path asks where burned CLT came from — which turned that account into a route from unbacked genesis CLT to real USDT out of the payout float.
+
+Then the balance, which was always the part that mattered: removing the endpoint never removed the CLT, and the route needed only the key, not the endpoint. `faucet_allocation` went to `0` on 2026-09-05, which took a chain reset because genesis values are committed into the genesis hash. Genesis now pre-mints nothing and CLT is obtained by [depositing USDT](/clutch-treasury/deposits).
 
 **How much USDT do I need to deposit?**  
 Whatever you want. There is no minimum, no expected amount, and no expiry — the address alone identifies who paid, and whatever lands is credited in full at the peg (1 USD = 1,000,000 CLT). See [Deposits](/clutch-treasury/deposits).

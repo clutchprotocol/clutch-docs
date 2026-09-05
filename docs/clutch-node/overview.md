@@ -23,7 +23,7 @@ Clutch Node is the blockchain core of Clutch Protocol. It runs the consensus lay
 | **Mempool** | Accepts and gossips pending transactions; rejects invalid nonces/signatures |
 | **State** | Account balances, nonces, and the ride state machine (requests, offers, trips) |
 | **Transaction processor** | Applies function-call tags (Transfer, RideRequest, RidePay, …) to state |
-| **Block store** | Append-only block ledger; genesis allocates the testnet faucet account's balance |
+| **Block store** | Append-only block ledger; genesis pre-mints nothing, so supply starts at zero |
 | **RPC server** | WebSocket JSON-RPC for apps and the Hub API |
 | **P2P layer** | libp2p gossip for tx and block propagation, plus bootstrap peer discovery |
 | **Metrics exporter** | Exposes node state, block index, and runtime counters to Prometheus |
