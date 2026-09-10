@@ -34,6 +34,36 @@ Payouts are paid from a float, not from custody and not from any deposit address
 
 That separation is the actual security boundary here, and it is worth being precise about what it protects against. `tron-signer`'s payout endpoint takes a destination and an amount — unlike the sweep endpoint, it has to, because a payout has no other way to say where the money goes. Widening that endpoint is what makes it different from sweep: its safety depends on the bearer token and the internal-only network actually holding, not on the request shape alone. What bounds the damage if they don't is the float itself — the caller can never reach custody or a deposit address through this endpoint, so the absolute worst case is the float's own balance, capped again by a per-transaction limit on top of that.
 
+## Energy for payouts
+
+Every payout is a TRC-20 transfer, and TRON charges energy for it: 64,285 units into an address that already holds USDT, 130,285 into one that does not. Left to itself the float pays for that by burning TRX at the chain's `getEnergyFee` — 100 sun per unit when measured on 2026-09-10 — so a payout to a fresh address costs about 13 TRX. That burn is what `APP_REDEMPTION_FEE_USDT` has to cover, and at a TRX price near $0.34 it is why the fee sits at $5.
+
+Staking replaces the burn. TRX frozen for energy earns a daily energy allowance instead of being spent, and TRON lets any wallet **delegate** that allowance to any address without holding the recipient's key. So the float never stakes anything itself and `tron-signer` never grows a staking endpoint: an operator stakes on a wallet they control and points the energy at the float.
+
+### How much to stake
+
+TronGrid's `getaccountresource` returns `TotalEnergyLimit` and `TotalEnergyWeight`; their ratio is the energy one staked TRX earns per day. It moves with how much the whole network has staked — 9.60 on mainnet and 73.75 on Nile on 2026-09-10 — so read it rather than remember it. `PROBE=energy` prints it.
+
+```
+TRX to stake = payouts per day × 130,285 ÷ (TotalEnergyLimit ÷ TotalEnergyWeight)
+```
+
+One payout a day is about 13,571 TRX on mainnet and 1,767 on Nile. Size for the worst-case 130,285 rather than the average: the recipient is the user's own address, and there is no knowing whether it already holds USDT.
+
+### Doing it
+
+1. In a wallet you control, stake TRX for **energy** (Stake 2.0). The TRX stays yours; unstaking waits 14 days.
+2. Delegate that energy to the payout float — `PAYOUT_FLOAT_ADDRESS`, or read it off `tron-signer` with the `treasury` probe. Delegation is its own transaction and needs nothing from the float.
+3. Run `PROBE=energy`. The float's `EnergyLimit` should now be non-zero.
+4. Make a payout. The probe reports the most recent one's `energy_fee`; it should be `0`.
+5. Only then lower `REDEMPTION_FEE_USDT`, and `MIN_REDEMPTION_CLT` with it — the fee has to stay below the minimum, or the smallest allowed redemption is one the treasury refuses.
+
+### What does not change
+
+The float still needs liquid TRX. `tron-signer` checks the float's TRX balance before every payout and tops it up to 30 TRX when short; that check predates delegation and reads TRX, not energy, so with energy delegated the 30 TRX simply sits there. Nothing breaks if the delegation lapses either: the payout falls back to burning TRX exactly as before and the fee account refunds the float. Forgetting to renew costs money, not a stuck redemption.
+
+Energy does not cover bandwidth. A transfer is about 345 bytes, every account gets 600 free per day, and past that it burns 0.345 TRX. Above one payout a day, delegate bandwidth as well or accept the small burn.
+
 ## Claim first, ask questions never
 
 Once a burn is confirmed, the redemption is marked as **submitted** — before the payout is even attempted, not after. A crash between those two moments is indistinguishable from a lost response, which is exactly the point: both are treated identically, because a TRC-20 transfer carries no memo field, so there is no way to later ask Tron "did this specific redemption already pay out" by inspecting the chain. Matching on address and amount alone is not safe either — a person legitimately redeeming the same amount to the same address twice is normal, not a duplicate.
