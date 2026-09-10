@@ -44,6 +44,8 @@ Two independent things read Tron: the orchestrator watches deposit addresses to 
 
 :::danger Not production custody
 This is a testnet system. The mint authority and the deposit mnemonic are both environment variables today, not keys behind a KMS or a hardware boundary. `clutch-treasury/docs/keys.md` names the mainnet blocker explicitly: an AWS-KMS-backed signer, a real key ceremony, and tested recovery, all before any of this holds real funds. `ChainSigner` (the mint key) and `PayoutSigner` (the payout key) are both already written as swap boundaries for that future signer — the seam exists, but nothing on the other side of it does yet.
+
+[Mainnet Readiness](/reference/mainnet-readiness) collects this blocker and every other one, each with what closes it.
 :::
 
 ## Related

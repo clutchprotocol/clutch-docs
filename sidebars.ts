@@ -94,6 +94,7 @@ const sidebars: SidebarsConfig = {
       label: 'Reference',
       items: [
         'reference/security',
+        'reference/mainnet-readiness',
         'reference/transaction-flow',
         'reference/signing-and-encoding',
         'reference/docker-images',
