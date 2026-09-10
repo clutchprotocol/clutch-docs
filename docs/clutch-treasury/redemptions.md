@@ -36,7 +36,7 @@ That separation is the actual security boundary here, and it is worth being prec
 
 ## Energy for payouts
 
-Every payout is a TRC-20 transfer, and TRON charges energy for it: 64,285 units into an address that already holds USDT, 130,285 into one that does not. Left to itself the float pays for that by burning TRX at the chain's `getEnergyFee` — 100 sun per unit when measured on 2026-09-10 — so a payout to a fresh address costs about 13 TRX. That burn is what `APP_REDEMPTION_FEE_USDT` has to cover, and at a TRX price near $0.34 it is why the fee sits at $5.
+Every payout is a TRC-20 transfer, and TRON charges energy for it: 64,285 units into an address that already holds USDT, 130,285 into one that does not. Left to itself the float pays for that by burning TRX at the chain's `getEnergyFee` — 100 sun per unit when measured on 2026-09-10 — so a payout to a fresh address costs about 13 TRX. That burn is what `APP_REDEMPTION_FEE_USDT` has to cover whenever the float pays for its own energy, and at a TRX price near $0.34 it is why a burn-paying deployment needs a fee near $5. Delegating energy to the float removes that burn, which is why this testnet charges **$1** with a **$5** minimum instead — see step 5 of the runbook below, and [CLT Economics](/clutch-node/clt-economics#who-pays-for-the-network).
 
 Staking replaces the burn. TRX frozen for energy earns a daily energy allowance instead of being spent, and TRON lets any wallet **delegate** that allowance to any address without holding the recipient's key. So the float never stakes anything itself and `tron-signer` never grows a staking endpoint: an operator stakes on a wallet they control and points the energy at the float.
 
