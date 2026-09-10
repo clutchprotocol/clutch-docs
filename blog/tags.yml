@@ -1,0 +1,9 @@
+# Blog tags. Posts reference keys here in front-matter (`tags: [tutorial]`).
+tutorial:
+  label: Tutorial
+  permalink: /tutorial
+  description: Step-by-step guides you can run end to end.
+sdk:
+  label: SDK
+  permalink: /sdk
+  description: Posts about clutch-hub-sdk-js, the client SDK.
