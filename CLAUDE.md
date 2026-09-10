@@ -47,7 +47,9 @@ Enabled through the classic preset's `blog` options in `docusaurus.config.ts`; s
 
 - Posts: `blog/YYYY-MM-DD-kebab-slug.md` with front-matter `title`, `authors: [key]`, optional `tags`. The body must contain `<!-- truncate -->` after the summary paragraph — the build throws without it (`onUntruncatedBlogPosts: 'throw'`).
 - Authors come only from `blog/authors.yml` (`onInlineAuthors: 'throw'`). Add the key there before using it.
-- With zero posts the plugin creates no routes, so there is deliberately no "Blog" navbar or footer item yet: a `to: '/blog'` link would trip `onBrokenLinks: 'throw'`. Add the navbar item in the same commit as the first post.
+- Tags come from `blog/tags.yml`; add a key there before tagging a post with it.
+- The navbar and footer carry a `to: '/blog'` item. With zero posts the plugin creates no routes, so that link would trip `onBrokenLinks: 'throw'`: never delete the last post without removing both items.
+- Posts are MDX: a bare `<` or `{` in prose breaks the build. Keep them inside code spans.
 
 ## Site Config (`docusaurus.config.ts`)
 

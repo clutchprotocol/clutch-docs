@@ -103,6 +103,7 @@ const config: Config = {
           position: 'left',
           label: 'Documentation',
         },
+        {to: '/blog', label: 'Blog', position: 'left'},
         {
           href: 'https://app-stage.clutchprotocol.io',
           label: 'Demo App',
@@ -140,6 +141,7 @@ const config: Config = {
             {label: 'Quick Start', to: '/getting-started/quickstart'},
             {label: 'Ride Lifecycle', to: '/getting-started/ride-lifecycle'},
             {label: 'Architecture', to: '/getting-started/architecture'},
+            {label: 'Blog', to: '/blog'},
           ],
         },
         {
