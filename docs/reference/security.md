@@ -53,7 +53,7 @@ See [Signing and Encoding](/reference/signing-and-encoding) for the exact algori
 | API `jwt_secret` | Hub API host / env var | Random 32+ bytes; rotated; not logged |
 
 :::danger Still environment variables, not production custody
-Every key above — including the two treasury rows — is an environment variable today, not a key behind a KMS or a hardware boundary. That is a stated, tracked gap, not an oversight: `ChainSigner` (the mint key) and `PayoutSigner` (the payout key) are both already written as swap boundaries for a future signer, and the named mainnet blocker is an AWS-KMS-backed signer, a real key ceremony, and tested recovery — all before any of this holds real funds. See [Clutch Treasury Overview — Testnet posture](/clutch-treasury/overview#testnet-posture).
+Every key above — including the two treasury rows — is an environment variable today, not a key behind a KMS or a hardware boundary. That is a stated, tracked gap, not an oversight: `ChainSigner` (the mint key) and `PayoutSigner` (the payout key) are both already written as swap boundaries for a future signer, and the named mainnet blocker is an AWS-KMS-backed signer, a real key ceremony, and tested recovery — all before any of this holds real funds. See [Clutch Treasury Overview — Testnet posture](/clutch-treasury/overview#testnet-posture), and [Mainnet Readiness](/reference/mainnet-readiness) for this gap alongside everything else that stands between the current testnet and a deployment that could hold money.
 :::
 
 ### Recommendations
