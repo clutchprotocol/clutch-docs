@@ -15,8 +15,17 @@ This version changes three things that will break code written against v2: amoun
 ### Constructor
 
 ```typescript
-new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string, chainId?: number)
+new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string, chainId?: number, options?: ClutchHubSdkOptions)
 ```
+
+```typescript
+interface ClutchHubSdkOptions {
+  /** HTTP timeout for every hub request, in ms. Default 30_000 (DEFAULT_HTTP_TIMEOUT_MS); 0 disables. */
+  timeoutMs?: number;
+}
+```
+
+Every HTTP request the SDK makes (queries, mutations, `generateToken`) is bounded by `timeoutMs` and rejects with an axios timeout error when the hub does not answer in time. Before this option existed there was no timeout at all: a request the hub never answered hung the caller indefinitely, with no error to catch. Subscriptions run over graphql-ws and are not affected by it.
 
 `chainId` is new in v3 and **optional**, but you should pass it for anything beyond read-only queries: it is the value the SDK pins locally for both the auth challenge and [`verifyUnsignedTransaction`](#chain_id-and-verifyunsignedtransaction). Get it from your own app configuration — never from a value read back from the hub, since that would defeat the point of pinning it. Omitting `chainId` still lets you call read-only methods, but `signTransaction` throws if you later try to pass an `expected` verification argument without a pinned `chainId` available from somewhere.
 
@@ -78,6 +87,10 @@ See [chain_id and verifyUnsignedTransaction](#chain_id-and-verifyunsignedtransac
 | `getAccountBalance(publicKey?)` | CLT balance, as `bigint` (requires auth) |
 
 Filter options: `{ driverAddress?, passengerAddress? }`.
+
+:::note Hash arguments
+The hub stores transaction hashes as 64 lowercase hex characters without `0x` and matches query arguments as exact strings, while `signTransaction` returns `txHash` with a `0x` prefix. `listRideOffers` and `subscribeRideOffers` normalize their hash argument (strip `0x`, lowercase, unwrap legacy JSON quoting) before sending it, so either form works. Hashes returned by list queries and subscriptions are in the hub's form.
+:::
 
 :::note No getChainInfo
 The SDK has no chain-info method — `ChainInfo` under [Types](#types) is exported for typing a manual query, but nothing in the SDK produces one. Query the hub's `chainInfo` GraphQL field directly if you need genesis-committed parameters for display:
