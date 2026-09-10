@@ -47,7 +47,23 @@ const config: Config = {
           // reports the deploy commit's date.
           showLastUpdateTime: true,
         },
-        blog: false,
+        blog: {
+          blogTitle: 'Clutch Protocol Blog',
+          blogDescription:
+            'Engineering notes, postmortems, and the monthly state of the project.',
+          editUrl: 'https://github.com/clutchprotocol/clutch-docs/tree/main/',
+          // Every post names an author key from blog/authors.yml and carries a
+          // <!-- truncate --> marker, so the list page shows summaries, not full posts.
+          onInlineAuthors: 'throw',
+          onUntruncatedBlogPosts: 'throw',
+          feedOptions: {
+            type: ['rss', 'atom'],
+            xslt: true,
+            title: 'Clutch Protocol Blog',
+            description:
+              'Engineering notes, postmortems, and the monthly state of the project.',
+          },
+        },
         theme: {
           customCss: './src/css/custom.css',
         },

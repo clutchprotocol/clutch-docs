@@ -1,0 +1,9 @@
+# Blog authors. Posts reference a key here in front-matter (`authors: [mehran]`).
+# Inline author objects are rejected — see onInlineAuthors in docusaurus.config.ts.
+mehran:
+  name: Mehran Mazhar
+  title: Founder and lead developer
+  url: https://github.com/MehranMazhar
+  image_url: https://github.com/MehranMazhar.png
+  socials:
+    github: MehranMazhar

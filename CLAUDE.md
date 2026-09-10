@@ -30,7 +30,7 @@ npm run typecheck  # tsc over config/src
 | Deployment | `docs/deployment/` | clutch-deploy (compose), monitoring (Grafana/Prometheus/Seq), nginx |
 | Reference | `docs/reference/` | security, transaction-flow, signing-and-encoding (RLP/secp256k1), docker-images, faq |
 
-No versioning, no blog (`blog: false`), no i18n beyond `en`. All content is `.md` (no `.mdx` files yet, though MDX is supported).
+No versioning, no i18n beyond `en`. Blog enabled at `/blog` (see below). All content is `.md` (no `.mdx` files yet, though MDX is supported).
 
 ## Sidebars
 
@@ -40,6 +40,14 @@ No versioning, no blog (`blog: false`), no i18n beyond `en`. All content is `.md
 2. Add its ID (path without extension, e.g. `clutch-node/json-rpc`) to the matching category in `sidebars.ts`
 
 Docs also carry `sidebar_position` front-matter, but with an explicit sidebar the array order in `sidebars.ts` is what actually controls ordering — keep both consistent anyway (every existing doc has it).
+
+## Blog (`blog/`)
+
+Enabled through the classic preset's `blog` options in `docusaurus.config.ts`; served at `/blog`, with feeds at `/blog/rss.xml` and `/blog/atom.xml`.
+
+- Posts: `blog/YYYY-MM-DD-kebab-slug.md` with front-matter `title`, `authors: [key]`, optional `tags`. The body must contain `<!-- truncate -->` after the summary paragraph — the build throws without it (`onUntruncatedBlogPosts: 'throw'`).
+- Authors come only from `blog/authors.yml` (`onInlineAuthors: 'throw'`). Add the key there before using it.
+- With zero posts the plugin creates no routes, so there is deliberately no "Blog" navbar or footer item yet: a `to: '/blog'` link would trip `onBrokenLinks: 'throw'`. Add the navbar item in the same commit as the first post.
 
 ## Site Config (`docusaurus.config.ts`)
 
