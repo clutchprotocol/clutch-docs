@@ -55,8 +55,8 @@ One payout a day is about 13,571 TRX on mainnet and 1,767 on Nile. Size for the 
 1. In a wallet you control, stake TRX for **energy** (Stake 2.0). The TRX stays yours; unstaking waits 14 days.
 2. Delegate that energy to the payout float — `PAYOUT_FLOAT_ADDRESS`, or read it off `tron-signer` with the `treasury` probe. Delegation is its own transaction and needs nothing from the float.
 3. Run `PROBE=energy`. The float's `EnergyLimit` should now be non-zero.
-4. Make a payout. The probe reports the most recent one's `energy_fee`; it should be `0`.
-5. Only then lower `REDEMPTION_FEE_USDT`, and `MIN_REDEMPTION_CLT` with it — the fee has to stay below the minimum, or the smallest allowed redemption is one the treasury refuses.
+4. Make a payout. The probe reads its receipt, which says who supplied the energy. The proof that the delegation works is `energy_usage` — energy the *sender* supplied, own or delegated — being non-zero while `energy_fee` is `0`. **On Nile this cannot be observed.** The Nile test USDT contract sponsors its own energy, so every Nile payout shows `energy_fee: 0` and a non-zero `origin_energy_usage` whether or not anything is delegated; a payout made *before* delegating reads identically. Mainnet USDT makes the sender pay, so the first mainnet payout is the real test.
+5. Lower `REDEMPTION_FEE_USDT`, and `MIN_REDEMPTION_CLT` with it — the fee has to stay below the minimum, or the smallest allowed redemption is one the treasury refuses. On stage this is safe as soon as step 3 passes, since Nile energy costs nothing either way; stage charges **$1** with a **$5** minimum. On mainnet, keep the burn-covering fee until step 4 has shown sender energy on a real receipt.
 
 ### What does not change
 
