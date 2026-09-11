@@ -42,7 +42,9 @@ One absence here is deliberate and will stay: nothing in the stack can spend fro
 
 The chain now supports M-of-N: a mint is authorised when it is submitted by one member of an authority set and carries further approval signatures from distinct other members, checked by consensus rather than by an application. Approvers sign a digest covering the chain, recipient, amount and the off-chain payment reference, so an approval for one mint cannot authorise another, and the treasury service that collects those signatures never holds the keys that make them.
 
-What remains is choosing how many authorities there will be and how many must sign, then generating the keys. Those values are committed into the genesis, so they are settled before a mainnet chain starts rather than after.
+The configuration chosen on 2026-09-12 is **three authorities, any two of which must sign**, with the three keys deliberately held in three separate places: one reachable by the treasury service, one under separate credentials elsewhere, and one offline as a cold spare. Three keys in one account would be a two-of-three on paper and a one-of-one in practice. Routine minting uses the first two; the third exists so that losing a key costs availability rather than the chain.
+
+What remains is generating those keys, which happens in a recorded ceremony requiring two people. Their addresses are committed into the genesis, so all three exist and are tested before a mainnet chain starts.
 
 **Closed by:** signing through KMS in the mainnet configuration, key material that has never existed outside it, a written ceremony record, and a recovery rehearsal in which both keys were restored into a fresh environment and used to sign.
 
