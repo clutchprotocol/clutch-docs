@@ -90,7 +90,13 @@ The reference demo app generates or imports keys in the browser and stores them 
 
 These decide whether a real ride market is usable. They do not endanger the reserve.
 
-**Dispute resolution — blocker for a public launch.** Cancellations are on-chain, but there is no arbitration when two parties disagree, and no no-show or fraud handling. Passengers also give up card-issuer chargebacks by signing payment directly, which is a fair trade for instant settlement on a testnet and a serious gap with real money: the passenger would have no recourse at all. A dispute mechanism has to exist, and the passenger's recourse has to be stated plainly before they pay.
+**Dispute resolution — built on 2026-09-12, switched on at mainnet genesis.** The gap here ran the opposite way to how it is usually described. A rider is already protected: accepting an offer holds the whole fare, payment is released in instalments, and cancelling returns the unpaid remainder, so a rider who stops paying loses only what they released. The party with no protection was the **driver**, against a rider who takes the ride and never releases the rest. The driver's only move was to cancel, which returned the money to the rider.
+
+Two hours after a ride is accepted, that same cancellation now pays the remaining held fare to the driver instead. Inaction used to favour whoever owed money; it now favours whoever is owed. The window is a consensus parameter fixed in the genesis, not something an operator can change afterwards.
+
+Stated plainly, because it is the limit of what this does: it closes silent non-payment. A rider acting in bad faith who actively cancels every ride still avoids paying. That behaviour is visible on the public ledger and is what reputation below is for. Cancelling inside the window was deliberately left free, because charging for it would penalise exactly the rider this protects.
+
+Riders still give up card-issuer chargebacks by signing payment directly, and that remains a real trade rather than something the above removes.
 
 **Reputation — required.** No driver or rider scoring exists, so nothing distinguishes a first-time counterparty from a repeatedly bad one.
 
