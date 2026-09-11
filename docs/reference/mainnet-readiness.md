@@ -38,6 +38,12 @@ Everything below expands these, plus the product, review, and regulatory work ar
 
 One absence here is deliberate and will stay: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. See [Clutch Treasury Overview](/clutch-treasury/overview).
 
+**Multi-signature minting shipped on 2026-09-11**, and it addresses the larger half of this item. Until then a `Mint` was authorised by a single address, while every other control on minting — the two-approver rule, the per-transaction cap, the daily cap, the halt breaker — lived off-chain. A holder of that one key could submit a mint straight to a node and none of them would run. Non-exportable key storage lowers the chance of theft; it does nothing about what theft would mean.
+
+The chain now supports M-of-N: a mint is authorised when it is submitted by one member of an authority set and carries further approval signatures from distinct other members, checked by consensus rather than by an application. Approvers sign a digest covering the chain, recipient, amount and the off-chain payment reference, so an approval for one mint cannot authorise another, and the treasury service that collects those signatures never holds the keys that make them.
+
+What remains is choosing how many authorities there will be and how many must sign, then generating the keys. Those values are committed into the genesis, so they are settled before a mainnet chain starts rather than after.
+
 **Closed by:** signing through KMS in the mainnet configuration, key material that has never existed outside it, a written ceremony record, and a recovery rehearsal in which both keys were restored into a fresh environment and used to sign.
 
 ## The payout rail
