@@ -84,6 +84,10 @@ This is the argument for the item rather than an aside. A backup job that has ne
 
 **Required.** Anyone can create a keypair, so every authenticated endpoint is effectively public. Rate limits belong on those endpoints and on token issuance before a public launch. Deposit addresses are permanent and polled on a rotation, so the relationship between how many exist and worst-case detection latency needs a measured ceiling rather than a discovered one. See [Deposits](/clutch-treasury/deposits) for how polling works.
 
+The token-issuing endpoint was rate limited and then measured against the testnet on 2026-09-13. The per-identity limit refused exactly the request after its allowance, both runs. The endpoint-wide limit held inside a window, and the service stayed up while that endpoint was saturated, which is the property that matters: a limiter that protects one route by taking the process down would be worse than none.
+
+The measurement also corrected something the code claimed. The endpoint-wide limit uses a fixed window, so its counter resets at the boundary and a burst spanning one gets up to twice the configured number. A comment had dismissed that as uninteresting; the same burst was refused on one run and not at all on the next, purely on timing. The limit is unchanged, because twice a number chosen well below what causes harm is still well below it, but it is now described accurately rather than optimistically.
+
 **Closed by:** limits recorded and shown to hold under load, and a documented ceiling on address growth.
 
 ## Client-side key handling
