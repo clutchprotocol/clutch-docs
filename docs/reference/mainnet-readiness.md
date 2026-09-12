@@ -70,6 +70,14 @@ Aura is an authority round-robin, so the validator set is permissioned by constr
 
 **Blocker.** The treasury ledger is the off-chain half of every deposit and redemption. The chain records the mint and the burn; it does not record which off-chain payment a mint answered. Losing that ledger means losing the ability to honour redemptions, so it needs the same seriousness as the keys.
 
+**The backup and restore path was rehearsed against the testnet on 2026-09-12, and the rehearsal found the backup broken.** The first attempt stopped two lines in with no output at all, because reading an unset optional setting aborted the whole script under strict shell error handling. That was not a theoretical fault: the nightly job had already run once and failed exactly that way, silently, on a host where nobody was watching. Had nobody rehearsed, the first sign of trouble would have been a restore that found no backups.
+
+It is fixed, and the failure path reports properly now. The second attempt dumped both databases, encrypted them, decrypted them, restored each into a throwaway copy with the expected row counts, and dropped the copies. Nothing touched a live database at any point.
+
+This is the argument for the item rather than an aside. A backup job that has never been exercised is a belief, not a control, and the belief is usually wrong in a way that only shows up on the day it matters.
+
+**Still open:** no real backup exists yet, because the encryption passphrase is not set and the job correctly refuses to write a ledger dump in the clear. When dumps do start they will need an off-host destination, and reconciliation has to be run against a restored ledger. Row counts prove a restore is not empty; they do not prove it is coherent.
+
 **Closed by:** encrypted off-host backups on a schedule, and a restore performed into a clean environment with [reconciliation](/clutch-treasury/reserves-and-reconciliation) green against it. The restore closes this, not the existence of a backup job. Reconciliation itself runs on a schedule and alerts a human, with the alert route tested by forcing a failure.
 
 ## Abuse controls
