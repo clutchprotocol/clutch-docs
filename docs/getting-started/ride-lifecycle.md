@@ -124,6 +124,26 @@ sequenceDiagram
 | Before acceptance | Passenger only | `RideRequestCancel` | No driver accepted yet |
 | After acceptance | Passenger or driver | `RideCancel` | `farePaid` less than `fare` |
 
+### Who the unpaid remainder goes to
+
+By default a `RideCancel` refunds the unpaid remainder to the passenger. That is the right answer
+while a ride is genuinely being called off, and the wrong one once the ride has happened: a rider
+who takes the trip and simply never pays the rest can cancel and take the money back. Partial
+payment protects the rider; nothing protected the driver.
+
+A chain may therefore set an **auto-release window**. Past it, the remainder belongs to the driver
+instead, whoever submits the cancel — including the rider, for whom cancelling late no longer
+helps. If the driver's address cannot be read the refund happens anyway, because paying out to an
+address the node cannot verify would be guessing.
+
+:::note Not active on the public testnet
+The window is `ride_auto_release_secs`, a **genesis-committed consensus parameter** in `ChainInit` —
+it decides who receives money, so a node with a different value computes a different balance from
+the same block, and it cannot be added to a chain after genesis. It defaults to `0`, which disables
+the rule, and that is its value on the current testnet: **every `RideCancel` there refunds the
+passenger.** The intended mainnet value is 7200 seconds (two hours).
+:::
+
 Code examples for cancellation are in [Cancellation](#cancellation) below.
 
 ## Prerequisites
