@@ -136,12 +136,22 @@ instead, whoever submits the cancel — including the rider, for whom cancelling
 helps. If the driver's address cannot be read the refund happens anyway, because paying out to an
 address the node cannot verify would be guessing.
 
-:::note Not active on the public testnet
 The window is `ride_auto_release_secs`, a **genesis-committed consensus parameter** in `ChainInit` —
 it decides who receives money, so a node with a different value computes a different balance from
 the same block, and it cannot be added to a chain after genesis. It defaults to `0`, which disables
-the rule, and that is its value on the current testnet: **every `RideCancel` there refunds the
-passenger.** The intended mainnet value is 7200 seconds (two hours).
+the rule entirely.
+
+:::note The public testnet uses five minutes, mainnet will use two hours
+Stage runs `ride_auto_release_secs = 300`, enabled by a chain reset on 2026-09-14. That is
+deliberately short: two hours cannot be exercised on a development chain, so the rule would reach
+mainnet having never run against a real ride. The decision of record for mainnet is **7200** (two
+hours), and `check-genesis.sh` refuses any other value when building a mainnet genesis.
+
+Read the live value rather than trusting this page — it is in `get_chain_info`:
+
+```json
+{ "chain_id": 2077, "ride_auto_release_secs": 300, "latest_block_index": 39 }
+```
 :::
 
 Code examples for cancellation are in [Cancellation](#cancellation) below.
