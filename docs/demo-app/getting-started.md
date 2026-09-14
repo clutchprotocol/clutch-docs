@@ -73,6 +73,8 @@ VITE_API_URL=http://localhost:3000 npm run dev
 
 The demo optionally stores keys in localStorage for convenience. **Never do this in production.** Use hardware wallets, secure enclaves, or per-action key prompts instead.
 
+Because that storage is lost by clearing site data, switching browsers or changing machine, the app can write an **encrypted backup**: a passphrase-protected JSON file, sealed with WebCrypto. The passphrase is the whole protection — anyone with both the file and the passphrase has the wallet, and losing the passphrase makes the file unopenable with no recovery. That is still the right shape for a backup, and it is why the export refuses to write a plaintext key.
+
 ## Related
 
 - [User Flows](/demo-app/user-flows)

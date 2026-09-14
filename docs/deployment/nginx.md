@@ -188,7 +188,19 @@ For production, terminate TLS at Nginx with Let's Encrypt:
 
 ## Local vs stage
 
-The config on this page is local/dev only, brought up via the optional overlay described above. It has no bearing on the project's stage deployment: stage's nginx is not part of this compose project at all. It runs as a separate container belonging to another compose project entirely, mounting a hand-maintained config file that lives outside this repo and serves the Clutch routes alongside that other project's own. It holds the host's port 80, so `docker-compose.stage.nginx.yml` cannot run there, and editing anything under `config/nginx/` in this repo has no effect on stage. A change that needs to reach stage's nginx is patched into that mounted file in place by the deploy workflow instead, not shipped by editing this repo's config.
+The config on this page is local/dev only, brought up via the optional overlay described above. It has no bearing on the project's stage deployment: stage's nginx is not part of this compose project at all. It runs as a separate container belonging to another compose project entirely, mounting a config file that lives outside this repo and serves the Clutch routes alongside that other project's own. It holds the host's port 80, so `docker-compose.stage.nginx.yml` cannot run there, and editing `config/nginx/nginx.conf` — the file on this page — has no effect on stage.
+
+**The Clutch parts of that file are owned by this repo even so.** Three directories are injected into it between markers on every deploy, and everything outside those markers belongs to the other project and is never touched:
+
+| Directory | Holds | Lands |
+|---|---|---|
+| `config/nginx/clutch.d/<vhost>/*.conf` | `location` blocks, one subdirectory per vhost | inside that vhost's `server` block |
+| `config/nginx/clutch.http/*.conf` | `upstream`, `limit_req_zone` and friends | at `http` level |
+| `config/nginx/clutch.shared/*.conf` | snippets every Clutch vhost needs | copied into each Clutch vhost |
+
+An `include` would be the obvious design and cannot work here: the container bind-mounts a single file, not a directory, so no host directory is visible inside it — and a glob matching nothing is valid nginx, which means that mistake passes `nginx -t`, reloads cleanly and loads nothing.
+
+The sync is guarded rather than trusted. The set of `server_name`s must be identical before and after, no upstream may disappear, `nginx -t` must pass, and a set of post-reload checks must answer correctly — including real WebSocket handshakes returning 101, because losing an upgrade header degrades a subscription endpoint to a plain 200 while every page still loads. Any failure restores the previous config and fails the deploy.
 
 ## Related
 
