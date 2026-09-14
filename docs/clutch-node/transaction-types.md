@@ -15,7 +15,7 @@ Clutch Node supports custom non-EVM transaction types encoded with RLP tags.
 | 2 | `RideOffer` | Yes | Driver offers to fulfill a request |
 | 3 | `RideAcceptance` | Yes | Passenger accepts an offer |
 | 4 | `RidePay` | Yes | Passenger pays driver (partial OK) |
-| 5 | `RideCancel` | Yes | Cancel active trip; refunds the unpaid fare to the passenger, or releases it to the driver past the auto-release window (see [Ride Lifecycle](/getting-started/ride-lifecycle#who-the-unpaid-remainder-goes-to) — disabled on the public testnet) |
+| 5 | `RideCancel` | Yes | Cancel active trip; refunds the unpaid fare to the passenger, or releases it to the driver past the auto-release window (see [Ride Lifecycle](/getting-started/ride-lifecycle#who-the-unpaid-remainder-goes-to) — 5 minutes on the public testnet, 2 hours on mainnet) |
 | 6 | `Mint` | No — node only | Credit CLT; only `mint_authority` may sign one |
 | 7 | `Burn` | Yes (`createUnsignedBurn`) | Destroy CLT from the caller's own balance |
 | 8 | `RideRequestCancel` | Yes | Cancel pending request |
