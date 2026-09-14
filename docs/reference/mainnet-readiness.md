@@ -64,7 +64,11 @@ A single redemption is already bounded twice, in two services that do not share 
 
 Aura is an authority round-robin, so the validator set is permissioned by construction. Mainnet needs authorities that do not share an operator or a failure domain, each with its own key.
 
-**Closed by:** reviewed and recorded genesis parameters, every node reporting the same genesis hash, block production observed continuing with one authority stopped, and a key rotation procedure rehearsed on a throwaway network.
+**Nothing was watching whether the chain was producing at all until 2026-09-14.** The testnet halted, stayed halted for most of a day, and the first alarm was a person noticing the block explorer was empty — three layers below the fault. Alerts covered the money path and not the chain that money path reads from, which is the wrong way round: a treasury reading a frozen chain believes a frozen supply and judges its reserve against it.
+
+Liveness is now alerted on directly. Aura authors an empty block every slot when there is nothing to include, so height advancing is a heartbeat rather than a measure of traffic — a quiet chain still climbs, and one that stops climbing is broken. That property is what makes the alert possible, and it is worth stating because a consensus that produced blocks only on demand would need an entirely different signal. Validators disagreeing about the height is alerted separately: a node that has fallen behind still answers queries, with its own stale number, which is harder to notice than one that has stopped answering.
+
+**Closed by:** reviewed and recorded genesis parameters, every node reporting the same genesis hash, block production observed continuing with one authority stopped, a key rotation procedure rehearsed on a throwaway network, and the liveness alert delivered to a human rather than only to a dashboard.
 
 ## Durability and recovery
 
