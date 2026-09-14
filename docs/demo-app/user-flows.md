@@ -15,8 +15,20 @@ For the full interaction between passenger and driver (including Hub API and nod
 | Role entry screen | Choose passenger or driver — separate wallet scopes |
 | Generate wallet | Local key generation (`wallet.js`) |
 | Import wallet | Paste existing public/private key pair |
+| Restore backup | Open an encrypted backup file and unlock it with its passphrase |
+| Back up wallet | Menu, while connected — writes an encrypted JSON file |
 
 Keys are stored per role: `clutch_passenger_*`, `clutch_driver_*` in localStorage.
+
+Backups are encrypted with a passphrase you choose (PBKDF2-SHA256, then AES-GCM, both from the
+browser's own WebCrypto — no library). The file names its address in the clear so several backups
+can be told apart without unlocking each one; restoring re-derives the address from the decrypted
+key and refuses the file if the two disagree, since that field sits outside the sealed envelope and
+anyone can edit it.
+
+The format is `clutch-keystore-1`, deliberately **not** Ethereum keystore v3 — v3 wants scrypt,
+which WebCrypto does not provide, and a file that looked like v3 without being it would be worse
+than one that never claimed to be.
 
 ## Passenger flows
 
