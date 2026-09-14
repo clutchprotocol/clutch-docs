@@ -88,7 +88,11 @@ The token-issuing endpoint was rate limited and then measured against the testne
 
 The measurement also corrected something the code claimed. The endpoint-wide limit uses a fixed window, so its counter resets at the boundary and a burst spanning one gets up to twice the configured number. A comment had dismissed that as uninteresting; the same burst was refused on one run and not at all on the next, purely on timing. The limit is unchanged, because twice a number chosen well below what causes harm is still well below it, but it is now described accurately rather than optimistically.
 
-**Closed by:** limits recorded and shown to hold under load, and a documented ceiling on address growth.
+A per-client limiter now also runs at the edge, in front of every Clutch hostname, as of 2026-09-14. It **refuses nothing yet, deliberately**: it evaluates each request, records what it would have rejected, and serves it. A rate argued from how many requests a page load makes is a guess, and guessing low means turning away real people with no application log to explain why — so the measurement comes before the enforcement, and the enforcement is one line.
+
+Keying it correctly was the substance. Behind a CDN the immediate peer is the CDN, so limiting on it would put every visitor in one bucket, and trusting a forwarded header outright is what the application deliberately refused to do — a spoofable one lets an attacker both create unlimited buckets and lock a chosen person out. The edge matches on the real peer address first and honours the forwarded header only when the request genuinely arrived from the CDN, which is the distinction the application had no way to make.
+
+**Closed by:** limits recorded and shown to hold under load, the edge limiter enforcing with a measured period behind it, and a documented ceiling on address growth.
 
 ## Client-side key handling
 
