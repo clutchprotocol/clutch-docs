@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Mainnet Readiness
 
-**Status: not ready for real funds.** Last reviewed 2026-09-10.
+**Status: not ready for real funds.** Last reviewed 2026-09-15.
 
 Clutch runs a public alpha testnet. The CLT on it is backed by Tron **Nile testnet** USDT, which has no value and cannot be bought. Nothing in this stack should hold money you care about yet.
 
@@ -27,7 +27,7 @@ Five things must all be true before any mainnet deposit address reaches a user:
 1. The mint key and the payout key sit behind a KMS or hardware boundary, with a rehearsed recovery.
 2. The payout rail has been proven on mainnet, with a real receipt behind the fee.
 3. The chain runs a fresh mainnet genesis, with authorities under independent operators.
-4. The treasury ledger has off-host backups and a restore that has actually been performed.
+4. ~~The treasury ledger has off-host backups and a restore that has actually been performed.~~ **Met 2026-09-15.**
 5. More than one person can operate and halt the system.
 
 Everything below expands these, plus the product, review, and regulatory work around them.
@@ -72,7 +72,7 @@ Liveness is now alerted on directly. Aura authors an empty block every slot when
 
 ## Durability and recovery
 
-**Blocker.** The treasury ledger is the off-chain half of every deposit and redemption. The chain records the mint and the burn; it does not record which off-chain payment a mint answered. Losing that ledger means losing the ability to honour redemptions, so it needs the same seriousness as the keys.
+**Met 2026-09-15.** The treasury ledger is the off-chain half of every deposit and redemption. The chain records the mint and the burn; it does not record which off-chain payment a mint answered. Losing that ledger means losing the ability to honour redemptions, so it needs the same seriousness as the keys.
 
 **The backup and restore path was rehearsed against the testnet on 2026-09-12, and the rehearsal found the backup broken.** The first attempt stopped two lines in with no output at all, because reading an unset optional setting aborted the whole script under strict shell error handling. That was not a theoretical fault: the nightly job had already run once and failed exactly that way, silently, on a host where nobody was watching. Had nobody rehearsed, the first sign of trouble would have been a restore that found no backups.
 
@@ -80,9 +80,13 @@ It is fixed, and the failure path reports properly now. The second attempt dumpe
 
 This is the argument for the item rather than an aside. A backup job that has never been exercised is a belief, not a control, and the belief is usually wrong in a way that only shows up on the day it matters.
 
-**Still open:** no real backup exists yet, because the encryption passphrase is not set and the job correctly refuses to write a ledger dump in the clear. When dumps do start they will need an off-host destination, and reconciliation has to be run against a restored ledger. Row counts prove a restore is not empty; they do not prove it is coherent.
+**Closed on 2026-09-15.** Encrypted dumps now run nightly to off-host object storage, and the verification that closed this was not a loadable dump — it was a dump fetched back **out of** that storage, decrypted with the real passphrase, restored into a throwaway database, and reconciled green against the real chain and real custody. Row counts prove a restore is not empty; they do not prove it is coherent, and only the second thing is worth anything.
 
-**Closed by:** encrypted off-host backups on a schedule, and a restore performed into a clean environment with [reconciliation](/clutch-treasury/reserves-and-reconciliation) green against it. The restore closes this, not the existence of a backup job. Reconciliation itself runs on a schedule and alerts a human, with the alert route tested by forcing a failure.
+That reconciliation runs in a mode that starts no background workers at all. An ordinary instance of the treasury service would start the sweeper, the chain outbox and the payout workers, every one of which acts on chain — so a service pointed at a *copy* of the ledger would re-broadcast transactions already submitted and re-sweep addresses already swept. Verifying a backup must not be able to move money, and the safe path has to be built deliberately rather than assumed.
+
+**The rehearsal found a real discrepancy, which is the argument for the item rather than an aside.** The first run came back not-green, and so did the live ledger, with identical numbers — which is what proved the restore faithful rather than broken. The gap was a single mint that had been submitted to the chain and never confirmed, sitting in a state nothing retried, nothing timed out, and nothing checked. It had been raising an alert for a day. A backup exercise found it because reconciling a restored ledger asks a question nobody had asked of the live one.
+
+Both defects behind it are fixed: a submission that is not confirmed within a bounded window is now re-queued, safely, because the chain refuses a duplicate mint against the same reference; and the deposit watcher's position is now published and alerted on when it drifts above the chain head, a state a chain reset produces silently.
 
 ## Abuse controls
 
