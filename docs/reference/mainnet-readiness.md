@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Mainnet Readiness
 
-**Status: not ready for real funds.** Last reviewed 2026-09-15.
+**Status: not ready for real funds.** Last reviewed 2026-09-17.
 
 Clutch runs a public alpha testnet. The CLT on it is backed by Tron **Nile testnet** USDT, which has no value and cannot be bought. Nothing in this stack should hold money you care about yet.
 
@@ -31,6 +31,41 @@ Five things must all be true before any mainnet deposit address reaches a user:
 5. More than one person can operate and halt the system.
 
 Everything below expands these, plus the product, review, and regulatory work around them.
+
+## The order they happen in
+
+The items below are not independent, and the sequence is not a preference — several of them physically cannot start until another has finished. That is most of the answer to "when is mainnet?", and it is why the honest answer is an order rather than a date.
+
+```mermaid
+flowchart LR
+  L["Legal advice"] --> GO["Real funds"]
+  A["Security audit"] --> GO
+  P["Second operator"] --> K["Key ceremony"]
+  H["KMS boundary"] --> K
+  K --> G["Mainnet genesis"]
+  V["Validator set"] --> G
+  G --> C["Caps applied"]
+  G --> R["Real payout receipt"]
+  R --> F["Redemption fee"]
+  C --> GO
+  F --> GO
+```
+
+Three things about that shape are worth stating plainly, because each one is a constraint rather than a plan.
+
+**Everything funnels through the genesis, and the genesis is final.** Consensus parameters are committed into the genesis hash and compared by peers at handshake, so they cannot be changed afterwards without starting a new chain. That includes the mint authority's address — which means the key ceremony has to happen *before* the chain exists, not after it is running.
+
+**A second person gates more than it looks.** The key ceremony requires two people and refuses to proceed with one, because its real subject is testing that *access* recovers — a second principal, in a separate identity, signing from a machine that has never held the first one's credentials. So "find another operator" sits upstream of the keys, which sit upstream of the genesis.
+
+**The payout fee cannot be set before mainnet exists.** Tron's Nile testnet sponsors its own energy for the test USDT contract, so every testnet payout reports a zero energy fee whether or not energy delegation is working. The first mainnet payout is therefore the first real measurement, and the fee follows it rather than preceding it. See [Redemptions](/clutch-treasury/redemptions).
+
+The two items with no dependencies — legal advice and the security audit — are also the two with the longest lead times. They run from the start, in parallel with everything else, because starting them late is the one delay that cannot be recovered.
+
+## What "closed" means here
+
+Several items below are marked closed against the current testnet. **Closed against a testnet is not closed against mainnet**, and the distinction is not pedantry: what gets verified is a specific bucket, a specific passphrase, a specific alert destination. The backup rehearsal and the alert route both have to be performed again against the real stack.
+
+The bar for each is evidence that something worked, not evidence that it was configured. That wording is deliberate. Over two days of building the monitoring for this, four separate signals loaded cleanly, reported no error, and measured nothing — a config include matching no files, an alert rule whose query could never match, a credential file the alerting process could not read. Every one of them looked healthy from outside. An untested control is a belief, and the belief is usually wrong in the way that only shows up on the day it matters.
 
 ## Key custody
 
