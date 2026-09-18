@@ -12,17 +12,19 @@ sidebar_position: 2
 ## Setup
 
 ```bash
-git clone https://github.com/clutchprotocol/clutch-hub-demo-app.git
-cd clutch-hub-demo-app
+git clone https://github.com/clutchprotocol/clutch-hub-sdk-js.git
+cd clutch-hub-sdk-js
 npm install
 npm run dev
 ```
+
+The demo app lives at `apps/demo` in that repo, alongside the SDK at `packages/sdk` — merged 2026-09-18 so the two are tested and versioned together. `npm run dev` at the repo root runs the demo app; `npm install` installs and builds both.
 
 Visit http://localhost:5173
 
 Or use the demo included in clutch-deploy at http://localhost:5173 after `docker compose up -d`.
 
-Docker image: [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/clutchprotocol/clutch-hub-demo-app/pkgs/container/clutch-hub-demo-app) · [Docker Hub](https://hub.docker.com/r/9194010019/clutch-hub-demo-app). See [Docker images](/reference/docker-images).
+Docker image: [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/clutchprotocol/clutch-hub-demo-app/pkgs/container/clutch-hub-demo-app). See [Docker images](/reference/docker-images).
 
 ## Configuration
 

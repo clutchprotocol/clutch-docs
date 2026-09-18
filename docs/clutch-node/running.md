@@ -57,6 +57,5 @@ None of this is instant even when every config agrees: block time is derived, no
 | Registry | Image | Package page |
 |----------|-------|--------------|
 | GHCR | `ghcr.io/clutchprotocol/clutch-node:latest` | [clutch-node on GHCR](https://github.com/clutchprotocol/clutch-node/pkgs/container/clutch-node) |
-| Docker Hub | `9194010019/clutch-node:latest` | [clutch-node on Docker Hub](https://hub.docker.com/r/9194010019/clutch-node) |
 
 All published images: [Docker images reference](/reference/docker-images).

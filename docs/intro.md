@@ -38,7 +38,7 @@ Community governance (DAO) is on the roadmap and described on the [marketing sit
 | Documentation | https://docs.clutchprotocol.io |
 | Stage demo app | https://app-stage.clutchprotocol.io |
 | npm SDK | https://www.npmjs.com/package/clutch-hub-sdk-js |
-| Docker packages | [Docker images](/reference/docker-images) · [GHCR org](https://github.com/orgs/clutchprotocol/packages) · [Docker Hub](https://hub.docker.com/u/9194010019) |
+| Docker packages | [Docker images](/reference/docker-images) · [GHCR org](https://github.com/orgs/clutchprotocol/packages) |
 
 ## CLT economics
 
@@ -62,7 +62,7 @@ Full details: [CLT Economics](/clutch-node/clt-economics)
 - [Passenger–driver flow](/getting-started/ride-lifecycle#complete-passengerdriver-flow) — Full sequence diagram
 - [Ride Lifecycle](/getting-started/ride-lifecycle) — End-to-end tutorial
 - [Architecture](/getting-started/architecture) — System design
-- [Docker images](/reference/docker-images) — GHCR and Docker Hub packages
+- [Docker images](/reference/docker-images) — GHCR packages
 - [Clutch Hub API](/clutch-hub-api/overview) — GraphQL reference
 - [SDK](/clutch-hub-sdk-js/overview) — JavaScript/TypeScript integration
 - [Explorer](/clutch-explorer/overview) — Block explorer
