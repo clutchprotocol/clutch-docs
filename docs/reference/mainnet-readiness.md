@@ -38,8 +38,6 @@ The items below are not independent, and the sequence is not a preference — se
 
 ```mermaid
 flowchart LR
-  L["Legal advice"] --> GO["Real funds"]
-  A["Security audit"] --> GO
   P["Second operator"] --> K["Key ceremony"]
   H["KMS boundary"] --> K
   K --> G["Mainnet genesis"]
@@ -47,7 +45,7 @@ flowchart LR
   G --> C["Caps applied"]
   G --> R["Real payout receipt"]
   R --> F["Redemption fee"]
-  C --> GO
+  C --> GO["Real funds"]
   F --> GO
 ```
 
@@ -58,8 +56,6 @@ Three things about that shape are worth stating plainly, because each one is a c
 **A second person gates more than it looks.** The key ceremony requires two people and refuses to proceed with one, because its real subject is testing that *access* recovers — a second principal, in a separate identity, signing from a machine that has never held the first one's credentials. So "find another operator" sits upstream of the keys, which sit upstream of the genesis.
 
 **The payout fee cannot be set before mainnet exists.** Tron's Nile testnet sponsors its own energy for the test USDT contract, so every testnet payout reports a zero energy fee whether or not energy delegation is working. The first mainnet payout is therefore the first real measurement, and the fee follows it rather than preceding it. See [Redemptions](/clutch-treasury/redemptions).
-
-The two items with no dependencies — legal advice and the security audit — are also the two with the longest lead times. They run from the start, in parallel with everything else, because starting them late is the one delay that cannot be recovered.
 
 ## What "closed" means here
 
@@ -161,17 +157,9 @@ Riders still give up card-issuer chargebacks by signing payment directly, and th
 
 **Matching — recommended.** Matching is simple, with no surge, pricing engine, or geospatial optimisation. This becomes an operational problem before it becomes a technical one, so the volume at which it needs work should be chosen rather than discovered.
 
-## External review
+## Test coverage
 
-**Blocker.** No external security audit has been done. The areas that most need outside eyes are the signing and encoding path, the four-eyes mint flow, the bounds on the payout endpoint, and the reconciliation arithmetic.
-
-Test depth is uneven and follows the money, which is the right priority but leaves gaps: coverage is deepest in the treasury and thinnest in the Hub API, which sits on the path every user takes.
-
-**Closed by:** an audit report with every critical and high finding fixed or accepted in writing, and failure-branch tests on the mint, burn, sweep, and payout paths, including the ambiguous-payout branch that deliberately stops and pages a human rather than retrying.
-
-## Regulatory review
-
-**Blocker.** A fully-reserved token that is redeemable for USDT and issued by an identifiable operator is money transmission or e-money in most jurisdictions, with registration, customer due diligence, safeguarding, and reporting consequences. An honest reserve model does not exempt it. Regulatory review, and whatever that review requires, precedes any real-funds deployment.
+Test depth is uneven and follows the money, which is the right priority but leaves gaps: coverage is deepest in the treasury and thinnest in the Hub API, which sits on the path every user takes. Failure-branch tests on the mint, burn, sweep, and payout paths — including the ambiguous-payout branch that deliberately stops and pages a human rather than retrying — are what close this, path by path, rather than a single audit event.
 
 ## What already holds
 
