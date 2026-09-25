@@ -37,11 +37,11 @@ SDK connection:
 const sdk = new ClutchHubSdk('http://localhost:3000', publicKey);
 ```
 
-Demo app (standalone clone):
+Demo app, from the clutch-hub repo:
 
 ```bash
-git clone https://github.com/clutchprotocol/clutch-hub-demo-app.git
-cd clutch-hub-demo-app
+git clone https://github.com/clutchprotocol/clutch-hub.git
+cd clutch-hub
 npm install
 VITE_API_URL=http://localhost:3000 npm run dev
 ```

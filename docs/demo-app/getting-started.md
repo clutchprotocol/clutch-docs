@@ -24,7 +24,7 @@ Visit http://localhost:5173
 
 Or use the demo included in clutch-deploy at http://localhost:5173 after `docker compose up -d`.
 
-Docker image: [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/clutchprotocol/clutch-hub-demo-app/pkgs/container/clutch-hub-demo-app). See [Docker images](/reference/docker-images).
+Docker image: [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/orgs/clutchprotocol/packages/container/package/clutch-hub-demo-app). See [Docker images](/reference/docker-images).
 
 ## Configuration
 
