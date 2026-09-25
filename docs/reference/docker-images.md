@@ -21,8 +21,8 @@ Images also published to Docker Hub through 2026-09-18. That registry received n
 | Component | GHCR |
 |-----------|------|
 | **Clutch Node** | [`ghcr.io/clutchprotocol/clutch-node`](https://github.com/clutchprotocol/clutch-node/pkgs/container/clutch-node) |
-| **Clutch Hub API** | [`ghcr.io/clutchprotocol/clutch-hub-api`](https://github.com/clutchprotocol/clutch-hub-api/pkgs/container/clutch-hub-api) |
-| **Demo app** | [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/clutchprotocol/clutch-hub-demo-app/pkgs/container/clutch-hub-demo-app) |
+| **Clutch Hub API** | [`ghcr.io/clutchprotocol/clutch-hub-api`](https://github.com/orgs/clutchprotocol/packages/container/package/clutch-hub-api) |
+| **Demo app** | [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/orgs/clutchprotocol/packages/container/package/clutch-hub-demo-app) |
 | **Explorer backend** | [`ghcr.io/clutchprotocol/clutch-explorer-backend`](https://github.com/clutchprotocol/clutch-explorer/pkgs/container/clutch-explorer-backend) |
 | **Explorer frontend** | [`ghcr.io/clutchprotocol/clutch-explorer-frontend`](https://github.com/clutchprotocol/clutch-explorer/pkgs/container/clutch-explorer-frontend) |
 

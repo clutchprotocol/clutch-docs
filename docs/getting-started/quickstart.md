@@ -70,11 +70,11 @@ Open http://localhost:5173:
 4. As passenger: pick locations on the map and request a ride
 5. As driver: view requests and submit an offer
 
-Or run the demo standalone:
+Or run the demo from the clutch-hub repo:
 
 ```bash
-git clone https://github.com/clutchprotocol/clutch-hub-demo-app.git
-cd clutch-hub-demo-app
+git clone https://github.com/clutchprotocol/clutch-hub.git
+cd clutch-hub
 npm install
 VITE_API_URL=http://localhost:3000 npm run dev
 ```
