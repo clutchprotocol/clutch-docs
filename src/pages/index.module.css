@@ -112,6 +112,22 @@
   margin-bottom: 2.25rem;
 }
 
+.whatIsList {
+  max-width: 68ch;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.whatIsList li + li {
+  margin-top: 0.75rem;
+}
+
+/* A repo name is one word. Without this, clutch-treasury can split at its hyphen. */
+.whatIsList code {
+  white-space: nowrap;
+}
+
 .featureGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

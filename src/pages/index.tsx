@@ -86,6 +86,44 @@ function Hero(): ReactNode {
   );
 }
 
+function Repo({name}: {name: string}): ReactNode {
+  return (
+    <Link href={`https://github.com/clutchprotocol/${name}`}>
+      <code>{name}</code>
+    </Link>
+  );
+}
+
+// The same three lines as the org profile README and clutchprotocol.io. Change them together.
+function WhatIsClutch(): ReactNode {
+  return (
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle}>What is Clutch?</h2>
+      <ol className={styles.whatIsList}>
+        <li>
+          <strong>What it is:</strong> Clutch Protocol is an open-source
+          ride-sharing blockchain. Passengers and drivers send ride requests,
+          offers and payments as transactions on its own chain,{' '}
+          <Repo name="clutch-node" />.
+        </li>
+        <li>
+          <strong>How apps use it:</strong> <Repo name="clutch-hub" /> has the
+          Hub API, a JavaScript SDK that signs on the user's device, and a
+          reference app for passengers and drivers.{' '}
+          <Repo name="clutch-explorer" /> shows the blocks and transactions.
+        </li>
+        <li>
+          <strong>Money and servers:</strong> Rides are paid in CLT, a token
+          fully backed by USDT, and <Repo name="clutch-treasury" /> gives CLT
+          for USDT and pays USDT back. <Repo name="clutch-deploy" /> runs the
+          public testnet and the mainnet, which has been live since 2026-09-19
+          (mainnet deposits are not open yet).
+        </li>
+      </ol>
+    </section>
+  );
+}
+
 function Features(): ReactNode {
   return (
     <section className={styles.section}>
@@ -140,6 +178,7 @@ export default function Home(): ReactNode {
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
       <Hero />
       <main>
+        <WhatIsClutch />
         <Features />
         <ArchitectureSteps />
       </main>
