@@ -82,14 +82,6 @@ Components: `DriverView.jsx`, `ActiveTripCard.jsx`.
 1. Try WebSocket subscription via `subscribe*`
 2. On failure, fall back to periodic `list*` queries
 
-## Network info
-
-`GeneralView.jsx` displays configured endpoints:
-
-- Hub API URL (auto-detected from hostname)
-- Public node WebSocket URLs (`VITE_PUBLIC_NODE_ENDPOINTS`)
-- Links to GitHub repos and stage nodes
-
 ## Private key prompt
 
 Sensitive actions trigger `usePrivateKeyRequest` modal — user enters private key per action if not stored locally.

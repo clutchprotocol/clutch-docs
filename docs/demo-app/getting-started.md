@@ -33,7 +33,6 @@ Docker image: [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `VITE_API_URL` | Hub API base URL | `http://localhost:3000` |
-| `VITE_PUBLIC_NODE_ENDPOINTS` | Comma-separated node WS URLs for network tab | empty |
 | `VITE_CHAIN_ID` | Chain id pinned client-side for the auth challenge and `signTransaction`'s verification pin — never sourced from the Hub | `2077` |
 | `VITE_ORCHESTRATOR_URL` | `payment-orchestrator` base URL, used by the deposit panel | `/payment` (a same-origin path, proxied by nginx) |
 | `VITE_CARTO_API_KEY` | CARTO basemap API key (Voyager / Dark Matter map tiles) | empty — falls back to OpenStreetMap tiles |
