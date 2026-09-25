@@ -16,7 +16,7 @@ For the full interaction between passenger and driver (including Hub API and nod
 | Generate wallet | Local key generation (`wallet.js`) |
 | Import wallet | Paste existing public/private key pair |
 | Restore backup | Open an encrypted backup file and unlock it with its passphrase |
-| Back up wallet | Menu, while connected — writes an encrypted JSON file |
+| Back up wallet | ☰ → **Wallet** → **Back up**, while connected — writes an encrypted JSON file |
 
 Keys are stored per role: `clutch_passenger_*`, `clutch_driver_*` in localStorage.
 
@@ -51,7 +51,7 @@ Components: `PassengerView.jsx`, `RideForm.jsx`, `ActiveTripCard.jsx`, `BalanceD
 
 ## Top up (deposit)
 
-Opened from the app menu (☰ → **Top up with USDT**) once a wallet exists — available to either role, not just passengers, though funding a passenger wallet to pay fares is the common case. `DepositPanel.jsx` calls `payment-orchestrator` directly (`POST`/`GET /api/v1/deposits`), bypassing the Hub API and the SDK entirely except for `sdk.getAuthHeaders()`, which attaches the same Hub-issued JWT as a bearer token. See [Architecture — Deposit Flow](/getting-started/architecture#deposit-flow) for why the path is separate.
+Opened from the app menu (☰ → **Wallet** → **Top up**) once a wallet exists — available to either role, not just passengers, though funding a passenger wallet to pay fares is the common case. `DepositPanel.jsx` calls `payment-orchestrator` directly (`POST`/`GET /api/v1/deposits`), bypassing the Hub API and the SDK entirely except for `sdk.getAuthHeaders()`, which attaches the same Hub-issued JWT as a bearer token. See [Architecture — Deposit Flow](/getting-started/architecture#deposit-flow) for why the path is separate.
 
 | Panel state | What it means |
 |-------------|----------------|
