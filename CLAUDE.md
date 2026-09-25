@@ -62,7 +62,7 @@ Enabled through the classic preset's `blog` options in `docusaurus.config.ts`; s
 
 ## Customizations (`src/`)
 
-- `src/pages/index.tsx` — custom landing page (hero, feature-card grid linking into sections, architecture steps). Update the `features` array / links when sections change.
+- `src/pages/index.tsx` — custom landing page (hero, a three-line "What is Clutch?" summary, feature-card grid linking into sections, architecture steps). Update the `features` array / links when sections change. The three summary lines are the same as in the org profile README (`.github/profile/README.md`) and on clutchprotocol.io, so change all three places together.
 - `src/css/custom.css` — brand palette only (`--ifm-color-primary` family, indigo `#667eea` from the logo gradient) with dark-mode variants. No swizzled theme components.
 - `static/img/` — logo, favicon, social card, and **placeholder SVG screenshots** (`demo-*.svg`, `explorer-*.svg`, `grafana.svg`) referenced as `/img/...`; docs contain notes on replacing them with real PNG captures.
 
