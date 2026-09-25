@@ -181,7 +181,7 @@ const driverSdk = new ClutchHubSdk(API_URL, driverKey, undefined, CHAIN_ID);
 
 ## 2. Fund wallets
 
-Both wallets need CLT before they can transact, and CLT is issued against a USDT deposit. Each wallet has one permanent Tron address; USDT (TRC-20) sent to it is minted as CLT to that wallet. Get the address from `POST /api/v1/deposits` on `payment-orchestrator`, or from the demo app's ☰ → **Top up with USDT** panel — see [Deposits](/clutch-treasury/deposits).
+Both wallets need CLT before they can transact, and CLT is issued against a USDT deposit. Each wallet has one permanent Tron address; USDT (TRC-20) sent to it is minted as CLT to that wallet. Get the address from `POST /api/v1/deposits` on `payment-orchestrator`, or from the demo app's ☰ → **Wallet** → **Top up** tab — see [Deposits](/clutch-treasury/deposits).
 
 Confirm the CLT arrived before going on:
 

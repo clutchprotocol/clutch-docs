@@ -57,7 +57,7 @@ It checks a hub-returned unsigned transaction (type, fare/amount, references, `f
 ## Getting CLT
 
 **How do I get CLT?**  
-Deposit USDT. Every wallet has one permanent Tron address; send USDT (TRC-20) to it and the treasury mints the matching CLT to that wallet. In the demo app that's ☰ → **Top up with USDT**. See [Deposits](/clutch-treasury/deposits).
+Deposit USDT. Every wallet has one permanent Tron address; send USDT (TRC-20) to it and the treasury mints the matching CLT to that wallet. In the demo app that's ☰ → **Wallet** → **Top up**. See [Deposits](/clutch-treasury/deposits).
 
 **There used to be a faucet — where did it go?**  
 Gone, in two stages. First the endpoint: `POST /faucet` and the SDK's `requestFaucet()` were removed, because the faucet *transferred* CLT out of a genesis-funded account rather than minting it, so what it handed out had no USDT behind it and was excluded from reserve liability by construction. That was harmless while CLT only ever flowed one way. Redemptions went live on 2026-09-04, and nothing in the burn path asks where burned CLT came from — which turned that account into a route from unbacked genesis CLT to real USDT out of the payout float.

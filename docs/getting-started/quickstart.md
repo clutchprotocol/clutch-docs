@@ -66,7 +66,7 @@ Open http://localhost:5173:
 
 1. Choose **Passenger** or **Driver**
 2. Generate or import a wallet
-3. Fund the wallet: ☰ → **Top up with USDT**, then send USDT (TRC-20) to the address shown — see [Deposits](/clutch-treasury/deposits)
+3. Fund the wallet: ☰ → **Wallet** → **Top up**, then send USDT (TRC-20) to the address shown — see [Deposits](/clutch-treasury/deposits)
 4. As passenger: pick locations on the map and request a ride
 5. As driver: view requests and submit an offer
 
