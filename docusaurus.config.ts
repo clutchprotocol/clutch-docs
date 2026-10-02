@@ -7,6 +7,9 @@ const config: Config = {
   tagline: 'Decentralized ride-sharing blockchain - developer documentation',
   favicon: 'img/favicon.svg',
 
+  stylesheets: [
+    'https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap',
+  ],
   future: {
     v4: true,
   },
@@ -85,6 +88,8 @@ const config: Config = {
       content:
         'Alpha software on a live testnet — APIs may change without notice.',
       isCloseable: true,
+      backgroundColor: '#e8b923',
+      textColor: '#14181c',
     },
     colorMode: {
       defaultMode: 'light',
