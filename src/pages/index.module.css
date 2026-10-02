@@ -1,126 +1,172 @@
 /**
- * Landing page styles for Clutch Protocol docs.
+ * Landing page styles for Clutch Protocol docs. Same look as clutchprotocol.io.
  */
 
 .heroBanner {
-  padding: 5rem 1.5rem 4rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #4558a5 0%, #667eea 60%, #764ba2 100%);
-  color: #fff;
+  padding: 4.5rem 1.5rem 4rem;
+  border-bottom: 4px dashed var(--clutch-lane);
 }
 
 .heroInner {
-  max-width: 900px;
+  max-width: 1160px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 4rem;
+  align-items: center;
 }
 
 .heroTitle {
-  font-size: 3rem;
-  font-weight: 800;
+  font-size: clamp(3.25rem, 7vw, 5.5rem);
+  line-height: 0.95;
   margin-bottom: 1rem;
-  line-height: 1.1;
 }
 
 .heroSubtitle {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.88);
-  margin-bottom: 0.5rem;
-  font-weight: 400;
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
 }
 
 .heroTagline {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 2.25rem;
+  font-size: 1.2rem;
+  max-width: 34em;
+  margin-bottom: 2rem;
 }
 
 .buttons {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.heroButtonPrimary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #fff;
-  color: #4558a5;
-  font-weight: 700;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+.heroButtonPrimary,
+.heroButtonOutline {
+  display: inline-block;
+  padding: 0.75rem 1.35rem;
+  border-radius: 6px;
+  border: 2px solid var(--ifm-font-color-base);
+  font-weight: 600;
   text-decoration: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.heroButtonPrimary {
+  background: var(--ifm-font-color-base);
+  color: var(--ifm-background-color);
 }
 
 .heroButtonPrimary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
-  color: #4558a5;
+  background: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-background-color);
   text-decoration: none;
 }
 
 .heroButtonOutline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: transparent;
-  color: #fff;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  transition: background 0.15s ease;
+  color: var(--ifm-font-color-base);
 }
 
 .heroButtonOutline:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: var(--ifm-font-color-base);
+  color: var(--ifm-background-color);
   text-decoration: none;
 }
 
 .alphaBadge {
-  display: inline-block;
-  margin-top: 2rem;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 999px;
-  color: #fff;
+  margin-top: 1.75rem;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* The ride as a route: four stops joined by a line */
+.route {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-toc-border-color);
+  border-left: 6px solid var(--clutch-lane);
+  padding: 1.75rem 1.75rem 1.5rem;
+}
+
+.routeTitle {
+  font-size: 1.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.routeList {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0 0 0 2rem;
+  position: relative;
+}
+
+.routeList::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+.routeList li {
+  position: relative;
+  padding: 0.4rem 0;
+}
+
+.routeList li::before {
+  content: '';
+  position: absolute;
+  left: -2rem;
+  top: 0.75rem;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--ifm-background-surface-color);
+  border: 3px solid var(--ifm-color-primary);
+}
+
+.routeList code {
+  display: block;
+  font-weight: 500;
 }
 
 .section {
-  padding: 3rem 1.5rem;
-  max-width: 1100px;
+  padding: 4rem 1.5rem;
+  max-width: 1160px;
   margin: 0 auto;
 }
 
 .sectionTitle {
-  font-size: 1.75rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 2.25rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin-bottom: 2rem;
 }
 
+/* Three facts, label left and text right */
 .whatIsList {
-  max-width: 68ch;
-  margin: 0 auto;
-  font-size: 1.05rem;
-  line-height: 1.75;
+  margin: 0;
+  border-top: 2px solid var(--ifm-font-color-base);
 }
 
-.whatIsList li + li {
-  margin-top: 0.75rem;
+.whatIsList > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.3fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.whatIsList dt {
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.whatIsList dd {
+  margin: 0;
+  max-width: 62ch;
 }
 
 /* A repo name is one word. Without this, clutch-treasury can split at its hyphen. */
@@ -128,81 +174,72 @@
   white-space: nowrap;
 }
 
+/* Stack: ruled two-column list, no cards */
 .featureGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 4rem;
 }
 
 .featureCard {
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 12px;
-  padding: 1.5rem;
-  background: var(--ifm-card-background, var(--ifm-background-color));
-  transition: transform 0.15s ease, border-color 0.15s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  display: block;
+  padding: 1.25rem 0 1.75rem;
+  border-top: 2px solid var(--ifm-font-color-base);
   text-decoration: none;
   color: inherit;
 }
 
 .featureCard:hover {
-  transform: translateY(-2px);
-  border-color: var(--ifm-color-primary);
-  text-decoration: none;
   color: inherit;
+  text-decoration: none;
 }
 
-.featureIcon {
-  font-size: 1.5rem;
+.featureCard:hover .featureTitle {
   color: var(--ifm-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .featureTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0;
+  font-size: 1.6rem;
+  margin: 0 0 0.35rem;
 }
 
 .featureDesc {
-  font-size: 0.95rem;
-  color: var(--ifm-color-emphasis-700);
   margin: 0;
+  max-width: 48ch;
+  color: var(--ifm-color-emphasis-800);
 }
 
 .archBlock {
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 12px;
-  padding: 2rem;
-  background: var(--ifm-background-color);
+  background: var(--ifm-background-surface-color);
+  border-left: 6px solid var(--clutch-lane);
+  padding: 1.75rem 2rem;
 }
 
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 3rem 1.5rem;
   }
-  .heroTitle {
-    font-size: 2.25rem;
+  .heroInner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
   }
   .featureGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .whatIsList > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .featureGrid {
-    grid-template-columns: 1fr;
-  }
-  .heroTitle {
-    font-size: 1.85rem;
-  }
   .buttons {
     flex-direction: column;
   }
   .heroButtonPrimary,
   .heroButtonOutline {
-    width: 100%;
-    justify-content: center;
+    text-align: center;
   }
 }

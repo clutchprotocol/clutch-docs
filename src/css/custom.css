@@ -1,26 +1,105 @@
 /**
- * Clutch Protocol docs theme — brand colors from clutch-logo.svg gradient.
+ * Clutch Protocol docs theme. Same look as clutchprotocol.io: concrete page, asphalt, one
+ * highway-sign green, and a yellow lane-line for anything "current".
  */
 
 :root {
-  --ifm-color-primary: #667eea;
-  --ifm-color-primary-dark: #5a72d4;
-  --ifm-color-primary-darker: #546bc8;
-  --ifm-color-primary-darkest: #4558a5;
-  --ifm-color-primary-light: #768aee;
-  --ifm-color-primary-lighter: #8092f0;
-  --ifm-color-primary-lightest: #9aa8f4;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --clutch-asphalt: #14181c;
+  --clutch-concrete: #eceee8;
+  --clutch-paper: #fdfdf8;
+  --clutch-lane: #e8b923;
+
+  --ifm-color-primary: #0a5c45;
+  --ifm-color-primary-dark: #095340;
+  --ifm-color-primary-darker: #08503d;
+  --ifm-color-primary-darkest: #064133;
+  --ifm-color-primary-light: #0b6549;
+  --ifm-color-primary-lighter: #0c6a4d;
+  --ifm-color-primary-lightest: #0f8461;
+
+  --ifm-font-family-base: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifm-heading-font-family: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  --ifm-font-family-monospace: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --ifm-font-size-base: 106.25%;
+  --ifm-heading-font-weight: 700;
+  --ifm-line-height-base: 1.65;
+  --ifm-code-font-size: 90%;
+  --ifm-global-radius: 6px;
+
+  --ifm-background-color: var(--clutch-concrete);
+  --ifm-background-surface-color: var(--clutch-paper);
+  --ifm-navbar-background-color: rgba(236, 238, 232, 0.96);
+  --ifm-navbar-shadow: none;
+  --ifm-toc-border-color: #c9cec5;
+  --ifm-color-content: #2b3136;
+  --docusaurus-highlighted-code-line-bg: rgba(232, 185, 35, 0.22);
+
+  --docusaurus-announcement-bar-height: auto;
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #8b9cf5;
-  --ifm-color-primary-dark: #7286f2;
-  --ifm-color-primary-darker: #667eea;
-  --ifm-color-primary-darkest: #4558a5;
-  --ifm-color-primary-light: #9aa8f7;
-  --ifm-color-primary-lighter: #a4b0f8;
-  --ifm-color-primary-lightest: #c2cbfb;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #4cc29b;
+  --ifm-color-primary-dark: #35b88c;
+  --ifm-color-primary-darker: #31ad84;
+  --ifm-color-primary-darkest: #278c6a;
+  --ifm-color-primary-light: #66cba9;
+  --ifm-color-primary-lighter: #72cfb0;
+  --ifm-color-primary-lightest: #96dcc4;
+
+  --ifm-background-color: var(--clutch-asphalt);
+  --ifm-background-surface-color: #1b2127;
+  --ifm-navbar-background-color: rgba(20, 24, 28, 0.96);
+  --ifm-toc-border-color: #323a42;
+  --ifm-color-content: #d5dad6;
+  --docusaurus-highlighted-code-line-bg: rgba(232, 185, 35, 0.16);
+}
+
+/* The announcement bar colours are set in docusaurus.config.ts (website banner yellow) */
+div[class*='announcementBar'] a { color: inherit; }
+
+/* Headings */
+h1, h2, h3, h4 { letter-spacing: -0.005em; line-height: 1.1; }
+.markdown h1 { font-size: 3rem; }
+.markdown h2 { font-size: 2rem; margin-top: 2.5rem; }
+.markdown h3 { font-size: 1.5rem; }
+
+/* Navbar */
+.navbar { border-bottom: 1px solid var(--ifm-toc-border-color); }
+.navbar__title { font-family: var(--ifm-heading-font-family); font-size: 1.5rem; font-weight: 700; }
+.navbar__link { font-weight: 500; }
+.navbar__link--active { box-shadow: inset 0 -3px 0 var(--clutch-lane); }
+
+/* Sidebar: the page you are on gets a lane-line marker */
+.menu__link { border-radius: 0 var(--ifm-global-radius) var(--ifm-global-radius) 0; }
+.menu__link--active:not(.menu__link--sublist) {
+  font-weight: 600;
+  background: var(--ifm-background-surface-color);
+  box-shadow: inset 4px 0 0 var(--clutch-lane);
+}
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link {
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Prose and code */
+.markdown a { text-underline-offset: 3px; }
+.markdown a:not(.button):not(.hash-link) { text-decoration: underline; text-decoration-thickness: 1px; }
+code { background: rgba(20, 24, 28, 0.07); border: 0; }
+[data-theme='dark'] code { background: rgba(255, 255, 255, 0.08); }
+.markdown table { display: table; width: 100%; }
+.markdown table th { font-family: var(--ifm-heading-font-family); font-size: 1.05rem; }
+.theme-code-block { box-shadow: none; border: 1px solid var(--ifm-toc-border-color); }
+
+/* Pagination: plain ruled boxes, no lift */
+.pagination-nav__link { border-radius: 0; border: 1px solid var(--ifm-toc-border-color); border-top: 3px solid var(--ifm-color-primary); }
+.pagination-nav__link:hover { border-color: var(--ifm-color-primary); }
+.pagination-nav__label { font-family: var(--ifm-heading-font-family); font-size: 1.25rem; }
+
+/* Footer */
+.footer { background: var(--clutch-asphalt); border-top: 4px dashed var(--clutch-lane); }
+.footer__title { font-family: var(--ifm-heading-font-family); font-size: 1.2rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }
