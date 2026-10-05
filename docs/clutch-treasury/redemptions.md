@@ -20,7 +20,7 @@ When withdrawals open, the pilot's limits are $25 to $50 per withdrawal, a $2.00
 
 Redeeming reverses a deposit: burn CLT on the Clutch chain, receive USDT on Tron. The two legs happen in a fixed order, and that order is the whole safety argument.
 
-A redemption fee is charged on this leg, and it is the only revenue the protocol takes ([Who pays for the network](/clutch-node/clt-economics#who-pays-for-the-network)). You burn the full amount and receive that much less in USDT; the difference stays in the reserve. Both numbers are quoted back when the redemption is created — `amount_clt` is what to burn, `payout_amount_usdt` is what arrives — and the quote is stored at that moment rather than recomputed later, so a fee change can never land between what you accepted and what you are paid.
+A redemption fee is charged on this leg. The only other money the protocol keeps is the part of a deposit's network fee that the relay does not charge ([Who pays for the network](/clutch-node/clt-economics#who-pays-for-the-network), [Deposits](/clutch-treasury/deposits)). You burn the full amount and receive that much less in USDT; the difference stays in the reserve. Both numbers are quoted back when the redemption is created — `amount_clt` is what to burn, `payout_amount_usdt` is what arrives — and the quote is stored at that moment rather than recomputed later, so a fee change can never land between what you accepted and what you are paid.
 
 ## Burn first, pay second
 
