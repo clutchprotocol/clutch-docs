@@ -40,10 +40,10 @@ flowchart LR
 
 Two independent things read Tron: the orchestrator watches deposit addresses to detect incoming payments, and the treasury separately reads balances to compute the reserve during reconciliation. Both are read-only. The only arrows that write to Tron pass through `tron-signer`.
 
-## Testnet posture
+## Testnet and mainnet posture
 
 :::danger Not production custody
-This is a testnet system. The mint authority and the deposit mnemonic are both environment variables today, not keys behind a KMS or a hardware boundary. `clutch-treasury/docs/keys.md` names the mainnet blocker explicitly: an AWS-KMS-backed signer, a real key ceremony, and tested recovery, all before any of this holds real funds. `ChainSigner` (the mint key) and `PayoutSigner` (the payout key) are both already written as swap boundaries for that future signer — the seam exists, but nothing on the other side of it does yet.
+The treasury runs two stacks: the testnet (Nile test USDT, no value) and the mainnet pilot (real USDT, small limits). On both, the mint authority and the deposit mnemonic are plain secrets on the server, in environment variables, and not keys behind a KMS or a hardware boundary. On the mainnet pilot that is a real exposure: someone who gets into the server could mint CLT without limit and take the reserve. The pilot's limits ($100 per top-up, $200 per day, $50 per withdrawal) are small for that reason. `clutch-treasury/docs/keys.md` names the blocker for a production mainnet explicitly: a signer whose key cannot be exported, a real key ceremony, and tested recovery. `ChainSigner` (the mint key) and `PayoutSigner` (the payout key) are both already written as swap boundaries for that future signer — the seam exists, but nothing on the other side of it is in use.
 
 [Mainnet Readiness](/reference/mainnet-readiness) collects this blocker and every other one, each with what closes it.
 :::

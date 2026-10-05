@@ -13,7 +13,13 @@ A decentralized ride-sharing blockchain with on-chain ride lifecycle, client-sid
 CLT is pegged 1 USD = 1,000,000 CLT, making CLT itself the smallest unit (a micro-dollar) — there's nothing smaller to express as a decimal. Every CLT in circulation is backed 1:1 by off-chain reserve; the only operations that change total supply are the authority-gated `Mint` and the permissionless `Burn`. See [CLT Economics](/clutch-node/clt-economics).
 
 **Is it production-ready?**  
-No. Alpha/experimental. APIs may change without notice.
+No. Alpha/experimental. APIs may change without notice. The mainnet is a capped pilot, not a production launch: see the next question.
+
+**Is there a mainnet?**  
+Yes, as a capped pilot. Chain `1000` is running with three validators and has been open to every account since 2026-10-05. You get CLT by topping up with USDT (TRC-20 on Tron): at most $100 per top-up and $200 per day, and network fees apply. Withdrawals are not open yet. The pilot is alpha software with real money: the three validators run on one host, the treasury's mint and payout keys are plain keys on the server, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and [Mainnet Readiness](/reference/mainnet-readiness) for what stands between the pilot and a production mainnet.
+
+**Why can't I withdraw on the mainnet yet?**  
+A withdrawal (a redemption) is paid from the treasury's payout wallet, and that wallet has to be activated once before it can send its first payment. The activation needs a small surplus in the reserve, which builds up from the first top-ups. Until it has happened, the treasury refuses to start a redemption, before anything is burned, so nobody loses CLT by trying. See [Redemptions](/clutch-treasury/redemptions).
 
 **Is there a DAO / governance?**  
 Described on the marketing site as roadmap. Not implemented in the current codebase.

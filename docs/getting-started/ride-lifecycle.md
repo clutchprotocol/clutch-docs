@@ -141,11 +141,11 @@ it decides who receives money, so a node with a different value computes a diffe
 the same block, and it cannot be added to a chain after genesis. It defaults to `0`, which disables
 the rule entirely.
 
-:::note The public testnet uses five minutes, mainnet will use two hours
+:::note The public testnet uses five minutes, the mainnet uses two hours
 Stage runs `ride_auto_release_secs = 300`, enabled by a chain reset on 2026-09-14. That is
-deliberately short: two hours cannot be exercised on a development chain, so the rule would reach
-mainnet having never run against a real ride. The decision of record for mainnet is **7200** (two
-hours), and `check-genesis.sh` refuses any other value when building a mainnet genesis.
+deliberately short: two hours cannot be exercised on a development chain. The mainnet runs **7200**
+(two hours), the decision of record, and `check-genesis.sh` refuses any other value when building a
+mainnet genesis.
 
 Read the live value rather than trusting this page — it is in `get_chain_info`:
 

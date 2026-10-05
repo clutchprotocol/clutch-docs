@@ -4,11 +4,13 @@ sidebar_position: 2
 
 # Mainnet Readiness
 
-**Status: not ready for real funds.** Last reviewed 2026-09-17.
+**Status: a capped pilot is live; a production mainnet is not ready.** Last reviewed 2026-10-05.
 
-Clutch runs a public alpha testnet. The CLT on it is backed by Tron **Nile testnet** USDT, which has no value and cannot be bought. Nothing in this stack should hold money you care about yet.
+The mainnet (chain `1000`) has been open to every account since 2026-10-05 as a **capped pilot**: real USDT, at most $100 per top-up and $200 per day, and withdrawals are not open yet. The pilot goes ahead without parts of the gate below, on purpose, with limits small enough that a total loss would be acceptable: the mint and payout keys are plain keys on the server, the three validators run on one host and are operated by one person, no real payout has been made yet, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and the limits.
 
-This page exists because "when is mainnet?" deserves a better answer than "no fixed date". Below is what has to be true before real funds, why each item matters, and what counts as evidence that it is done. It is the public half of a checklist maintained in the treasury repository, which carries the operational detail.
+Clutch also runs a public alpha testnet. The CLT on it is backed by Tron **Nile testnet** USDT, which has no value and cannot be bought.
+
+This page exists because "when is a production mainnet?" deserves a better answer than "no fixed date". Below is what has to be true before a production launch and before the pilot's limits are raised, why each item matters, and what counts as evidence that it is done. It is the public half of a checklist maintained in the treasury repository, which carries the operational detail.
 
 ## How to read this
 
@@ -20,9 +22,11 @@ This page exists because "when is mainnet?" deserves a better answer than "no fi
 
 Every item names what closes it. An item is closed by an artefact someone else can inspect, not by intent.
 
+The pilot is a recorded exception to the first row. The maintainer decided to run it before the key custody and the payout rail are closed, and the caps are the bound on the loss. The rule in the table is the rule for anything beyond the pilot.
+
 ## The gate
 
-Five things must all be true before any mainnet deposit address reaches a user:
+Five things must all be true before a production launch, and before the pilot's limits are raised. The pilot runs without items 1, 2, 3 (independent operators) and 5, on purpose:
 
 1. The mint key and the payout key sit behind a KMS or hardware boundary, with a rehearsed recovery.
 2. The payout rail has been proven on mainnet, with a real receipt behind the fee.
@@ -65,9 +69,13 @@ The bar for each is evidence that something worked, not evidence that it was con
 
 ## Key custody
 
-**Blocker.** The mint authority is the only key that can create CLT, so its compromise means unbounded issuance against a fixed reserve. Today it is an environment variable, as is the payout key. That is a tracked gap rather than an oversight: `ChainSigner` and `PayoutSigner` already exist in the code as swap boundaries for a KMS-backed signer, and the named blocker is that signer plus a real key ceremony and tested recovery. See [Security](/reference/security) for the full key inventory.
+**Blocker.** The mint authority is the only key that can create CLT, so its compromise means unbounded issuance against a fixed reserve. Today it is an environment variable on the server, as is the payout key, on the testnet and on the mainnet pilot. On the pilot that is a real exposure: someone who gets into the server could mint CLT without limit and take the reserve, and the pilot's small limits are what keep that loss small. That is a tracked gap rather than an oversight: `ChainSigner` and `PayoutSigner` already exist in the code as swap boundaries for a KMS-backed signer, and the named blocker is that signer plus a real key ceremony and tested recovery. See [Security](/reference/security) for the full key inventory.
 
-One absence here is deliberate and will stay: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. See [Clutch Treasury Overview](/clutch-treasury/overview).
+One absence is deliberate in the design: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. That holds on the testnet. **The mainnet pilot gives it up on purpose**, because of cost and the early stage of the network: all deposits are swept into the payout wallet, whose key is on the server, and the custody address stays empty. So on the pilot the worst case for a compromised server is the whole reserve, and the small limits bound how large that can be. See [Clutch Treasury Overview](/clutch-treasury/overview).
+
+:::warning What the mainnet pilot actually runs
+The chain supports M-of-N minting, described below, but the mainnet genesis commits **one** mint authority and no co-signers. That was decided on 2026-09-18, because a second independent key store was not affordable. Since 2026-10-05 that one key is a plain secret on the server. The four-eyes rule, the mint caps and the halt breaker are in the treasury service, off-chain, so they stop a mistake in the treasury and not someone who holds the key. Adding co-signers later needs a new chain, because the mint authority and the co-signer set are committed in the genesis.
+:::
 
 **Multi-signature minting shipped on 2026-09-11**, and it addresses the larger half of this item. Until then a `Mint` was authorised by a single address, while every other control on minting — the two-approver rule, the per-transaction cap, the daily cap, the halt breaker — lived off-chain. A holder of that one key could submit a mint straight to a node and none of them would run. Non-exportable key storage lowers the chance of theft; it does nothing about what theft would mean.
 
@@ -81,7 +89,7 @@ What remains is generating those keys, which happens in a recorded ceremony requ
 
 ## The payout rail
 
-**Blocker.** The redemption payout path cannot be fully tested on the current testnet, and this is worth understanding if you are building on Clutch. Nile's test USDT contract sponsors its own energy, so every Nile payout reports zero energy fee whether or not energy delegation is working. A payout made before delegating reads identically to one made after. Mainnet USDT makes the sender pay, so the first mainnet payout is the first real test of the energy model.
+**Blocker.** The redemption payout path cannot be fully tested on the current testnet, and this is worth understanding if you are building on Clutch. Nile's test USDT contract sponsors its own energy, so every Nile payout reports zero energy fee whether or not energy delegation is working. A payout made before delegating reads identically to one made after. Mainnet USDT makes the sender pay, so the first mainnet payout is the first real test of the energy model. No mainnet payout has been made yet: withdrawals open once the payout wallet is activated, and the first one is that measurement.
 
 The redemption fee follows from that. It was measured rather than chosen, from the energy a TRC-20 transfer burns, the chain's energy price, and the TRX price on the day. That energy price is a TRON governance parameter which has already halved once, so the fee has to be re-measured against mainnet rather than scaled from the testnet number. [Redemptions](/clutch-treasury/redemptions) documents the model.
 
@@ -93,7 +101,7 @@ A single redemption is already bounded twice, in two services that do not share 
 
 **Blocker.** Consensus parameters, including the network id and the testnet flag, are committed into the genesis hash and compared by peers at handshake. Mainnet is therefore a new genesis, not a configuration change, and it must pre-mint nothing, exactly as the current chain does. See [CLT Economics](/clutch-node/clt-economics).
 
-Aura is an authority round-robin, so the validator set is permissioned by construction. Mainnet needs authorities that do not share an operator or a failure domain, each with its own key.
+Aura is an authority round-robin, so the validator set is permissioned by construction. A production mainnet needs authorities that do not share an operator or a failure domain, each with its own key. The pilot's three authorities run on one host and are operated by one person, so the host is the chain: if it is lost, the chain is lost with it. The pilot's own chain holds only what users top up within the small limits.
 
 **Nothing was watching whether the chain was producing at all until 2026-09-14.** The testnet halted, stayed halted for most of a day, and the first alarm was a person noticing the block explorer was empty — three layers below the fault. Alerts covered the money path and not the chain that money path reads from, which is the wrong way round: a treasury reading a frozen chain believes a frozen supply and judges its reserve against it.
 
@@ -137,7 +145,7 @@ Keying it correctly was the substance. Behind a CDN the immediate peer is the CD
 
 **Blocker for any app holding real funds.** This is the item most likely to affect you today.
 
-The reference demo app generates or imports keys in the browser and stores them in plaintext `localStorage`. That is a deliberate choice for a demo on a valueless testnet, and it is not a wallet. Do not put real funds behind it, and do not carry that pattern into an app that will. The SDK's design does not require it: keys never leave the client, so a real key boundary can be substituted without changing how transactions are built or signed.
+The reference demo app generates or imports keys in the browser and stores them in plaintext `localStorage`. That was a deliberate choice for a demo on a valueless testnet, and it is not a wallet. **The mainnet pilot serves this same app**, so on the pilot your key sits in the browser too: clearing site data, switching browsers or using another machine loses it, and nothing can recover it. The app offers an encrypted backup from its menu; use it, and keep only small amounts behind a key stored this way. Do not carry that pattern into an app that holds more. The SDK's design does not require it: keys never leave the client, so a real key boundary can be substituted without changing how transactions are built or signed.
 
 **Closed by:** the reference app moving to a real key boundary such as a hardware wallet, an OS keychain, or an external signer, or being presented unambiguously as a demo that is not a place to hold value.
 
@@ -167,7 +175,7 @@ Stated so the sound parts are not assumed provisional. These were designed for t
 
 - **The deposit mnemonic exists in one service.** The service that hands out deposit addresses holds only an extended public key, which derives receive addresses and cannot spend. Owning it does not move a deposit.
 - **The sweep endpoint takes an address index and nothing else** — no destination, amount, or contract — so it cannot be turned into a second payout path.
-- **Reserve custody is unreachable from code**, which is why payouts come from a bounded float.
+- **Reserve custody is unreachable from code** on the testnet, which is why payouts come from a bounded float there. The mainnet pilot does not have this: see Key custody above.
 - **Redemptions are bounded twice, in services that do not share the value.**
 - **Ambiguous payouts stop rather than retry.** Only a reply proving nothing was broadcast returns a redemption to the queue; anything else pages a human. That accepts a stuck redemption to avoid a double payment.
 - **Minting has four-eyes approval, a per-transaction cap, a daily cap, and a manual halt.**
@@ -182,4 +190,4 @@ The [discussions](https://github.com/orgs/clutchprotocol/discussions) are open, 
 
 ## What this page is not
 
-It is not a date. The items are ordered by dependency, not by schedule, and no mainnet date will appear here until the gate above is closed. It is also not exhaustive about internal operational work: the checklist this page derives from tracks infrastructure and process items that are not useful to publish.
+It is not a date. The items are ordered by dependency, not by schedule, and no date for a production mainnet will appear here until the gate above is closed. It is also not exhaustive about internal operational work: the checklist this page derives from tracks infrastructure and process items that are not useful to publish.

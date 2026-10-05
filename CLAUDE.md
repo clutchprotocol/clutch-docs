@@ -57,7 +57,9 @@ Enabled through the classic preset's `blog` options in `docusaurus.config.ts`; s
 - **Docs served at site root**: `routeBasePath: '/'` — doc URLs have no `/docs/` prefix (e.g. `/clutch-node/overview`). Internal links use absolute paths like `/clutch-hub-api/overview`.
 - **Mermaid** enabled via `markdown.mermaid: true` + `@docusaurus/theme-mermaid` — used freely in architecture/lifecycle/economics docs.
 - `editUrl` points to `github.com/clutchprotocol/clutch-docs/tree/main/`.
-- Navbar links out to stage demo, npm SDK, marketing site, clutch-deploy repo, GitHub org. Footer link groups: Docs / Build / Project / Community.
+- Navbar links out to the mainnet app, the testnet demo, npm SDK, marketing site, clutch-deploy repo, GitHub org. Footer link groups: Docs / Build / Project / Community.
+- The yellow announcement bar has an `id` (`mainnet-pilot`). A visitor who closes it is remembered by that id, so change the id when the text changes in a way everyone should see again.
+- **Status words must stay true.** Since 2026-10-05 the mainnet is a live capped pilot (real USDT, small limits, withdrawals not open until the payout wallet is activated) and the stage is a testnet. The pages that carry status are `intro.md`, `reference/faq.md`, `reference/mainnet-readiness.md`, `reference/security.md`, `getting-started/environments.md`, `clutch-treasury/{overview,deposits,redemptions}.md` and the docs homepage; the pilot's limits are in `environments.md` and `deposits.md`. Change them together when the pilot changes (for example when withdrawals open).
 - Custom domain: `static/CNAME` (`docs.clutchprotocol.io`) + `static/.nojekyll` — do not delete these.
 
 ## Customizations (`src/`)
@@ -68,7 +70,7 @@ Enabled through the classic preset's `blog` options in `docusaurus.config.ts`; s
 
 ## Deploy
 
-`.github/workflows/deploy.yml` — on push to `main`: Node 20, `npm ci && npm run build`, upload `build/` as Pages artifact, then `actions/deploy-pages` to GitHub Pages. No manual deploy step; `npm run deploy` (docusaurus deploy) is unused.
+`.github/workflows/build-check.yml` runs the same install, typecheck and build on every pull request, because `deploy.yml` only runs after a merge and a broken link or anchor stops it. `.github/workflows/deploy.yml` — on push to `main`: Node 20, `npm ci && npm run build`, upload `build/` as Pages artifact, then `actions/deploy-pages` to GitHub Pages. No manual deploy step; `npm run deploy` (docusaurus deploy) is unused.
 
 ## Conventions
 

@@ -93,8 +93,8 @@ Use [Clutch Explorer](/clutch-explorer/overview) or node RPC `get_account_balanc
 
 ## Important limits
 
-:::warning Alpha / testnet
-Clutch is experimental, and APIs and economics may change. The CLT figures above are exact — 2% of a $5.00 fare really is 100,000 CLT — but on this testnet CLT is backed by Nile *testnet* USDT, which has no fiat value. The peg is an accounting rule you can build against, not money you can spend yet ([Testnet notes](/clutch-node/clt-economics#testnet-notes)).
+:::warning Alpha / testnet / capped pilot
+Clutch is experimental, and APIs and economics may change. The CLT figures above are exact — 2% of a $5.00 fare really is 100,000 CLT. On the testnet CLT is backed by Nile *testnet* USDT, which has no fiat value: there the peg is an accounting rule you can build against, not money you can spend ([Testnet notes](/clutch-node/clt-economics#testnet-notes)). On the mainnet pilot CLT is backed by real USDT, in small amounts and under small limits, and withdrawals are not open yet ([Environments](/getting-started/environments)).
 :::
 
 - **Your Hub, your referrers** — Earnings go to whoever owns the Hub config. Apps using someone else's shared Hub do not automatically get a share unless that operator sets your wallet as referrer.
