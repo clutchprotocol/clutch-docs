@@ -85,7 +85,7 @@ const sdk = new ClutchHubSdk('https://api.clutchprotocol.io', publicKey, private
 
 The demo app auto-detects the chain: when served from `app.clutchprotocol.io`, it uses chain `1000` and `api.clutchprotocol.io`.
 
-To get CLT, open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints the same amount of CLT to your wallet, minus the network fees below.
+To get CLT, open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee below.
 
 The pilot's limits:
 
@@ -93,8 +93,8 @@ The pilot's limits:
 |------|-------|
 | One top-up | $100 of CLT. A top-up that would credit more is not credited by itself: it waits for a manual review, and your USDT stays safe at your address in the meantime |
 | Top-ups per day | $200 of CLT in any rolling 24 hours. A top-up that would pass it waits, and is credited when older ones leave the window |
-| Smallest top-up | $5 after the network fees. A smaller one credits nothing and waits for a manual decision |
-| Network fees | Up to $4.00 is held back from your first top-up, and up to $2.00 from each later one, to pay the relay that moves the USDT out of your address |
+| Smallest top-up | $5 after the network fee. A smaller one credits nothing and waits for a manual decision |
+| Network fee | $4.00 is taken from your first top-up and $2.00 from each later one, to pay the relay that moves the USDT out of your address. The relay charges less today ($3.00 and $1.50) and its price can change. The difference is not refunded: it stays in the reserve as extra backing. The app shows the fee before you pay |
 | Withdrawal | **Not open yet.** When it opens: $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
 
 :::danger Real money, alpha software
