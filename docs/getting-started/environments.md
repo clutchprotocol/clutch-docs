@@ -4,7 +4,7 @@ sidebar_position: 6
 
 # Environments
 
-Clutch Protocol can run locally via Docker or on the public stage deployment.
+Clutch Protocol can run locally via Docker, on the public stage deployment (a testnet), or on the mainnet pilot.
 
 ## Local development
 
@@ -66,17 +66,50 @@ const sdk = new ClutchHubSdk('https://api-stage.clutchprotocol.io', publicKey);
 
 The demo app auto-detects stage URLs: when served from `app-stage.clutchprotocol.io`, it uses `api-stage.clutchprotocol.io` automatically.
 
-## Production demo
+## Mainnet (capped pilot)
+
+The mainnet runs chain id `1000`. It has been open to every account since 2026-10-05 as a **capped pilot**: alpha software, real USDT, small limits. It is a different chain from the testnet, and nothing carries over between the two.
+
+| Service | URL |
+|---------|-----|
+| Demo app | https://app.clutchprotocol.io |
+| Hub API | https://api.clutchprotocol.io |
+
+There are no public node WebSocket addresses and no block explorer for the mainnet yet. The Hub API is the way in.
+
+SDK connection. Pass the chain id, so that the SDK pins it for signing:
+
+```javascript
+const sdk = new ClutchHubSdk('https://api.clutchprotocol.io', publicKey, privateKey, 1000);
+```
+
+The demo app auto-detects the chain: when served from `app.clutchprotocol.io`, it uses chain `1000` and `api.clutchprotocol.io`.
+
+To get CLT, open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints the same amount of CLT to your wallet, minus the network fees below.
+
+The pilot's limits:
+
+| What | Limit |
+|------|-------|
+| One top-up | $100 of CLT. A top-up that would credit more is not credited by itself: it waits for a manual review, and your USDT stays safe at your address in the meantime |
+| Top-ups per day | $200 of CLT in any rolling 24 hours. A top-up that would pass it waits, and is credited when older ones leave the window |
+| Smallest top-up | $5 after the network fees. A smaller one credits nothing and waits for a manual decision |
+| Network fees | Up to $4.00 is held back from your first top-up, and up to $2.00 from each later one, to pay the relay that moves the USDT out of your address |
+| Withdrawal | **Not open yet.** When it opens: $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
+
+:::danger Real money, alpha software
+Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app also keeps **your own key in the browser's local storage**. Clearing site data, switching browsers or using another machine loses it, and nothing can recover it, so back it up from the app's menu (an encrypted file under a passphrase) before you top up.
+:::
+
+## Website and documentation
 
 | Service | URL |
 |---------|-----|
 | Marketing site | https://clutchprotocol.io |
 | Documentation | https://docs.clutchprotocol.io |
 
-There is no production demo app yet — `demo.clutchprotocol.io` is not deployed. Use the stage demo app above, or run the stack locally.
-
 :::warning Alpha
-The stage environment is for testing. APIs and endpoints may change.
+The stage environment is for testing, and the mainnet is a capped pilot. APIs and endpoints may change.
 :::
 
 ## Environment variables
@@ -121,4 +154,5 @@ Every environment funds a wallet the same way: deposit USDT. Each wallet gets on
 | Local development | Docker compose on localhost |
 | Integration testing | Stage URLs |
 | Learning / demo | Stage demo app or local stack |
+| Real USDT, small amounts, alpha risk | Mainnet pilot |
 | Block explorer | Local `:5174` or deploy with compose |

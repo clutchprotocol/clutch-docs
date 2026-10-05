@@ -12,6 +12,12 @@ A single redemption is bounded twice, in two services that do not share the valu
 A redemption that finds the float dry is returned to the queue and retried, because a dry float proves nothing was broadcast. Every other unclear outcome stops and pages a human instead. The CLT is already gone by then either way — which is what the next section is about.
 :::
 
+:::warning Withdrawals are not open yet on the mainnet pilot
+The mainnet treasury has redemptions switched on (`APP_REDEMPTIONS_ENABLED` is `true`), but it refuses to create one until its payout wallet has been activated once. The refusal comes before anything exists to burn against, so nobody loses CLT by trying: the app answers that withdrawals are not available yet. The activation needs a small surplus in the reserve, which builds up from the first top-ups (see [Deposits](/clutch-treasury/deposits)).
+
+When withdrawals open, the pilot's limits are $25 to $50 per withdrawal, a $2.00 fee (you burn the full amount and receive that much less), and a rolling 24-hour ceiling of $200 for everyone together. A withdrawal above the ceiling waits, with its CLT already burned, until older payouts leave the 24-hour window.
+:::
+
 Redeeming reverses a deposit: burn CLT on the Clutch chain, receive USDT on Tron. The two legs happen in a fixed order, and that order is the whole safety argument.
 
 A redemption fee is charged on this leg, and it is the only revenue the protocol takes ([Who pays for the network](/clutch-node/clt-economics#who-pays-for-the-network)). You burn the full amount and receive that much less in USDT; the difference stays in the reserve. Both numbers are quoted back when the redemption is created — `amount_clt` is what to burn, `payout_amount_usdt` is what arrives — and the quote is stored at that moment rather than recomputed later, so a fee change can never land between what you accepted and what you are paid.
@@ -30,7 +36,7 @@ A redemption names a destination Tron address and an amount. The address is chec
 
 ## The payout float
 
-Payouts are paid from a float, not from custody and not from any deposit address. The float is derived at its own path, distinct from every deposit address and from the fee account that pays for sweeps, so it can never collide with either. An operator tops it up from custody as needed.
+Payouts are paid from a float, not from custody and not from any deposit address. The float is derived at its own path, distinct from every deposit address and from the fee account that pays for sweeps, so it can never collide with either. On the testnet an operator tops it up from custody as needed. On the mainnet pilot every sweep goes into the float, which holds the whole reserve, so there is nothing to top up (see [Mainnet Readiness](/reference/mainnet-readiness)).
 
 That separation is the actual security boundary here, and it is worth being precise about what it protects against. `tron-signer`'s payout endpoint takes a destination and an amount — unlike the sweep endpoint, it has to, because a payout has no other way to say where the money goes. Widening that endpoint is what makes it different from sweep: its safety depends on the bearer token and the internal-only network actually holding, not on the request shape alone. What bounds the damage if they don't is the float itself — the caller can never reach custody or a deposit address through this endpoint, so the absolute worst case is the float's own balance, capped again by a per-transaction limit on top of that.
 

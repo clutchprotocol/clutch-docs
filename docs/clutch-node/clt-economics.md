@@ -55,7 +55,7 @@ The fee is quoted once, when the redemption intent is created, and stored on it.
 That split shows up in the ledger too, and has to. Confirming the burn drops liability by the full *N*; the payout records only the USDT that actually left the float. Recording the gross in both places would understate the reserve by the fee on every redemption — and a reserve reported below liability is the one condition that halts minting.
 
 :::info What the fee actually is
-`APP_REDEMPTION_FEE_USDT`, in micro-USDT, per deployment rather than a protocol constant. It defaults to **zero**, so a deployment that never sets it redeems at par. This testnet currently charges **$1.00**, against a **$5.00** minimum redemption.
+`APP_REDEMPTION_FEE_USDT`, in micro-USDT, per deployment rather than a protocol constant. It defaults to **zero**, so a deployment that never sets it redeems at par. This testnet currently charges **$1.00**, against a **$5.00** minimum redemption. The mainnet pilot charges **$2.00**, against a **$25.00** minimum and a **$50.00** maximum.
 
 The figure that is measured rather than chosen is not that one — it is what a payout costs when the float pays for it by burning TRX. On 2026-09-10 a TRC-20 USDT transfer into an address that held no USDT yet burned 130,285 units of energy, at a `getEnergyFee` of 100 sun per unit — 13.03 TRX, about $4.43 at a TRX price of $0.34, plus roughly $0.12 of bandwidth once the day's free 600 bytes are spent. A payout is that expensive shape whenever the recipient's Tron address is new to USDT, which the treasury does not get to control, so a deployment whose float burns TRX needs a fee near **$5** to cover the worst case rather than the average. A transfer into an address that already holds USDT costs half as much.
 

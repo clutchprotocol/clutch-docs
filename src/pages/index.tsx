@@ -75,12 +75,18 @@ function Hero(): ReactNode {
             </Link>
             <Link
               className={styles.heroButtonOutline}
+              href="https://app.clutchprotocol.io"
+            >
+              Open the mainnet app
+            </Link>
+            <Link
+              className={styles.heroButtonOutline}
               href="https://app-stage.clutchprotocol.io"
             >
-              Try the stage demo
+              Try the testnet
             </Link>
           </div>
-          <p className={styles.alphaBadge}>Alpha software. Public testnet is live.</p>
+          <p className={styles.alphaBadge}>Alpha software. The mainnet is live as a capped pilot, and a public testnet is open.</p>
         </div>
         <div className={styles.route}>
           <h2 className={styles.routeTitle}>One ride, four transactions</h2>
@@ -131,8 +137,8 @@ function WhatIsClutch(): ReactNode {
           <dd> Rides are paid in CLT, a token
           fully backed by USDT, and <Repo name="clutch-treasury" /> gives CLT
           for USDT and pays USDT back. <Repo name="clutch-deploy" /> runs the
-          public testnet and the mainnet, which has been live since 2026-09-19
-          (mainnet deposits are not open yet).</dd>
+          public testnet and the mainnet. The mainnet is live as a capped
+          pilot: top-ups are open, withdrawals are not open yet.</dd>
         </div>
       </dl>
     </section>

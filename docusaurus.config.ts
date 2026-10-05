@@ -84,9 +84,10 @@ const config: Config = {
       },
     ],
     announcementBar: {
-      id: 'alpha',
+      // A new id on purpose: a visitor who closed the old notice sees this one.
+      id: 'mainnet-pilot',
       content:
-        'Alpha software on a live testnet — APIs may change without notice.',
+        'Alpha software. The mainnet is live as a capped pilot (real money, small limits) and a public testnet is open for experiments — APIs may change without notice.',
       isCloseable: true,
       backgroundColor: '#e8b923',
       textColor: '#14181c',
@@ -110,8 +111,13 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
+          href: 'https://app.clutchprotocol.io',
+          label: 'Mainnet App',
+          position: 'right',
+        },
+        {
           href: 'https://app-stage.clutchprotocol.io',
-          label: 'Demo App',
+          label: 'Testnet Demo',
           position: 'right',
         },
         {
@@ -163,7 +169,8 @@ const config: Config = {
           title: 'Project',
           items: [
             {label: 'Website', href: 'https://clutchprotocol.io'},
-            {label: 'Stage Demo', href: 'https://app-stage.clutchprotocol.io'},
+            {label: 'Mainnet App', href: 'https://app.clutchprotocol.io'},
+            {label: 'Testnet Demo', href: 'https://app-stage.clutchprotocol.io'},
             {label: 'GitHub', href: 'https://github.com/clutchprotocol'},
             {label: 'Deploy', href: 'https://github.com/clutchprotocol/clutch-deploy'},
           ],

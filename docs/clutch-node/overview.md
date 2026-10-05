@@ -52,7 +52,7 @@ Apps do not call the node RPC directly in most cases — they go through the [Hu
 
 ## Status and limitations
 
-- **Alpha testnet only** — no mainnet, small validator set on the public testnet
+- **Alpha** — the mainnet (chain `1000`) is live as a capped pilot, and the public testnet (chain `2077`) runs beside it. Both have a small validator set: three authorities each, all running on a single host. See [Environments](/getting-started/environments) and [Mainnet Readiness](/reference/mainnet-readiness)
 - Progressive `RidePay` releases after `RideAcceptance`; the chain does not attest physical arrival
 - DAO / governance is on the roadmap and not yet implemented
 

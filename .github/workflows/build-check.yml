@@ -1,0 +1,30 @@
+name: Build check
+
+# Docusaurus fails the build on a broken link or a broken anchor (onBrokenLinks and onBrokenAnchors are
+# 'throw'), and deploy.yml only runs after a merge to main. This runs the same install, typecheck and build on
+# a pull request, so a broken page is found before it can stop a deploy.
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history, as in deploy.yml, so showLastUpdateTime reads real commit dates
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install, typecheck and build
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build

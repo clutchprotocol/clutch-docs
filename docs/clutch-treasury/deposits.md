@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Deposits
 
-Turning USDT into CLT starts with one address, handed out once per user and reused forever. There is no amount to declare, no minimum, and no expiry: send any amount of USDT (TRC-20) to your address and it is credited in full.
+Turning USDT into CLT starts with one address, handed out once per user and reused forever. There is no amount to declare and no expiry: send USDT (TRC-20) to your address and it is credited, less the network fee held back, and subject to a minimum and to limits. Read the section "Network fees, the minimum and the limits" below before you send anything on the mainnet.
 
 ## One permanent address per user
 
@@ -20,7 +20,17 @@ Each on-chain transfer to your address becomes its own credit, in full, the mome
 - The same transfer, observed again on a later poll, is still **one** credit — every credit is keyed to its own Tron transaction id, so re-observing it changes nothing.
 - There is no expected amount to compare against and nothing to "complete" — the old model asked you to pay a specific figure at a specific address and matched partial or rounded payments against it; the current one has nothing to match, because the address alone identifies who paid. Whatever number of micro-USDT actually lands, that is what gets credited.
 
-The only floor is that a transfer has to move something — a transfer of exactly zero (a real, if unusual, kind of TRC-20 message) is not a deposit and credits nothing.
+The only floor in this section's terms is that a transfer has to move something — a transfer of exactly zero (a real, if unusual, kind of TRC-20 message) is not a deposit and credits nothing. The next section adds the real minimum.
+
+## Network fees, the minimum and the limits
+
+The testnet and the mainnet pilot both run the **GasFree rail**: your address is a GasFree account owned by your derived key, and a relay moves the USDT out of it by a permit the treasury signs, so the address never needs any TRX. The relay charges its fee in USDT, and the treasury holds that fee back from your deposit before it mints:
+
+- The **first** deposit to an address holds back up to the relay's activation fee plus its transfer fee. On the mainnet pilot that is up to **$4.00**. Each later deposit holds back up to the transfer fee, **$2.00**. On the testnet the figures are smaller ($2.00 and $0.50).
+- A deposit that is below the **minimum after the fee** mints nothing and waits for a person to decide: **$5.00** on the mainnet pilot and $1.00 on the testnet. The USDT is not lost. It stays counted in the reserve.
+- The **mint caps** bound what is credited. On the mainnet pilot a single deposit credits at most **$100** of CLT and a rolling 24 hours at most **$200**. A deposit that would credit more than the first waits for a manual approval, and one that would pass the second waits and is credited when older mints leave the window. In both cases your USDT stays at your address, counted in the reserve, and no CLT exists for it until it is credited.
+
+The first deposits also build up a small surplus in the reserve, because the fee held back is a maximum and the relay charges less. The mainnet payout wallet needs that surplus once, to activate itself, before the first withdrawal can be paid: see [Redemptions](/clutch-treasury/redemptions).
 
 ## Detection: hot and cold
 
