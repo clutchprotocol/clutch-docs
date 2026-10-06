@@ -5,7 +5,7 @@ sidebar_position: 4
 # Redemptions
 
 :::info Redemptions are live on this testnet
-`APP_REDEMPTIONS_ENABLED` is `true`, set directly in `docker-compose.treasury.yml` rather than read from `.env`. Payouts are USDT on the Nile testnet.
+`APP_REDEMPTIONS_ENABLED` is `true`, set directly in `docker-compose.treasury.yml` rather than read from `.env`. Payouts are USDT on the Nile testnet, paid from the GasFree float.
 
 A single redemption is bounded twice, in two services that do not share the value. `payment-orchestrator` refuses a request above `APP_MAX_REDEMPTION_CLT` before any burn happens, and `tron-signer` independently refuses a payout above its own per-transaction cap. Both stand at $25 today, deliberately equal so a request the signer would reject can never become a burn nobody can pay. A rolling 24-hour ceiling in `treasury-service` sits above both.
 
@@ -36,11 +36,15 @@ A redemption names a destination Tron address and an amount. The address is chec
 
 ## The payout float
 
-Payouts are paid from a float, not from custody and not from any deposit address. The float is derived at its own path, distinct from every deposit address and from the fee account that pays for sweeps, so it can never collide with either. On the testnet an operator tops it up from custody as needed. On the mainnet pilot every sweep goes into the float, which holds the whole reserve, so there is nothing to top up (see [Mainnet Readiness](/reference/mainnet-readiness)).
+Payouts are paid from a float, not from custody and not from any deposit address. The float is derived at its own path, distinct from every deposit address and from the fee account that pays for sweeps, so it can never collide with either. On the mainnet pilot every sweep goes into the float, which therefore holds the whole reserve, so there is nothing to top up; the testnet has been configured the same way since 2026-10-05 (see [Mainnet Readiness](/reference/mainnet-readiness)).
 
-That separation is the actual security boundary here, and it is worth being precise about what it protects against. `tron-signer`'s payout endpoint takes a destination and an amount — unlike the sweep endpoint, it has to, because a payout has no other way to say where the money goes. Widening that endpoint is what makes it different from sweep: its safety depends on the bearer token and the internal-only network actually holding, not on the request shape alone. What bounds the damage if they don't is the float itself — the caller can never reach custody or a deposit address through this endpoint, so the absolute worst case is the float's own balance, capped again by a per-transaction limit on top of that.
+That separation is the actual security boundary here, and it is worth being precise about what it protects against. `tron-signer`'s payout endpoint takes a destination and an amount — unlike the sweep endpoint, it has to, because a payout has no other way to say where the money goes. Widening that endpoint is what makes it different from sweep: its safety depends on the bearer token and the internal-only network actually holding, not on the request shape alone. What bounds the damage if they don't is the float itself — the caller can never reach custody or a deposit address through this endpoint, so the absolute worst case is the float's own balance, capped again by a per-transaction limit on top of that. With one wallet, as the mainnet pilot runs, the float's balance is the whole reserve, so on the mainnet pilot that bound is only as small as the pilot's caps keep the reserve.
 
 ## Energy for payouts
+
+:::note This section is about the TRX rail
+The testnet (since 2026-09-26) and the mainnet pilot pay redemptions on the **GasFree rail**: the float signs a permit, a relay submits the transfer, and the relay's fee comes out of the USDT. Nothing stakes, burns or delegates TRX, and the float needs no TRX at all. What follows applies to a deployment on the TRX rail, and is kept because it is how the fee was first measured.
+:::
 
 Every payout is a TRC-20 transfer, and TRON charges energy for it: 64,285 units into an address that already holds USDT, 130,285 into one that does not. Left to itself the float pays for that by burning TRX at the chain's `getEnergyFee` — 100 sun per unit when measured on 2026-09-10 — so a payout to a fresh address costs about 13 TRX. That burn is what `APP_REDEMPTION_FEE_USDT` has to cover whenever the float pays for its own energy, and at a TRX price near $0.34 it is why a burn-paying deployment needs a fee near $5. Delegating energy to the float removes that burn, which is why this testnet charges **$1** with a **$5** minimum instead — see step 5 of the runbook below, and [CLT Economics](/clutch-node/clt-economics#who-pays-for-the-network).
 

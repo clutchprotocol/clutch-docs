@@ -39,6 +39,9 @@ faucet_address                    = "0xdeb4cfb63db134698e1879ea24904df074726cc0"
 faucet_allocation                 = 0
 ride_request_referrer_fee_bps    = 200
 ride_offer_referrer_fee_bps      = 200
+ride_auto_release_secs           = 300   # 0 turns the rule off
+# mint_cosigners                 = ["0x...", "0x..."]  # optional, for multi-signature minting
+# mint_threshold                 = 2
 
 # Observability
 serve_metric_addr      = "0.0.0.0:3001"
@@ -53,7 +56,7 @@ seq_url                = "http://seq:80"
 | `blockchain_name` | Chain identifier | `clutch-node-test-1` |
 | `author_public_key` | Validator public key | `0x9b6e8af...` |
 | `author_secret_key` | Validator secret (keep secure) | — |
-| `developer_mode` | **Deletes the on-disk database on every graceful shutdown** — see the danger note below | `true` in every shipped config |
+| `developer_mode` | **Deletes the on-disk database on every graceful shutdown** — see the danger note below | `true` in clutch-node's own configs; `false` in every clutch-deploy config |
 | `websocket_addr` | WebSocket JSON-RPC bind | `0.0.0.0:8081` |
 | `listen_addrs` | libp2p listen addresses | `["/ip4/0.0.0.0/tcp/4001"]` |
 | `bootstrap_nodes` | Peers to dial on startup | `["/ip4/127.0.0.1/tcp/4001"]` (node2/3) |
@@ -67,6 +70,9 @@ seq_url                = "http://seq:80"
 | `faucet_allocation` | CLT credited to `faucet_address` at genesis, only if `is_testnet = true` | `0` — genesis pre-mints nothing |
 | `ride_request_referrer_fee_bps` | Request referrer fee on each `RidePay`, in basis points | `200` (2%) |
 | `ride_offer_referrer_fee_bps` | Offer referrer fee on each `RidePay`, in basis points | `200` (2%) |
+| `ride_auto_release_secs` | Seconds after a `RideAcceptance` after which a cancel pays the held fare to the driver instead of refunding the rider. `0` turns the rule off. See [Ride Lifecycle](/getting-started/ride-lifecycle) | `300` on the testnet, `7200` on the mainnet |
+| `mint_cosigners` | Further addresses allowed to sign or approve a `Mint`, on top of `mint_authority` | empty: one signer |
+| `mint_threshold` | Distinct authority signatures a `Mint` needs. `0` and `1` both mean one | `0` |
 | `sync_enabled` | Whether this node runs the peer-sync job (pulls blocks from peers) | `true` |
 | `serve_metric_enabled` | Whether the Prometheus `/metrics` endpoint is served at all | `true` |
 | `serve_metric_addr` | Prometheus metrics bind | `0.0.0.0:3001` |
@@ -74,7 +80,7 @@ seq_url                = "http://seq:80"
 | `seq_url` | Seq logging URL | `http://seq:80` |
 
 :::danger developer_mode deletes the database
-`developer_mode = true` — the value in every shipped config, including `default.toml` — makes the node delete its entire on-disk database on every **graceful** shutdown (`shutdown_blockchain` → `cleanup_db` in `blockchain.rs`). That's the intended behavior for a scratch chain that starts fresh each run, and catastrophic for one whose data is meant to survive a restart: a month of stage outages were mistakenly blamed on volumes and the deploy script before anyone traced the actual cause to this flag.
+`developer_mode = true` — the value in clutch-node's own configs, including `default.toml`, and in none of clutch-deploy's — makes the node delete its entire on-disk database on every **graceful** shutdown (`shutdown_blockchain` → `cleanup_db` in `blockchain.rs`). That's the intended behavior for a scratch chain that starts fresh each run, and catastrophic for one whose data is meant to survive a restart: a month of stage outages were mistakenly blamed on volumes and the deploy script before anyone traced the actual cause to this flag.
 
 The escape hatch is the `DB_PATH` environment variable: if it's set, the node treats that as a sign the data is meant to outlive the process, logs a warning, and **refuses to delete** rather than honoring `developer_mode`. Set `DB_PATH` (or `developer_mode = false`) before running against any volume whose contents you care about.
 :::
@@ -93,7 +99,7 @@ That is the right default for a testnet whose entire purpose is letting anyone s
 
 ## Consensus parameters must match across every node
 
-`chain_id`, `is_testnet`, `tx_fee`, `mint_authority`, `faucet_address`, `faucet_allocation`, and the two referrer-fee bps rates are not just per-node preferences — they are written into the chain's state by a single `ChainInit` transaction (RLP tag 9) at block 0, and that transaction's hash feeds the genesis block hash. Peers compare genesis hashes during the p2p handshake: a node whose config produces a *different* genesis hash is refused outright, not silently allowed to fork.
+`chain_id`, `is_testnet`, `tx_fee`, `mint_authority`, `mint_cosigners`, `mint_threshold`, `faucet_address`, `faucet_allocation`, `ride_auto_release_secs`, and the two referrer-fee bps rates are not just per-node preferences — they are written into the chain's state by a single `ChainInit` transaction (RLP tag 9) at block 0, and that transaction's hash feeds the genesis block hash. Peers compare genesis hashes during the p2p handshake: a node whose config produces a *different* genesis hash is refused outright, not silently allowed to fork.
 
 Practically, this means:
 
@@ -115,7 +121,7 @@ Practically, this means:
 
 - [ ] Same `authorities` list (same order) on all nodes
 - [ ] Same `libp2p_topic_name` and `blockchain_name`
-- [ ] Same `chain_id`, `is_testnet`, `tx_fee`, `mint_authority`, `faucet_address`, `faucet_allocation`, and both referrer-fee bps rates on all nodes — a mismatch here prevents peering entirely
+- [ ] Same `chain_id`, `is_testnet`, `tx_fee`, `mint_authority`, `mint_cosigners`, `mint_threshold`, `faucet_address`, `faucet_allocation`, `ride_auto_release_secs`, and both referrer-fee bps rates on all nodes — a mismatch here prevents peering entirely
 - [ ] Node 1 has empty `bootstrap_nodes`; others point to node 1
 - [ ] Distinct ports per node (8081/8082/8083, 4001/4002/4003, 3001/3002/3003)
 - [ ] Validator secret keys kept out of source control

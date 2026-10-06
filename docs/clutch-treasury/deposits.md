@@ -53,6 +53,8 @@ This means detection is quick in the common case — someone who just opened the
 
 Every route below requires `Authorization: Bearer <token>` — the same JWT the Hub API issues via `generateToken` (see [Hub API Authentication](/clutch-hub-api/authentication)), not a token this service mints itself. The orchestrator decodes it as HS256 with claims `{pk, exp}` — the identical shape the hub issues — using the **same** `jwt_secret` the hub signs with; `Bearer` is stripped from the header before decoding. If the two secrets ever disagree, every route here fails closed with a plain `401`, not an error that would hint at the mismatch.
 
+On the mainnet, the orchestrator also checks the caller against the pilot's list of allowed accounts, after the token and before it creates anything, and answers `403` to any other account. The list has been everyone since 2026-10-05.
+
 This is why the browser calls this service directly instead of going through the Hub API or the SDK: a token obtained from the hub is already valid here, because both services check it against the same secret.
 
 ### `POST /api/v1/deposits`
@@ -113,7 +115,7 @@ An unrecognized status is shown as-is rather than guessed at — if the backend 
 
 ### The per-transaction mint cap
 
-A deposit large enough to exceed the treasury's per-transaction mint cap does not mint automatically. The USDT has already been credited to your account in the ledger and is not at risk — it is sitting in custody exactly as it should be — but turning it into CLT requires a human to review and approve it by hand, which shows up as `needs_manual`. See [Reserves and Reconciliation](/clutch-treasury/reserves-and-reconciliation) for what the cap is protecting against.
+A deposit large enough to exceed the treasury's per-transaction mint cap does not mint automatically. The USDT has already been credited to your account in the ledger and is not at risk — it is in the reserve exactly as it should be — but turning it into CLT requires a human to review and approve it by hand, which shows up as `needs_manual`. See [Reserves and Reconciliation](/clutch-treasury/reserves-and-reconciliation) for what the cap is protecting against.
 
 ## Related
 

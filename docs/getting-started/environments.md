@@ -54,6 +54,7 @@ The stage deployment uses Cloudflare and nginx in front of the stack:
 |---------|-----|
 | Demo app | https://app-stage.clutchprotocol.io |
 | Hub API | https://api-stage.clutchprotocol.io |
+| Block explorer | https://explorer-stage.clutchprotocol.io |
 | Node 1 | wss://node1-stage.clutchprotocol.io/ws |
 | Node 2 | wss://node2-stage.clutchprotocol.io/ws |
 | Node 3 | wss://node3-stage.clutchprotocol.io/ws |
@@ -99,7 +100,7 @@ The pilot's limits:
 | Withdrawal | **Not open yet.** When it opens: $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
 
 :::danger Real money, alpha software
-Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app holds **no key of yours**: you connect your own wallet (MetaMask or Trust Wallet), which keeps the key and asks you before each action. Keep the wallet's recovery phrase safe: it is the only way back to your account and your CLT, and nobody can recover it for you.
+Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app holds **no key of yours**: you connect your own wallet (MetaMask, Trust Wallet or TronLink), which keeps the key and asks you before each action. Keep the wallet's recovery phrase safe: it is the only way back to your account and your CLT, and nobody can recover it for you.
 :::
 
 ## Website and documentation
@@ -142,7 +143,8 @@ See [API Configuration](/clutch-hub-api/configuration).
 
 | Variable | Description |
 |----------|-------------|
-| `VITE_EXPLORER_API_URL` | Explorer backend URL (default `http://localhost:8088`) |
+| `VITE_EXPLORER_API_URL` | Explorer backend URL; `/api` is appended (default `http://localhost:8088` on localhost, otherwise the relative `/api`) |
+| `VITE_NETWORK_LABEL` | The network chip in the header; read from the hostname when unset |
 
 ## Funding a wallet
 
@@ -156,4 +158,4 @@ Every environment funds a wallet the same way: deposit USDT. Each wallet gets on
 | Integration testing | Stage URLs |
 | Learning / demo | Stage demo app or local stack |
 | Real USDT, small amounts, alpha risk | Mainnet pilot |
-| Block explorer | Local `:5174` or deploy with compose |
+| Block explorer | https://explorer-stage.clutchprotocol.io for the testnet, or local `:5174` |

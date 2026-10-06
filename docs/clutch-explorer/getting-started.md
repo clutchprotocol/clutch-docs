@@ -38,6 +38,9 @@ See the [clutch-explorer](https://github.com/clutchprotocol/clutch-explorer) rep
 | `/txs/:hash` | Transaction detail |
 | `/address/:address` | Account page |
 | `/validators` | Validator set |
+| `/search?q=` | Search results, when a query matches more than one thing |
+
+Press `/` anywhere to jump to the search box.
 
 ## Environment variables
 
@@ -50,13 +53,16 @@ Config loads from `config/{env}.toml`, with environment variables using the `APP
 | `EXPLORER_POSTGRES_*` | Database connection (in clutch-deploy `.env`, composed into `APP_DATABASE_URL`) |
 | `APP_INDEXER_POLL_INTERVAL_MS` | Block poll interval (default 4000) |
 | `APP_NODE_WS_URL` | Node WebSocket for indexing |
+| `APP_NODE_METRICS_URL` | Node Prometheus endpoint, read for the chain head (default `http://node1:3001/metrics`) |
 | `APP_CLUTCH_NODE_API_URL` | Node HTTP API URL (required, no default) |
+| `APP_TREASURY_PUBLIC_RECONCILIATION_URL` | The treasury's `/public/reconciliation`, republished as [`/api/v1/reserve`](/clutch-explorer/api-reference#reserve). Empty (the default) leaves the reserve section out |
 
 ### Frontend
 
 | Variable | Description |
 |----------|-------------|
-| `VITE_EXPLORER_API_URL` | Backend API URL (default `http://localhost:8088`) |
+| `VITE_EXPLORER_API_URL` | Backend API URL; `/api` is appended. Default `http://localhost:8088` on localhost, otherwise the relative `/api`. Baked in at build time |
+| `VITE_NETWORK_LABEL` | The network chip in the header. Unset, it is read from the hostname: `*-stage.*` shows Testnet, `*.clutchprotocol.io` shows Mainnet pilot, anything else Local |
 
 ## Verify indexing
 

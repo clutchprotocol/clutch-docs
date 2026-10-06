@@ -82,6 +82,7 @@ No params. Returns the consensus parameters committed by the genesis `ChainInit`
   "ride_request_referrer_fee_bps": 200,
   "ride_offer_referrer_fee_bps": 200,
   "mint_authority": "0x...",
+  "ride_auto_release_secs": 300,
   "total_supply": "1000000000000000",
   "latest_block_index": 42,
   "is_syncing": false,
@@ -91,6 +92,8 @@ No params. Returns the consensus parameters committed by the genesis `ChainInit`
 ```
 
 **`total_supply` is a decimal string; every other field is a bare JSON number.** At this release's peg (1 USD = 1,000,000 CLT), `total_supply` is the one field that can realistically exceed `2^53` (roughly $9B circulating) — a JSON number would silently round past that, and a reconciliation process treats a rounded supply as a serious incident. `chain_id`, `tx_fee`, both referrer-fee rates, and the block/sync fields can't approach that magnitude (a block a second would need hundreds of millions of years), so there's no reason to pay the string-parsing cost on those fields too.
+
+`ride_auto_release_secs` is how long after a ride is accepted a cancel still refunds the rider; after it, a cancel pays the held fare to the driver. `0` means the chain does not do that at all. See [Ride Lifecycle](/getting-started/ride-lifecycle).
 
 `is_syncing`, `best_peer_block_index`, and `blocks_behind` describe this node's own position relative to its peers, not a consensus parameter — without them, a node that's still catching up answers `get_chain_info` indistinguishably from one that's fully synced, and a caller has no way to tell it's reading a partial chain. `best_peer_block_index` is `0` when no peer has been heard from yet, meaning *unknown*, not "the tip is at block zero"; a lone node reports `is_syncing: false` in that case because it has no peer to be behind, not because it's caught up to anything.
 
