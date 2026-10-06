@@ -47,15 +47,44 @@ Submit as `0x` + hex of the full signed RLP via `sendRawTransaction`.
 
 ## Signature algorithm
 
-Critical detail — the node verifies signatures over:
+The node accepts **two** signatures on a transaction. It tries them in this order, and each one is checked against its own digest, so one cannot pass for the other. Both are recoverable secp256k1 signatures: `v` is the recovery id + 27 (27 or 28), and the node recovers the signer's address and compares it with `from`.
+
+### 1. A key signs the hash string
 
 ```
 Keccak256( UTF-8 bytes of the 64-char hash hex string )
 ```
 
-Not over the raw 32-byte hash bytes. The SDK `signHash()` method implements this to match Rust node verification.
+Not over the raw 32-byte hash bytes. This is what the SDK does with a private key, and what the treasury's mint authority and the faucet do. Signing library: `@noble/secp256k1`.
 
-Signing library: `@noble/secp256k1` with recoverable signatures.
+### 2. A wallet signs a short text (`personal_sign`)
+
+MetaMask, Trust Wallet and other wallets will not sign a bare hash. They sign a text with `personal_sign` (EIP-191), and they hash it with a fixed prefix first. The node accepts that signature when the text is:
+
+```
+clutch-tx:{chain_id}:{hash}
+```
+
+- `chain_id` — the transaction's `chain_id`, in decimal
+- `hash` — the unsigned-transaction hash: **64 lowercase hex characters, no `0x`**
+
+The signed digest is
+
+```
+Keccak256( "\x19Ethereum Signed Message:\n" + length(text) + text )
+```
+
+where `length(text)` is the number of bytes of the text, in decimal. The wallet shows the text to the person, so they see `clutch-tx:1000:6f1e…`.
+
+Because the text names the chain and the hash already commits to `chain_id`, `from`, `nonce` and the call data, a wallet signature cannot be moved to another chain or to another transaction. The wire format does not change: the signed RLP is the same eight elements, and `hash` is still the hash of the unsigned RLP.
+
+Two details that cost time elsewhere: send the text to the wallet as `0x` + the hex of its UTF-8 bytes (a text that starts with `0x` is otherwise read as bytes), and lift a recovery id of 0 or 1 to 27 or 28 before it goes on the wire.
+
+:::info Blind signing
+A wallet shows the text, not the ride. The hash in it stands for a transaction the person cannot read there. The reference app says what each prompt is for before it opens, and readable typed data (EIP-712) is a later step.
+:::
+
+This is a [consensus rule](/clutch-node/overview): a node that predates it rejects a block that carries a wallet-signed transaction, so every validator must run a build that has it.
 
 ## Function call encoding
 
@@ -165,7 +194,8 @@ Transaction hashes in arguments must be normalized (strip `0x`, handle legacy JS
 
 ```javascript
 const unsigned = await sdk.createUnsignedRideRequest({ ... });
-const { rawTransaction, txHash } = await sdk.signTransaction(unsigned, privateKey);
+// A private key, or a signer: a wallet's signer asks the wallet to sign the text above.
+const { rawTransaction, txHash } = await sdk.signTransaction(unsigned, keyOrSigner);
 await sdk.submitTransaction(rawTransaction);
 ```
 
@@ -185,7 +215,7 @@ If implementing signing outside the SDK:
 
 1. Match RLP field order exactly, including `chain_id` at index 2 in both the 4-item preimage and the 8-item signed format
 2. Strip `0x` from `from`, `r`, `s`, and hash fields in signed RLP
-3. Sign Keccak256 of UTF-8 hash hex string, not raw bytes
+3. Sign Keccak256 of UTF-8 hash hex string, not raw bytes (a key), or have a wallet sign `clutch-tx:{chain_id}:{hash}` with `personal_sign` (see above)
 4. Use the correct function call tag for each transaction type — see the [tag table](#rlp-tag-table) above; remember tags are non-contiguous
 5. Encode float coordinates as uint64 bit patterns
 6. Encode `chain_id` as a minimal big-endian integer (standard RLP integer encoding — no special casing)

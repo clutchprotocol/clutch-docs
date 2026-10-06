@@ -7,14 +7,15 @@ sidebar_position: 1
 ## Client-side signing
 
 - Private keys **never** leave the user's device
-- All transaction signing happens in the browser or mobile app via the SDK
+- All transaction signing happens in the user's own wallet (MetaMask, Trust Wallet) or in a script or server that holds its own key, through the SDK. The reference demo app holds no key at all
+- A wallet signs a short readable text with `personal_sign` (`clutch-tx:{chain_id}:{hash}` for a transaction); the node accepts that next to the signature of a key. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm)
 - The API only receives already-signed RLP hex via `sendRawTransaction`
 - Two services sign on the server side, and each is scoped narrowly: `treasury-service` (`Mint`, only once four-eyes approval and the mint gate both pass) and `tron-signer` (signs and broadcasts on Tron — sweeps into custody and, once enabled, redemption payouts from a bounded float). No other transaction type is ever signed anywhere but the client — see [Clutch Treasury Overview](/clutch-treasury/overview) for what each of the two may and may not do.
 
 ## Wallet authentication
 
 - Identity is a blockchain public key — no passwords
-- JWT issuance requires **proof of key ownership**: `generateToken(publicKey, timestamp, signature)` verifies a secp256k1 signature over the challenge `clutch-auth:{chain_id}:{publicKey}:{timestamp}` before minting a token
+- JWT issuance requires **proof of key ownership**: `generateToken(publicKey, timestamp, signature)` verifies a secp256k1 signature over the challenge `clutch-auth:{chain_id}:{publicKey}:{timestamp}` before minting a token. A key signs the hash of the challenge; a wallet signs the readable challenge itself with `personal_sign`. Each is checked against its own digest
 - `chain_id` binds the challenge to a specific network — without it, a challenge signed and captured on one Clutch chain would authenticate the same key on any other Clutch hub within the clock-skew window
 - The challenge timestamp must be within ±120s of server time (stateless replay window)
 - Change `jwt_secret` in production; tokens expire after `jwt_expiration_hours`
@@ -45,7 +46,7 @@ See [Signing and Encoding](/reference/signing-and-encoding) for the exact algori
 
 | Key | Where it lives | Exposure guidance |
 |-----|----------------|-------------------|
-| User private key | Client device (browser/mobile) | Never transmitted. The reference demo app keeps it in the browser's localStorage, on the mainnet pilot too: back it up (the app offers an encrypted export) and keep only small amounts behind a key stored that way |
+| User private key | The user's own wallet (MetaMask, Trust Wallet, a hardware wallet behind them) | Never transmitted, and never held by the reference demo app, which has no key store at all since 2026-10-06 (it used to generate a key in the browser and keep it in plain text in localStorage, on the testnet too). The wallet signs after the user approves. A script or a server that signs with its own key keeps that key like any server secret |
 | Validator `author_secret_key` | Node host / secret manager | Environment or secret manager; never in git; restrict file permissions |
 | `mint_authority` secret key | The treasury service's environment (never a validator host) | Highest-value key in the system — it is the only key that can create new CLT. On the mainnet pilot it is a plain secret on the server, generated there once and never printed. Do not use a dev/validator key in any deployment beyond local testing |
 | Deposit mnemonic | `tron-signer` only — never `payment-orchestrator` | Derives every Tron key the stack uses (deposit addresses, the fee account, the payout float). The orchestrator holds only the derived account **xpub**, which can derive receive addresses and cannot sign — see [Clutch Treasury Overview](/clutch-treasury/overview) |
@@ -58,7 +59,8 @@ Every key above — including the two treasury rows — is an environment variab
 
 ### Recommendations
 
-- Prefer OS keychain or hardware-backed storage for user keys where available
+- For a browser app, use the user's wallet through a signer: the app never sees a key
+- Prefer OS keychain or hardware-backed storage for any other user key where available
 - Encrypt validator and API secrets at rest
 - Use separate secrets per environment (dev / stage / prod)
 - Audit who has access to secret stores and rotate on team changes
@@ -72,6 +74,7 @@ Every key above — including the two treasury rows — is an environment variab
 | Replay of a submitted tx | Per-account nonce enforced on-chain |
 | Cross-chain replay of a tx or auth challenge | `chain_id` signed into both; a node rejects a mismatched `chain_id` |
 | Hub returns a transaction that doesn't match what the app asked for | SDK's `verifyUnsignedTransaction` checks type/amount/references/from/chain_id before signing (does not cover `referrer`, which is display-only) |
+| A wallet signs a transaction it cannot read | A wallet shows the text `clutch-tx:{chain_id}:{hash}`, not the ride: it is blind signing. The app names what each prompt is for before it opens, and the SDK has already checked the unsigned transaction against what was asked. A page that is not the app could ask a user to sign a text of this shape for a transaction of its own choosing; readable typed data (EIP-712) is the later fix |
 | Stolen JWT | Short lifetimes; secret rotation; HTTPS-only |
 | Compromised validator key | Rotate keys; limit validator set; audit block authorship |
 | Compromised mint authority key | Restrict to a dedicated treasury key (never a validator key); the chain enforces authority + exactly-once `credit_ref`, but cannot verify reserve exists — that's a process/reconciliation control, not consensus |
@@ -86,7 +89,7 @@ Every key above — including the two treasury rows — is an environment variab
 - [ ] Configure `ALLOWED_ORIGINS` for CORS
 - [ ] Never store private keys server-side
 - [ ] Use HTTPS in production (nginx / Cloudflare)
-- [ ] Do not store production keys in browser localStorage
+- [ ] Do not store keys in browser localStorage: use the user's wallet
 - [ ] Rotate validator and API secrets periodically
 - [ ] Restrict access to Grafana and Seq to trusted networks
 

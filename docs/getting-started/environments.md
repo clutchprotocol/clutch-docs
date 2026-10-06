@@ -80,12 +80,13 @@ There are no public node WebSocket addresses and no block explorer for the mainn
 SDK connection. Pass the chain id, so that the SDK pins it for signing:
 
 ```javascript
+// A script or a server with its own key. In a browser app pass the user's wallet signer instead.
 const sdk = new ClutchHubSdk('https://api.clutchprotocol.io', publicKey, privateKey, 1000);
 ```
 
 The demo app auto-detects the chain: when served from `app.clutchprotocol.io`, it uses chain `1000` and `api.clutchprotocol.io`.
 
-To get CLT, open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee below.
+To get CLT, connect your wallet (MetaMask or Trust Wallet; on a phone, open the app inside the wallet app), open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee below.
 
 The pilot's limits:
 
@@ -98,7 +99,7 @@ The pilot's limits:
 | Withdrawal | **Not open yet.** When it opens: $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
 
 :::danger Real money, alpha software
-Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app also keeps **your own key in the browser's local storage**. Clearing site data, switching browsers or using another machine loses it, and nothing can recover it, so back it up from the app's menu (an encrypted file under a passphrase) before you top up.
+Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app holds **no key of yours**: you connect your own wallet (MetaMask or Trust Wallet), which keeps the key and asks you before each action. Keep the wallet's recovery phrase safe: it is the only way back to your account and your CLT, and nobody can recover it for you.
 :::
 
 ## Website and documentation

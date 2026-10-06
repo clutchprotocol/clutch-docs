@@ -25,6 +25,8 @@ const sdk = new ClutchHubSdk(API_URL, publicKey, privateKey, CHAIN_ID);
 
 The constructor requires the API URL and the wallet public key. Pass the private key as the third argument (or later via `sdk.setPrivateKey(privateKey)`) if you will call authenticated methods: the SDK automatically obtains a JWT via `generateToken`, which requires signing a proof-of-key-ownership challenge (`clutch-auth:{chainId}:{publicKey}:{timestamp}`) with the private key. The key is used locally for signing only and is never sent to the API. Read-only usage (public `list*` queries and subscriptions) works without it.
 
+In a browser app, do not hold a key at all: pass a **signer** for the user's wallet instead of the key (see [Use a wallet](#use-a-wallet-metamask-trust-wallet)).
+
 The fourth argument, `chainId`, is new in this SDK version. Pin it to the network your app targets — it's used both to build the auth challenge above and, optionally, to verify a hub-returned transaction before you sign it (see [Verify before you sign](#verify-before-you-sign)).
 
 ## Basic transaction flow
@@ -155,9 +157,39 @@ Both formats work for pickup/dropoff:
 { lat: 35.7, lng: 51.4 }
 ```
 
-## Creating a wallet
+## Use a wallet (MetaMask, Trust Wallet)
 
-The SDK does not generate keys — it signs with a key you supply. Derive one with `@noble/secp256k1`, the same library and derivation the node and Hub API use:
+A browser app should not hold a private key. The user's wallet keeps it and signs after the user approves. Clutch accounts are Ethereum-type accounts (secp256k1, address = last 20 bytes of Keccak-256 of the public key), so the address of a MetaMask or Trust Wallet account is a valid Clutch address. The wallet is only a signer: it is not asked to add Clutch as a network.
+
+```javascript
+import { ClutchHubSdk, discoverInjectedWallets, connectWallet } from 'clutch-hub-sdk-js';
+
+// 1. Find wallets (EIP-6963 announcements, then window.ethereum). Show a button per wallet.
+const wallets = await discoverInjectedWallets();
+
+// 2. The wallet asks the user to share an account.
+const signer = await connectWallet(wallets[0]);
+
+// 3. Use the signer where you used a key. The address is in lower case.
+const sdk = new ClutchHubSdk(API_URL, signer.address, signer, CHAIN_ID);
+
+const unsigned = await sdk.createUnsignedRideRequest({ pickup, dropoff, fare: 5_000_000n });
+const signed = await sdk.signTransaction(unsigned, signer, { type: 'RideRequest', fare: 5_000_000n });
+await sdk.submitTransaction(signed.rawTransaction);
+```
+
+What the user sees, and what to do about it:
+
+- **A prompt for each signature.** The first authenticated call after a page load asks the wallet to sign in (`clutch-auth:…`; the token lives 6 hours, in memory), then `signTransaction` asks for the transaction (`clutch-tx:{chainId}:{hash}`). Tell the user what each prompt is for before it opens: a wallet shows the text it signs, not the ride.
+- **No prompts from timers.** The SDK never asks a wallet to sign in the background; its subscriptions go without a token. If your app polls an authenticated endpoint, check `sdk.hasValidToken()` first.
+- **The user can say no.** The wallet rejects with `code: 4001`. A second request while a prompt is open gives `-32002`. If the user switched accounts in the wallet, the SDK refuses the signature and says which account to switch back to.
+- **Accounts change.** Listen for `accountsChanged` on `wallet.provider` and build a new signer (`createWalletSigner(provider, newAddress)`).
+
+The node and the Hub API accept the wallet's signature next to the signature of a key; see [Signing and encoding](/reference/signing-and-encoding#signature-algorithm).
+
+## Creating a key (scripts and servers)
+
+The SDK does not generate keys — it signs with a key you supply. For a script or a server (not a browser app, which uses a wallet), derive one with `@noble/secp256k1`, the same library and derivation the node and Hub API use:
 
 ```javascript
 import * as secp from '@noble/secp256k1';
@@ -180,7 +212,7 @@ Config files in `clutch-node` and `clutch-hub-api` ship real private keys so the
 
 ## Security
 
-- Private keys are never sent to the server
-- Signing uses `@noble/secp256k1` and Keccak-256
+- Private keys are never sent to the server, and a browser app holds none: the user's wallet signs
+- Signing uses `@noble/secp256k1` and Keccak-256 (a wallet signs with `personal_sign`)
 - Transaction encoding uses RLP matching the node
 - See [Signing and Encoding](/reference/signing-and-encoding) for the full spec

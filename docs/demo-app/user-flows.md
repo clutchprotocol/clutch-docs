@@ -12,23 +12,14 @@ For the full interaction between passenger and driver (including Hub API and nod
 
 | UI | Behavior |
 |----|----------|
-| Role entry screen | Choose passenger or driver — separate wallet scopes |
-| Generate wallet | Local key generation (`wallet.js`) |
-| Import wallet | Paste existing public/private key pair |
-| Restore backup | Open an encrypted backup file and unlock it with its passphrase |
-| Back up wallet | ☰ → **Wallet** → **Back up**, while connected — writes an encrypted JSON file |
+| Role entry screen | Choose passenger or driver |
+| Connect your wallet | Lists the wallets found in the page (MetaMask, Trust Wallet, …). With none, it links to install one, or on a phone to open this page inside the wallet app |
+| Connect | The wallet asks you to share an account. The app then knows your address and holds a signer that asks the wallet, never a key |
+| Next visit | The wallet used last time connects again without a prompt, if it still shares the account with the site |
+| Switch account in the wallet | The app follows: the new account becomes the signed-in account |
+| ☰ → **Disconnect wallet** | Forgets the wallet in this app and returns to the role screen |
 
-Keys are stored per role: `clutch_passenger_*`, `clutch_driver_*` in localStorage.
-
-Backups are encrypted with a passphrase you choose (PBKDF2-SHA256, then AES-GCM, both from the
-browser's own WebCrypto — no library). The file names its address in the clear so several backups
-can be told apart without unlocking each one; restoring re-derives the address from the decrypted
-key and refuses the file if the two disagree, since that field sits outside the sealed envelope and
-anyone can edit it.
-
-The format is `clutch-keystore-1`, deliberately **not** Ethereum keystore v3 — v3 wants scrypt,
-which WebCrypto does not provide, and a file that looked like v3 without being it would be worse
-than one that never claimed to be.
+The app holds no private key (since 2026-10-06; before that it generated one in the browser, on the testnet too). Each action opens a prompt in your wallet, and the app says first what the prompt is for. The only things kept in `localStorage` are the id of the last wallet, the role and the local transaction history.
 
 ## Passenger flows
 
@@ -42,7 +33,7 @@ than one that never claimed to be.
 | Cancel pending request | `createUnsignedRideRequestCancel` → sign → submit |
 | Cancel active trip | `createUnsignedRideCancel` → sign → submit |
 | View balance | `getAccountBalance` / `subscribeAccountBalance` (both `bigint`) |
-| Top up (deposit) | `sdk.getAuthHeaders()` only — the deposit calls themselves go straight to `payment-orchestrator`, not the SDK |
+| Top up (deposit) | `sdk.getAuthHeaders()` only — the deposit calls themselves go straight to `payment-orchestrator`, not the SDK. Opening the panel is the one moment the wallet is asked to sign in (when it has not yet) |
 | Transaction history | localStorage per address |
 
 Balances and fares displayed in the UI are formatted with the SDK's `formatUsd()` helper (CLT is a micro-dollar — 1 USD = 1,000,000 CLT — so raw amounts are not meant to be shown directly).
@@ -60,7 +51,7 @@ Opened from the app menu (☰ → **Wallet** → **Top up**) once a wallet exist
 | Unavailable | The orchestrator returned `503` — deposits are temporarily switched off |
 | Error | The address or deposit-list request failed |
 
-Each row in the recent-deposits list shows an amount, an age, a truncated transaction id, and a status label — `Detected`, `Minting`, `Credited`, or `Needs review` — the same vocabulary documented in [Deposits — Status vocabulary](/clutch-treasury/deposits#status-vocabulary). The list refreshes every 10 seconds while the panel stays open.
+Each row in the recent-deposits list shows an amount, an age, a truncated transaction id, and a status label — `Detected`, `Minting`, `Credited`, or `Needs review` — the same vocabulary documented in [Deposits — Status vocabulary](/clutch-treasury/deposits#status-vocabulary). The list refreshes every 10 seconds while the panel stays open, and only while the sign-in is still valid: a timer never opens a wallet prompt.
 
 ## Driver flows
 
@@ -82,9 +73,9 @@ Components: `DriverView.jsx`, `ActiveTripCard.jsx`.
 1. Try WebSocket subscription via `subscribe*`
 2. On failure, fall back to periodic `list*` queries
 
-## Private key prompt
+## Wallet prompts
 
-Sensitive actions trigger `usePrivateKeyRequest` modal — user enters private key per action if not stored locally.
+Every signature is a prompt in the user's wallet: one to sign in (`clutch-auth:…`, once per 6-hour token) and one for each transaction (`clutch-tx:{chainId}:{hash}`). A wallet shows the text it signs, not the ride, so before each prompt the app shows a line such as "Approve in your wallet: pay $2.50 for this ride." If the user says no, the app says so in plain words and nothing is sent; a withdrawal burns nothing until the signature exists. Nothing on a timer opens a prompt: the subscriptions go without a token, and the 10-second refreshes in the top-up and withdraw panels run only while the sign-in is valid.
 
 ## Explorer links
 

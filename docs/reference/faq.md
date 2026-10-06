@@ -41,7 +41,16 @@ Grafana uses 3030 to avoid clash with API on 3000. Explorer frontend uses 5174 (
 ## Authentication
 
 **How do I authenticate?**  
-Call GraphQL `generateToken(publicKey, timestamp, signature)`, where `signature` is a secp256k1 signature over the challenge `clutch-auth:{chain_id}:{publicKey}:{timestamp}` proving you hold the private key. No username/password. The SDK does this automatically when given the private key and a `chainId` at construction.
+Call GraphQL `generateToken(publicKey, timestamp, signature)`, where `signature` is a secp256k1 signature over the challenge `clutch-auth:{chain_id}:{publicKey}:{timestamp}` proving you hold the private key. No username/password. The SDK does this automatically when given the private key, or a signer for the user's wallet, and a `chainId` at construction.
+
+**Which wallets work?**  
+Any wallet that can sign a message with `personal_sign`: MetaMask and Trust Wallet are the ones the demo app is built and tested for. A Clutch account is an Ethereum-type account (secp256k1; the address is the last 20 bytes of Keccak-256 of the public key), so the address of a MetaMask or Trust Wallet account is a valid Clutch address. The wallet is only a signer. Clutch is not an EVM network, so you do not add it to the wallet as a network and the wallet does not show your CLT balance. See [SDK Usage — Use a wallet](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet).
+
+**What does my wallet show when I approve something?**  
+A short text, not the ride: `clutch-auth:…` to sign in (once per session) and `clutch-tx:{chain_id}:{hash}` for a transaction. The demo app tells you what each prompt is for before it opens. Only approve a `clutch-tx:` text that an app you trust asked for just now.
+
+**Can I connect a wallet on my phone to the app on my computer?**  
+Not yet (WalletConnect is not built). On a phone, open the app inside the wallet app's own browser, or use the extension on a computer.
 
 **Do subscriptions need auth?**  
 Public list subscriptions work without JWT. `accountBalance` and mutations require JWT.
