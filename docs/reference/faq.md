@@ -94,7 +94,7 @@ Hub API is for building apps (GraphQL, write txs). Explorer is for browsing chai
 Indexer polls every ~4 seconds. Wait and refresh.
 
 **Is there a public explorer?**  
-For the testnet, at https://explorer-stage.clutchprotocol.io. The mainnet pilot has none yet.
+Yes, one for each network. The mainnet pilot's is at https://explorer.clutchprotocol.io, and the testnet's is at https://explorer-stage.clutchprotocol.io.
 
 **Where can I see the reserve behind CLT?**  
 On the explorer's home page, and at [`GET /api/v1/reserve`](/clutch-explorer/api-reference#reserve). Both show the treasury's latest reconciliation: CLT issued, what the ledger owes, and the USDT held against it, all from one run.

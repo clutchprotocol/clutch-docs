@@ -75,8 +75,9 @@ The mainnet runs chain id `1000`. It has been open to every account since 2026-1
 |---------|-----|
 | Demo app | https://app.clutchprotocol.io |
 | Hub API | https://api.clutchprotocol.io |
+| Block explorer | https://explorer.clutchprotocol.io |
 
-There are no public node WebSocket addresses and no block explorer for the mainnet yet. The Hub API is the way in.
+There are no public node WebSocket addresses for the mainnet yet. The Hub API is the way in, and the block explorer shows what is on the chain.
 
 SDK connection. Pass the chain id, so that the SDK pins it for signing:
 
@@ -158,4 +159,4 @@ Every environment funds a wallet the same way: deposit USDT. Each wallet gets on
 | Integration testing | Stage URLs |
 | Learning / demo | Stage demo app or local stack |
 | Real USDT, small amounts, alpha risk | Mainnet pilot |
-| Block explorer | https://explorer-stage.clutchprotocol.io for the testnet, or local `:5174` |
+| Block explorer | https://explorer.clutchprotocol.io for the mainnet pilot, https://explorer-stage.clutchprotocol.io for the testnet, or local `:5174` |
