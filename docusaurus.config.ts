@@ -2,6 +2,11 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+const editUrl = 'https://github.com/clutchprotocol/clutch-docs/tree/main/';
+const blogTitle = 'Clutch Protocol Blog';
+const blogDescription =
+  'Engineering notes, postmortems, and the monthly state of the project.';
+
 const config: Config = {
   title: 'Clutch Protocol Docs',
   tagline: 'Decentralized ride-sharing blockchain - developer documentation',
@@ -17,8 +22,6 @@ const config: Config = {
   url: 'https://docs.clutchprotocol.io',
   baseUrl: '/',
 
-  organizationName: 'clutchprotocol',
-  projectName: 'clutch-docs',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
@@ -33,11 +36,6 @@ const config: Config = {
 
   themes: ['@docusaurus/theme-mermaid'],
 
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
-  },
-
   presets: [
     [
       'classic',
@@ -45,16 +43,15 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
-          editUrl: 'https://github.com/clutchprotocol/clutch-docs/tree/main/',
+          editUrl,
           // Needs fetch-depth: 0 in .github/workflows/deploy.yml, else every page
           // reports the deploy commit's date.
           showLastUpdateTime: true,
         },
         blog: {
-          blogTitle: 'Clutch Protocol Blog',
-          blogDescription:
-            'Engineering notes, postmortems, and the monthly state of the project.',
-          editUrl: 'https://github.com/clutchprotocol/clutch-docs/tree/main/',
+          blogTitle,
+          blogDescription,
+          editUrl,
           // Every post names an author key from blog/authors.yml and carries a
           // <!-- truncate --> marker, so the list page shows summaries, not full posts.
           onInlineAuthors: 'throw',
@@ -62,9 +59,8 @@ const config: Config = {
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
-            title: 'Clutch Protocol Blog',
-            description:
-              'Engineering notes, postmortems, and the monthly state of the project.',
+            title: blogTitle,
+            description: blogDescription,
           },
         },
         theme: {

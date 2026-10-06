@@ -70,7 +70,7 @@ Enabled through the classic preset's `blog` options in `docusaurus.config.ts`; s
 
 ## Deploy
 
-`.github/workflows/build-check.yml` runs the same install, typecheck and build on every pull request, because `deploy.yml` only runs after a merge and a broken link or anchor stops it. `.github/workflows/deploy.yml` — on push to `main`: Node 20, `npm ci && npm run build`, upload `build/` as Pages artifact, then `actions/deploy-pages` to GitHub Pages. No manual deploy step; `npm run deploy` (docusaurus deploy) is unused.
+`.github/workflows/build-check.yml` runs the same install, typecheck and build on every pull request, because `deploy.yml` only runs after a merge and a broken link or anchor stops it. `.github/workflows/deploy.yml` — on push to `main`: Node 20, `npm ci && npm run build`, upload `build/` as Pages artifact, then `actions/deploy-pages` to GitHub Pages. No manual deploy step.
 
 ## Conventions
 
