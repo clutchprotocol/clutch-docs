@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Mainnet Readiness
 
-**Status: a capped pilot is live; a production mainnet is not ready.** Last reviewed 2026-10-05.
+**Status: a capped pilot is live; a production mainnet is not ready.** Last reviewed 2026-10-06.
 
 The mainnet (chain `1000`) has been open to every account since 2026-10-05 as a **capped pilot**: real USDT, at most $100 per top-up and $200 per day, and withdrawals are not open yet. The pilot goes ahead without parts of the gate below, on purpose, with limits small enough that a total loss would be acceptable: the mint and payout keys are plain keys on the server, the three validators run on one host and are operated by one person, no real payout has been made yet, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and the limits.
 
