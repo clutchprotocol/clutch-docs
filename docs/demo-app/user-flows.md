@@ -79,7 +79,7 @@ Every signature is a prompt in the user's wallet: one to sign in (`clutch-auth:â
 
 ## Explorer links
 
-On the testnet the app links to the block explorer: a menu entry opens https://explorer-stage.clutchprotocol.io, and each row of the transaction history links to that transaction's page there. The address is worked out from the app's own (`app-stage.` becomes `explorer-stage.`). The mainnet pilot has no explorer yet, so the app shows no explorer link there rather than one that would only answer "not found". For local development, `VITE_EXPLORER_URL` names one (for example `http://localhost:5174`).
+The app links to the block explorer of its own network: a menu entry opens the explorer, and each row of the transaction history links to that transaction's page there. The address is worked out from the app's own: `app-stage.` becomes `explorer-stage.` (the testnet, https://explorer-stage.clutchprotocol.io), and `app.` becomes `explorer.` (the mainnet pilot, https://explorer.clutchprotocol.io). On any other host the app shows no explorer link. For local development, `VITE_EXPLORER_URL` names one (for example `http://localhost:5174`).
 
 ## Related
 
