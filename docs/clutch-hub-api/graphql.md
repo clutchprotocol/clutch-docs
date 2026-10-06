@@ -21,7 +21,7 @@ curl -X POST http://localhost:3000/graphql \
 | `generateToken` | Public |
 | `chainInfo` | Public |
 | `listRideRequests`, `listRideOffers`, `listActiveTrips`, `listCompletedTrips`, `listRecentTrips` | Public |
-| `accountBalance`, `userRideRequests` | JWT |
+| `accountBalance` | JWT |
 | All `createUnsigned*` mutations (including `createUnsignedBurn`), `sendRawTransaction` | JWT |
 | Subscription list fields | Public |
 | `accountBalanceUpdated` | Public — **not enforced**; no guard on any subscription |
@@ -225,10 +225,6 @@ query ChainInfo {
   }
 }
 ```
-
-### Stub queries (do not use)
-
-`userRideRequests` (requires JWT) and `rideRequest` (public) return hardcoded placeholder data. Use `listRideRequests` instead.
 
 ## Mutations
 

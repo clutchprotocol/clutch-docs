@@ -54,7 +54,6 @@ Config loads from `config/{env}.toml`, with environment variables using the `APP
 | `APP_INDEXER_POLL_INTERVAL_MS` | Block poll interval (default 4000) |
 | `APP_NODE_WS_URL` | Node WebSocket for indexing |
 | `APP_NODE_METRICS_URL` | Node Prometheus endpoint, read for the chain head (default `http://node1:3001/metrics`) |
-| `APP_CLUTCH_NODE_API_URL` | Node HTTP API URL (required, no default) |
 | `APP_TREASURY_PUBLIC_RECONCILIATION_URL` | The treasury's `/public/reconciliation`, republished as [`/api/v1/reserve`](/clutch-explorer/api-reference#reserve). Empty (the default) leaves the reserve section out |
 
 ### Frontend

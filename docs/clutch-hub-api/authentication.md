@@ -99,4 +99,3 @@ Send the JWT in the `connection_init` payload:
 | `accountBalanceUpdated` (subscription) | No — **no guard on this subscription**; any client can stream any address's balance by passing its `publicKey` |
 | All `createUnsigned*` mutations (including `createUnsignedBurn`) | Yes |
 | `sendRawTransaction` | Yes |
-| `userRideRequests`, `rideRequest` | Yes / No (stubs — do not use) |

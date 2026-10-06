@@ -37,7 +37,7 @@ There is no `extensions.code` field. The only way to distinguish failures progra
 | `Proof of key ownership failed: Invalid hex format for public key: …` | `publicKey` contains non-hex characters | Validate key format before calling |
 | `Failed to generate token: …` | JWT signing failed server-side | Retry; check API logs |
 
-Guarded fields (those that can return `Unauthorized: Authentication required`) are all `createUnsigned*` mutations (including `createUnsignedBurn`), `sendRawTransaction`, and the `accountBalance` and `userRideRequests` queries. `chainInfo` is public, alongside every subscription and every `list*` query — see [Authentication](/clutch-hub-api/authentication) for the full table.
+Guarded fields (those that can return `Unauthorized: Authentication required`) are all `createUnsigned*` mutations (including `createUnsignedBurn`), `sendRawTransaction`, and the `accountBalance` query. `chainInfo` is public, alongside every subscription and every `list*` query — see [Authentication](/clutch-hub-api/authentication) for the full table.
 
 An invalid token is **not** rejected at the transport level: the handler simply does not attach an authenticated user, so the request only fails if it reaches a guard.
 
