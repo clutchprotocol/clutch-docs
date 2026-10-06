@@ -67,19 +67,21 @@ GET /api/v1/blocks/:id
 }
 ```
 
-`total_fees` is a placeholder — see [Fields that are placeholders today](#fields-that-are-placeholders-today).
+`total_fees` is what the block's author earned in fees, read from the block's `tx_fee_earned` balance effect. Blocks indexed before the explorer recorded fees keep `0` until they are re-indexed.
 
 ## Transactions
 
 ### List transactions
 
 ```
-GET /api/v1/transactions?limit=20&offset=0&address=0x...&status=...
+GET /api/v1/transactions?limit=20&offset=0&address=0x...&block=...&type=...
 ```
 
 | Param | Description |
 |-------|-------------|
-| `address` | Filter by sender or involved address — case-insensitive, matches either `from` or `to` |
+| `address` | Filter by sender or involved address — case-insensitive, matches either `from` or `to`, with or without the `0x` prefix |
+| `block` | Only the transactions in the block at this height |
+| `type` | Exact match against `function_call_type`, e.g. `Transfer`, `RidePay`, `Mint` |
 | `status` | Exact match against the stored status. See the placeholder note below before relying on this: only one value is ever stored today. |
 
 ```json
@@ -91,7 +93,7 @@ GET /api/v1/transactions?limit=20&offset=0&address=0x...&status=...
       "from": "0x1111111111111111111111111111111111111111",
       "to": "0x2222222222222222222222222222222222222222",
       "amount": 5000000,
-      "fee": 0,
+      "fee": 1000,
       "status": "confirmed",
       "function_call_type": "RidePay",
       "is_ride_related": true,
@@ -105,7 +107,7 @@ GET /api/v1/transactions?limit=20&offset=0&address=0x...&status=...
 }
 ```
 
-`fee` and `status` are placeholders — see below.
+`fee` is read from the transaction's `tx_fee_paid` balance effect, because the node's transaction payload carries no fee field. It is `0` when the sender produced the block (no self-fee), for a `RideAcceptance` (the node folds that fee into the escrow debit), and for transactions indexed before fees were recorded. `status` is a placeholder — see below.
 
 ### Get transaction
 
@@ -122,7 +124,7 @@ Returns the transaction directly — not wrapped in `items` — with a few field
   "from": "0x1111111111111111111111111111111111111111",
   "to": "0x2222222222222222222222222222222222222222",
   "amount": 5000000,
-  "fee": 0,
+  "fee": 1000,
   "status": "confirmed",
   "function_call_type": "RidePay",
   "is_ride_related": true,
@@ -218,7 +220,7 @@ Takes the same `limit`/`offset` as the list endpoints above (default 20, max 100
 GET /api/v1/search?q=<query>
 ```
 
-Exact match only — not a substring or fuzzy search. A `0x`-prefixed query is checked for an exact match against transaction hash, then account address, then block hash, in that order; a plain integer is checked against block height; anything else returns no results. The response has no `paging` — search takes no `limit`/`offset`:
+Exact match only — not a substring or fuzzy search. A plain integer is checked against block height. A hex value, with or without `0x` and in any case, is checked against transaction hash and block hash; a 40-hex value also returns an `account` result (summary "Address with no indexed activity" when the indexer has never seen it). Anything else returns no results. The response has no `paging` — search takes no `limit`/`offset`:
 
 ```json
 {
@@ -239,14 +241,14 @@ Returns the object directly, like the detail endpoints above:
 ```json
 {
   "latest_height": 118234,
-  "tx_per_second": 0.0,
+  "tx_per_second": 0.05,
   "total_transactions": 48213,
   "active_validators": 3,
-  "avg_block_time_seconds": 0.0
+  "avg_block_time_seconds": 60.0
 }
 ```
 
-`tx_per_second` and `avg_block_time_seconds` are placeholders — see below.
+`avg_block_time_seconds` and `tx_per_second` are measured over the newest 100 blocks: the time between the first and last of them divided by the gaps, and the transactions they carry divided by that time. Both are `0.0` until two blocks are indexed.
 
 ## Fields that are placeholders today
 
@@ -254,12 +256,8 @@ A few fields in the shapes above never change no matter what happened on chain. 
 
 | Field | Where it appears | Always | Why |
 |-------|-------------------|--------|-----|
-| `fee` | Transaction list and detail | `0` | Hardcoded when the indexer builds a transaction row — the node's block payload has no per-transaction fee for it to read. |
-| `status` | Transaction list and detail; the `status` filter on the list endpoint | `"confirmed"` | Hardcoded for the same reason. Every transaction the indexer sees already passed the node's validation before landing in a block, so there's no pending/failed state to report — but it also means the `status` query parameter can't currently narrow anything, since exactly one value is ever stored. |
-| `total_fees` | Block detail | `0` | Hardcoded at ingestion, same cause as transaction `fee` — nothing populates the per-block sum yet. |
+| `status` | Transaction list and detail; the `status` filter on the list endpoint | `"confirmed"` | Hardcoded at ingestion. Every transaction the indexer sees already passed the node's validation before landing in a block, so there's no pending/failed state to report — but it also means the `status` query parameter can't currently narrow anything, since exactly one value is ever stored. |
 | `peer_id` | Validators | `""` | The indexer derives the validator set from block producer addresses; the node's block payload identifies a producer by address only, with no libp2p peer id attached. |
-| `tx_per_second` | Network stats | `0.0` | Not computed. `get_stats` runs real `COUNT`/`MAX` queries for the other fields and returns a literal `0.0` for this one. |
-| `avg_block_time_seconds` | Network stats | `0.0` | Same as `tx_per_second` — no computation exists yet. |
 
 None of these are configurable from the API side; they'll start reflecting reality only once the indexer or the node is extended to compute them.
 
