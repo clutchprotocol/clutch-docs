@@ -47,7 +47,7 @@ Submit as `0x` + hex of the full signed RLP via `sendRawTransaction`.
 
 ## Signature algorithm
 
-The node accepts **two** signatures on a transaction. It tries them in this order, and each one is checked against its own digest, so one cannot pass for the other. Both are recoverable secp256k1 signatures: `v` is the recovery id + 27 (27 or 28), and the node recovers the signer's address and compares it with `from`.
+The node accepts **three** signatures on a transaction. It tries them in this order, and each one is checked against its own digest, so one cannot pass for another. All three are recoverable secp256k1 signatures: `v` is the recovery id + 27 (27 or 28), and the node recovers the signer's address and compares it with `from`.
 
 ### 1. A key signs the hash string
 
@@ -80,11 +80,25 @@ Because the text names the chain and the hash already commits to `chain_id`, `fr
 
 Two details that cost time elsewhere: send the text to the wallet as `0x` + the hex of its UTF-8 bytes (a text that starts with `0x` is otherwise read as bytes), and lift a recovery id of 0 or 1 to 27 or 28 before it goes on the wire.
 
+### 3. TronLink signs the same text (`signMessageV2`)
+
+TronLink will not sign a bare hash either. It signs a text with `signMessageV2` (TIP-191), which is `personal_sign` with another prefix. The node accepts that signature when the text is the same `clutch-tx:{chain_id}:{hash}`, and the signed digest is
+
+```
+Keccak256( "\x19TRON Signed Message:\n" + length(text) + text )
+```
+
+A TRON account is the same kind of key as a Clutch account: the same curve, the same Keccak-256, and the same 20 address bytes. TRON writes those bytes in base58 (`T…`): the byte `0x41`, the 20 bytes, and 4 bytes of checksum. So the `from` of a TronLink transaction is the `0x…` form of the TronLink address, in lower case. The wire format does not change.
+
+The two prefixes give two digests of the same text, so a signature made for one is not valid for the other. A prefix that the node does not know is refused.
+
+How `signMessageV2` reads its argument (plain text, or `0x` hex of the bytes) is not clear in TronLink's own documentation. A client should recover the signer from the signature with the TRON digest before it sends the transaction. A wallet that signed the hex as text signed something else, and the node refuses it. The SDK does this check.
+
 :::info Blind signing
 A wallet shows the text, not the ride. The hash in it stands for a transaction the person cannot read there. The reference app says what each prompt is for before it opens, and readable typed data (EIP-712) is a later step.
 :::
 
-This is a [consensus rule](/clutch-node/overview): a node that predates it rejects a block that carries a wallet-signed transaction, so every validator must run a build that has it.
+Schemes 2 and 3 are [consensus rules](/clutch-node/overview): a node that predates one of them rejects a block that carries a transaction signed that way, so every validator must run a build that has it before the first such transaction. Scheme 3 came after scheme 2, so a build with only scheme 2 still rejects a TronLink transaction.
 
 ## Function call encoding
 
@@ -215,7 +229,7 @@ If implementing signing outside the SDK:
 
 1. Match RLP field order exactly, including `chain_id` at index 2 in both the 4-item preimage and the 8-item signed format
 2. Strip `0x` from `from`, `r`, `s`, and hash fields in signed RLP
-3. Sign Keccak256 of UTF-8 hash hex string, not raw bytes (a key), or have a wallet sign `clutch-tx:{chain_id}:{hash}` with `personal_sign` (see above)
+3. Sign Keccak256 of UTF-8 hash hex string, not raw bytes (a key), or have a wallet sign `clutch-tx:{chain_id}:{hash}` with `personal_sign` (MetaMask, Trust Wallet) or `signMessageV2` (TronLink), see above
 4. Use the correct function call tag for each transaction type — see the [tag table](#rlp-tag-table) above; remember tags are non-contiguous
 5. Encode float coordinates as uint64 bit patterns
 6. Encode `chain_id` as a minimal big-endian integer (standard RLP integer encoding — no special casing)

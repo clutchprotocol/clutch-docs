@@ -81,7 +81,7 @@ See [chain_id and verifyUnsignedTransaction](#chain_id-and-verifyunsignedtransac
 
 ### Signers and wallets
 
-A wallet never hands a page its key, and it will not sign a bare hash. It signs a short readable text with `personal_sign` (EIP-191). The SDK takes a `Signer` wherever it takes a key:
+A wallet never hands a page its key, and it will not sign a bare hash. It signs a short readable text: MetaMask and Trust Wallet with `personal_sign` (EIP-191), and TronLink with `signMessageV2` (TIP-191, the same with the prefix `\x19TRON Signed Message:\n`). The SDK takes a `Signer` wherever it takes a key:
 
 ```typescript
 interface Signer {
@@ -94,12 +94,17 @@ interface Signer {
 
 | Function | Description |
 |----------|-------------|
-| `discoverInjectedWallets(options?)` | The wallets in the page: those that announce themselves (EIP-6963), then `window.ethereum`. Returns `{ id, name, icon?, provider }[]`; an empty list outside a browser |
-| `connectWallet(wallet)` | Asks the wallet to share an account and returns a signer for it. Rejects with the wallet's own error (code 4001) when the person says no |
+| `discoverInjectedWallets(options?)` | The wallets in the page: those that announce themselves (EIP-6963 for MetaMask and Trust Wallet, TIP-6963 for TronLink), then `window.ethereum` and `window.tron`. Returns `{ id, name, icon?, kind, provider }[]`, where `kind` is `'evm'` or `'tron'`; an empty list outside a browser |
+| `connectWallet(wallet)` | Asks the wallet to share an account and returns a signer for it. Rejects with the wallet's own error (code 4001) when the person says no. An older TronLink without `eth_requestAccounts` is asked with `tron_requestAccounts` |
+| `createSignerFor(wallet, account)` | The signer for that kind of wallet: `createWalletSigner` for `'evm'`, `createTronLinkSigner` for `'tron'` |
+| `sharedWalletAccount(wallet)` | The account the wallet already shares with the page, as a `0x` address, without opening a prompt; `null` when it shares none. An app can use it to connect again by itself on the next visit |
+| `watchWalletAccounts(wallet, listener)` | Calls `listener(account)` when the person switches account, and `listener(null)` when the wallet stops sharing the page. Returns a function that stops listening |
 | `createWalletSigner(provider, address)` | A signer for an EIP-1193 provider you already have. A transaction is signed as `clutch-tx:{chainId}:{hash}`, the login as the plain `clutch-auth:…` message. The signature is recovered inside the SDK and refused when it came from another account than `address` |
+| `createTronLinkSigner(provider, address)` | The same for TronLink, with `tronWeb.trx.signMessageV2`. `address` may be the base58 `T…` address that TronLink shows. The text goes in plain first, and in `0x` hex when TronLink answers `Invalid transaction provided` before it opens a prompt |
 | `createLocalSigner(privateKey)` | A signer for a key held in memory; signs the hash string |
 | `addressFromPrivateKey(privateKey)` | The address of a key |
-| `walletTransactionText(chainId, hashHex)`, `personalSignDigest(text)` | The text a wallet signs for a transaction, and the digest `personal_sign` signs for any text |
+| `tronAddressToHex(address)` | A TRON address (`T…`, with its checksum checked) as the Clutch address of the same key: `0x` and 40 lower-case hex characters |
+| `walletTransactionText(chainId, hashHex)`, `personalSignDigest(text)`, `tronSignDigest(text)` | The text a wallet signs for a transaction, and the digests that `personal_sign` and `signMessageV2` sign for any text |
 
 ```typescript
 const [wallet] = await discoverInjectedWallets();
@@ -107,6 +112,8 @@ const signer = await connectWallet(wallet);
 const sdk = new ClutchHubSdk(apiUrl, signer.address, signer, 2077);
 const signed = await sdk.signTransaction(unsigned, signer, { type: 'RideRequest', fare: 5_000_000n });
 ```
+
+A TronLink account is the same kind of key as a Clutch account, so the SDK works with the `0x` form of its address, in lower case. If a wallet signs with another account than the one you asked for, or (TronLink) signs the hex as text, the SDK refuses the signature and says why.
 
 Each `signTransaction` and each sign-in opens a prompt in the wallet, so call them where the person expects one. A wallet signer is `interactive`, and the SDK never asks an interactive signer for a signature in the background: a subscription that reconnects goes without a token rather than opening a prompt. The wallet shows the text it signs, not the ride; tell the person what each prompt is for before it opens (the demo app does). See [Signing and encoding](/reference/signing-and-encoding#signature-algorithm) for the exact texts.
 

@@ -47,7 +47,7 @@ new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string | Signer
 
 `chainId` is new in v3 — see [v3 breaking changes](/clutch-hub-sdk-js/api-reference#v3-breaking-changes). Pin it to your own app config; the SDK never reads it back from the hub. Omitting it still works for read-only queries, but you lose the ability to verify a hub-returned transaction before signing it.
 
-The SDK automatically obtains a JWT via `generateToken` when calling authenticated methods. `generateToken` requires a signed proof-of-key-ownership challenge, so pass the wallet's private key or a signer (or call `setPrivateKey` / `setSigner` later) before using authenticated methods; a key stays local and is never sent to the API, and a wallet keeps its key and asks the user. In a browser app use the user's wallet: see [Use a wallet](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet).
+The SDK automatically obtains a JWT via `generateToken` when calling authenticated methods. `generateToken` requires a signed proof-of-key-ownership challenge, so pass the wallet's private key or a signer (or call `setPrivateKey` / `setSigner` later) before using authenticated methods; a key stays local and is never sent to the API, and a wallet keeps its key and asks the user. In a browser app use the user's wallet: see [Use a wallet](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet-tronlink).
 
 ## Next steps
 

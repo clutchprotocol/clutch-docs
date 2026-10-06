@@ -7,8 +7,8 @@ sidebar_position: 1
 ## Client-side signing
 
 - Private keys **never** leave the user's device
-- All transaction signing happens in the user's own wallet (MetaMask, Trust Wallet) or in a script or server that holds its own key, through the SDK. The reference demo app holds no key at all
-- A wallet signs a short readable text with `personal_sign` (`clutch-tx:{chain_id}:{hash}` for a transaction); the node accepts that next to the signature of a key. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm)
+- All transaction signing happens in the user's own wallet (MetaMask, Trust Wallet, TronLink) or in a script or server that holds its own key, through the SDK. The reference demo app holds no key at all
+- A wallet signs a short readable text with `personal_sign`, or TronLink with `signMessageV2` (`clutch-tx:{chain_id}:{hash}` for a transaction); the node accepts that next to the signature of a key. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm)
 - The API only receives already-signed RLP hex via `sendRawTransaction`
 - Two services sign on the server side, and each is scoped narrowly: `treasury-service` (`Mint`, only once four-eyes approval and the mint gate both pass) and `tron-signer` (signs and broadcasts on Tron — sweeps into custody and, once enabled, redemption payouts from a bounded float). No other transaction type is ever signed anywhere but the client — see [Clutch Treasury Overview](/clutch-treasury/overview) for what each of the two may and may not do.
 
@@ -46,7 +46,7 @@ See [Signing and Encoding](/reference/signing-and-encoding) for the exact algori
 
 | Key | Where it lives | Exposure guidance |
 |-----|----------------|-------------------|
-| User private key | The user's own wallet (MetaMask, Trust Wallet, a hardware wallet behind them) | Never transmitted, and never held by the reference demo app, which has no key store at all since 2026-10-06 (it used to generate a key in the browser and keep it in plain text in localStorage, on the testnet too). The wallet signs after the user approves. A script or a server that signs with its own key keeps that key like any server secret |
+| User private key | The user's own wallet (MetaMask, Trust Wallet, TronLink, a hardware wallet behind them) | Never transmitted, and never held by the reference demo app, which has no key store at all since 2026-10-06 (it used to generate a key in the browser and keep it in plain text in localStorage, on the testnet too). The wallet signs after the user approves. A script or a server that signs with its own key keeps that key like any server secret |
 | Validator `author_secret_key` | Node host / secret manager | Environment or secret manager; never in git; restrict file permissions |
 | `mint_authority` secret key | The treasury service's environment (never a validator host) | Highest-value key in the system — it is the only key that can create new CLT. On the mainnet pilot it is a plain secret on the server, generated there once and never printed. Do not use a dev/validator key in any deployment beyond local testing |
 | Deposit mnemonic | `tron-signer` only — never `payment-orchestrator` | Derives every Tron key the stack uses (deposit addresses, the fee account, the payout float). The orchestrator holds only the derived account **xpub**, which can derive receive addresses and cannot sign — see [Clutch Treasury Overview](/clutch-treasury/overview) |

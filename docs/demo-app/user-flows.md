@@ -13,7 +13,7 @@ For the full interaction between passenger and driver (including Hub API and nod
 | UI | Behavior |
 |----|----------|
 | Role entry screen | Choose passenger or driver |
-| Connect your wallet | Lists the wallets found in the page (MetaMask, Trust Wallet, …). With none, it links to install one, or on a phone to open this page inside the wallet app |
+| Connect your wallet | Lists the wallets found in the page (MetaMask, Trust Wallet, TronLink, …). A TronLink entry has a TRON tag. With none, it links to install one, or on a phone to open this page inside the wallet app |
 | Connect | The wallet asks you to share an account. The app then knows your address and holds a signer that asks the wallet, never a key |
 | Next visit | The wallet used last time connects again without a prompt, if it still shares the account with the site |
 | Switch account in the wallet | The app follows: the new account becomes the signed-in account |

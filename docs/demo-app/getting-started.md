@@ -56,7 +56,7 @@ VITE_API_URL=http://localhost:3000 npm run dev
 ## Using the app
 
 1. Select **Passenger** or **Driver**
-2. **Connect your wallet** — MetaMask or Trust Wallet. On a phone, open the page inside the wallet app (the app shows a link when it finds no wallet); on a computer, install the extension first
+2. **Connect your wallet** — MetaMask, Trust Wallet or TronLink. On a phone, open the page inside the wallet app (the app shows a link when it finds no wallet); on a computer, install the extension first. TronLink shows your address as `T…`; the app shows the same account as `0x…`
 3. Fund the wallet: ☰ → **Wallet** → **Top up**, then send USDT (TRC-20) to the address shown
 4. Follow the [User Flows](/demo-app/user-flows) for each role
 
@@ -68,7 +68,7 @@ The app **holds no private key**. Your wallet keeps it and signs. Until 2026-10-
 
 | Key | Purpose |
 |-----|---------|
-| `clutch_wallet_id` | Which wallet you used last (for example `io.metamask`), so the next visit connects without a prompt. Never a key |
+| `clutch_wallet_id` | Which wallet you used last (for example `io.metamask`, or `org.tronlink.www` for TronLink), so the next visit connects without a prompt. Never a key |
 | `clutch_demo_role` | Which role you picked |
 | `clutch_tx_[address]` | Transaction history per address |
 
