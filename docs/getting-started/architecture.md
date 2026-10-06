@@ -19,7 +19,7 @@ flowchart LR
 ### Transaction steps
 
 1. **Build unsigned tx** — the app asks the Hub API for an unsigned transaction payload
-2. **Sign client-side** — the user signs locally (keys never sent to server): a key signs the hash, and a wallet such as MetaMask or Trust Wallet signs a short readable text that names the chain and the hash
+2. **Sign client-side** — the user signs locally (keys never sent to server): a key signs the hash, and a wallet such as MetaMask, Trust Wallet or TronLink signs a short readable text that names the chain and the hash
 3. **Submit signed tx** — the app sends the signed RLP hex to the Hub, which forwards it to the node
 4. **Validate & mine** — the node verifies signature/nonce, applies it to state, and includes it in a block
 

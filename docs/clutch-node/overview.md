@@ -42,7 +42,7 @@ flowchart LR
 
 Apps do not call the node RPC directly in most cases — they go through the [Hub API](/clutch-hub-api/overview), which builds unsigned transactions and forwards signed ones.
 
-"Validate signature" accepts two signatures, each against its own digest: a key's signature over the transaction hash string, and a wallet's `personal_sign` signature over `clutch-tx:{chain_id}:{hash}` (MetaMask and Trust Wallet will not sign a bare hash). See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm). The second is a consensus rule: a validator that does not have it rejects a block that carries a wallet-signed transaction, so every validator must run a build that has it.
+"Validate signature" accepts three signatures, each against its own digest: a key's signature over the transaction hash string, a wallet's `personal_sign` signature over `clutch-tx:{chain_id}:{hash}` (MetaMask and Trust Wallet will not sign a bare hash), and TronLink's `signMessageV2` signature over the same text (a TRON account is the same kind of key, with another prefix). See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm). The second and the third are consensus rules: a validator that does not have one rejects a block that carries a transaction signed that way, so every validator must run a build that has it.
 
 ## Ports (per node)
 

@@ -8,7 +8,7 @@ JavaScript/TypeScript SDK for client-side transaction signing and Clutch Hub API
 
 ## Features
 
-- **Client-side signing** — Private keys never leave the user's device. A browser app holds none: the user's wallet (MetaMask, Trust Wallet) keeps the key and signs after the user approves
+- **Client-side signing** — Private keys never leave the user's device. A browser app holds none: the user's wallet (MetaMask, Trust Wallet, TronLink) keeps the key and signs after the user approves
 - **Full ride lifecycle** — Request, offer, accept, pay, cancel; plus **Burn** for CLT redemption
 - **Chain-bound and verifiable** — `chain_id` in every signature; `verifyUnsignedTransaction` checks a hub-returned transaction before you sign it
 - **GraphQL integration** — Queries, mutations, and WebSocket subscriptions

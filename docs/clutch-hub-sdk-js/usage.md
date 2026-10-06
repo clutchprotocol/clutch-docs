@@ -25,7 +25,7 @@ const sdk = new ClutchHubSdk(API_URL, publicKey, privateKey, CHAIN_ID);
 
 The constructor requires the API URL and the wallet public key. Pass the private key as the third argument (or later via `sdk.setPrivateKey(privateKey)`) if you will call authenticated methods: the SDK automatically obtains a JWT via `generateToken`, which requires signing a proof-of-key-ownership challenge (`clutch-auth:{chainId}:{publicKey}:{timestamp}`) with the private key. The key is used locally for signing only and is never sent to the API. Read-only usage (public `list*` queries and subscriptions) works without it.
 
-In a browser app, do not hold a key at all: pass a **signer** for the user's wallet instead of the key (see [Use a wallet](#use-a-wallet-metamask-trust-wallet)).
+In a browser app, do not hold a key at all: pass a **signer** for the user's wallet instead of the key (see [Use a wallet](#use-a-wallet-metamask-trust-wallet-tronlink)).
 
 The fourth argument, `chainId`, is new in this SDK version. Pin it to the network your app targets — it's used both to build the auth challenge above and, optionally, to verify a hub-returned transaction before you sign it (see [Verify before you sign](#verify-before-you-sign)).
 
@@ -157,14 +157,15 @@ Both formats work for pickup/dropoff:
 { lat: 35.7, lng: 51.4 }
 ```
 
-## Use a wallet (MetaMask, Trust Wallet)
+## Use a wallet (MetaMask, Trust Wallet, TronLink)
 
-A browser app should not hold a private key. The user's wallet keeps it and signs after the user approves. Clutch accounts are Ethereum-type accounts (secp256k1, address = last 20 bytes of Keccak-256 of the public key), so the address of a MetaMask or Trust Wallet account is a valid Clutch address. The wallet is only a signer: it is not asked to add Clutch as a network.
+A browser app should not hold a private key. The user's wallet keeps it and signs after the user approves. Clutch accounts are Ethereum-type accounts (secp256k1, address = last 20 bytes of Keccak-256 of the public key), so the address of a MetaMask or Trust Wallet account is a valid Clutch address. So is a TronLink account: TRON uses the same kind of key and writes the same 20 bytes in base58 (`T…`), and the SDK works with the `0x` form. The wallet is only a signer: it is not asked to add Clutch as a network.
 
 ```javascript
 import { ClutchHubSdk, discoverInjectedWallets, connectWallet } from 'clutch-hub-sdk-js';
 
-// 1. Find wallets (EIP-6963 announcements, then window.ethereum). Show a button per wallet.
+// 1. Find wallets (EIP-6963 and TIP-6963 announcements, then window.ethereum and window.tron).
+//    Show a button per wallet. wallet.kind is 'evm' (MetaMask, Trust Wallet) or 'tron' (TronLink).
 const wallets = await discoverInjectedWallets();
 
 // 2. The wallet asks the user to share an account.
@@ -182,8 +183,10 @@ What the user sees, and what to do about it:
 
 - **A prompt for each signature.** The first authenticated call after a page load asks the wallet to sign in (`clutch-auth:…`; the token lives 6 hours, in memory), then `signTransaction` asks for the transaction (`clutch-tx:{chainId}:{hash}`). Tell the user what each prompt is for before it opens: a wallet shows the text it signs, not the ride.
 - **No prompts from timers.** The SDK never asks a wallet to sign in the background; its subscriptions go without a token. If your app polls an authenticated endpoint, check `sdk.hasValidToken()` first.
-- **The user can say no.** The wallet rejects with `code: 4001`. A second request while a prompt is open gives `-32002`. If the user switched accounts in the wallet, the SDK refuses the signature and says which account to switch back to.
-- **Accounts change.** Listen for `accountsChanged` on `wallet.provider` and build a new signer (`createWalletSigner(provider, newAddress)`).
+- **The user can say no.** MetaMask and Trust Wallet reject with `code: 4001`. A second request while a prompt is open gives `-32002`. TronLink rejects a signature with an error whose message is `user rejected request`, and no code. If the user switched accounts in the wallet, the SDK refuses the signature and says which account to switch back to.
+- **Accounts change.** Call `watchWalletAccounts(wallet, listener)`. It calls `listener(account)` when the user switches, and `listener(null)` when the wallet stops sharing the page. Build a new signer for the new account with `createSignerFor(wallet, account)`.
+- **Connect again without a prompt.** On the next visit `sharedWalletAccount(wallet)` gives the account the wallet already shares, or `null`, and never opens a prompt.
+- **TronLink.** The signer is `createTronLinkSigner`, and `connectWallet` and `createSignerFor` choose it for a `'tron'` wallet. TronLink signs the same texts with `signMessageV2`, so the user sees the same `clutch-…` text. The SDK checks every signature before it returns it.
 
 The node and the Hub API accept the wallet's signature next to the signature of a key; see [Signing and encoding](/reference/signing-and-encoding#signature-algorithm).
 
@@ -213,6 +216,6 @@ Config files in `clutch-node` and `clutch-hub-api` ship real private keys so the
 ## Security
 
 - Private keys are never sent to the server, and a browser app holds none: the user's wallet signs
-- Signing uses `@noble/secp256k1` and Keccak-256 (a wallet signs with `personal_sign`)
+- Signing uses `@noble/secp256k1` and Keccak-256 (a wallet signs with `personal_sign`, TronLink with `signMessageV2`)
 - Transaction encoding uses RLP matching the node
 - See [Signing and Encoding](/reference/signing-and-encoding) for the full spec

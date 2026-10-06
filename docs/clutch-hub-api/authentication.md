@@ -18,7 +18,7 @@ Clutch Hub API uses **wallet-based JWT authentication**. There is no username/pa
 The challenge previously carried no chain identity (`clutch-auth:{publicKey}:{timestamp}`). Without it, a challenge signed and captured on one Clutch chain would authenticate the same key on any other Clutch hub, within the ±120s clock-skew window — the signature never said which network it was for. Binding `chain_id` into the message closes that: a challenge built for one chain fails to verify against another. There is no fallback to the old chain_id-less format.
 :::
 
-The SDK does all of this automatically via `ensureAuth()` when you use authenticated methods — provide the wallet's private key, or a signer for a wallet such as MetaMask, to the `ClutchHubSdk` constructor (or `setPrivateKey` / `setSigner`), and pass `chainId` as the constructor's fourth argument so the SDK can build the correct challenge. See [SDK API Reference](/clutch-hub-sdk-js/api-reference#chain_id-and-verifyunsignedtransaction).
+The SDK does all of this automatically via `ensureAuth()` when you use authenticated methods — provide the wallet's private key, or a signer for a wallet such as MetaMask or TronLink, to the `ClutchHubSdk` constructor (or `setPrivateKey` / `setSigner`), and pass `chainId` as the constructor's fourth argument so the SDK can build the correct challenge. See [SDK API Reference](/clutch-hub-sdk-js/api-reference#chain_id-and-verifyunsignedtransaction).
 
 ## generateToken
 
@@ -39,7 +39,7 @@ mutation GenerateToken($publicKey: String!, $timestamp: Int!, $signature: AuthSi
 
 ## Challenge signing
 
-The Hub API accepts **two** signatures on the challenge. Each is checked against its own digest, so one cannot pass for the other. Both follow the same convention as [transaction signing](/reference/signing-and-encoding).
+The Hub API accepts **three** signatures on the challenge. Each is checked against its own digest, so one cannot pass for another. They follow the same conventions as [transaction signing](/reference/signing-and-encoding).
 
 `message = "clutch-auth:" + chainId + ":" + publicKey + ":" + timestamp` (`publicKey` byte-for-byte as sent in the mutation).
 
@@ -50,7 +50,9 @@ The Hub API accepts **two** signatures on the challenge. Each is checked against
 
 **A wallet signs the message itself.** MetaMask, Trust Wallet and other wallets will not sign a hash string. They sign a text with `personal_sign` (EIP-191): the signed digest is `keccak256("\x19Ethereum Signed Message:\n" + length(message) + message)`, and the wallet shows the person the message, `clutch-auth:1000:0x…:1751500000`. For a wallet, `publicKey` is its address in lower case. The message names the chain, so a wallet signature for one chain does not log in on another.
 
-In the SDK this is exposed as `signAuthChallenge(chainId, publicKey, timestamp, privateKey)` for a key (with helpers `buildAuthChallengeMessage(chainId, publicKey, timestamp)` and `authChallengeHashHex(chainId, publicKey, timestamp)`), and a wallet signer from `createWalletSigner` asks the wallet for the second form. `chainId` should come from your app's own configuration — the same value passed to the `ClutchHubSdk` constructor — not from a value read back from the server.
+**TronLink signs the same message with `signMessageV2` (TIP-191).** The signed digest is `keccak256("\x19TRON Signed Message:\n" + length(message) + message)`: the same as the wallet form above, with the TRON prefix. A TronLink account is the same key as a Clutch account, so `publicKey` is its `0x…` address (the `T…` address that TronLink shows, decoded) in lower case.
+
+In the SDK this is exposed as `signAuthChallenge(chainId, publicKey, timestamp, privateKey)` for a key (with helpers `buildAuthChallengeMessage(chainId, publicKey, timestamp)` and `authChallengeHashHex(chainId, publicKey, timestamp)`), and a wallet signer from `createWalletSigner` (MetaMask, Trust Wallet) or `createTronLinkSigner` (TronLink) asks the wallet for the second or third form. `chainId` should come from your app's own configuration — the same value passed to the `ClutchHubSdk` constructor — not from a value read back from the server.
 
 The token lives for `jwt_expiration_hours` (6 by default). With a wallet that means one sign-in prompt per session, on the first action that needs a token.
 
