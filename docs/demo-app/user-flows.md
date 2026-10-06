@@ -47,7 +47,7 @@ Opened from the app menu (☰ → **Wallet** → **Top up**) once a wallet exist
 | Panel state | What it means |
 |-------------|----------------|
 | Loading | The address request is in flight |
-| Address shown | Your permanent deposit address, plus a list of your recent deposits |
+| Address shown | Your permanent deposit address, the way an exchange shows one: the network (TRON, TRC-20, or the Nile testnet), the address as a QR code and as text with a Copy button, a Share button on phones, the network fee and the minimum after it, and a list of your recent deposits |
 | Unavailable | The orchestrator returned `503` — deposits are temporarily switched off |
 | Error | The address or deposit-list request failed |
 
@@ -79,7 +79,7 @@ Every signature is a prompt in the user's wallet: one to sign in (`clutch-auth:�
 
 ## Explorer links
 
-`ExplorerTabs` links to the block explorer for transaction lookup (external URL based on deployment).
+On the testnet the app links to the block explorer: a menu entry opens https://explorer-stage.clutchprotocol.io, and each row of the transaction history links to that transaction's page there. The address is worked out from the app's own (`app-stage.` becomes `explorer-stage.`). The mainnet pilot has no explorer yet, so the app shows no explorer link there rather than one that would only answer "not found". For local development, `VITE_EXPLORER_URL` names one (for example `http://localhost:5174`).
 
 ## Related
 

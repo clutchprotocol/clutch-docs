@@ -36,10 +36,11 @@ RideRequestCancel              RideCancel
 Credits CLT to an address. This is the chain's **only** on-ramp for new supply.
 
 ```
-Mint { to: address, amount: u64, credit_ref: 64-hex-chars }
+Mint { to: address, amount: u64, credit_ref: 64-hex-chars, cosignatures: [{ r, s, v }] }
 ```
 
-- Only the address recorded as `mint_authority` in genesis may sign a `Mint` — any other sender is rejected before it reaches the pool.
+- Only a member of the mint authority set may sign a `Mint` — `mint_authority`, plus any `mint_cosigners` committed in genesis. Any other sender is rejected before it reaches the pool.
+- On a chain with `mint_threshold` above 1, a `Mint` also carries approval signatures from distinct other members of that set, so one stolen key mints nothing on its own. Each approver signs `Keccak256(RLP([chain_id, to, amount, credit_ref]))`, not the transaction hash, so an approval for one mint cannot authorise another. The cosignatures sit inside the transaction's data, so the submitter's own signature covers them and nobody can add, remove or swap one afterwards. On a single-signer chain `cosignatures` is empty and is left out of the encoding. Both live chains are single-signer today: see [Mainnet Readiness](/reference/mainnet-readiness#key-custody).
 - `credit_ref` is the hash of an off-chain deposit intent (a specific USDT-on-Tron transfer, matched and verified by the treasury). The node records every `credit_ref` it has processed and rejects a repeat — so a retried or duplicated deposit request can never credit twice, no matter how many times the caller retries it.
 - `Mint` is fee-exempt: the mint authority is not required to hold CLT of its own in order to credit users.
 
@@ -68,7 +69,9 @@ The single transaction in block 0. Carries every consensus parameter into state:
 ChainInit {
   chain_id, is_testnet, tx_fee,
   ride_request_referrer_fee_bps, ride_offer_referrer_fee_bps,
-  mint_authority, faucet_address, faucet_allocation
+  mint_authority, faucet_address, faucet_allocation,
+  ride_auto_release_secs,
+  mint_cosigners, mint_threshold   // only on a multi-signature chain
 }
 ```
 

@@ -250,6 +250,42 @@ Returns the object directly, like the detail endpoints above:
 
 `avg_block_time_seconds` and `tx_per_second` are measured over the newest 100 blocks: the time between the first and last of them divided by the gaps, and the transactions they carry divided by that time. Both are `0.0` until two blocks are indexed.
 
+## Reserve
+
+```
+GET /api/v1/reserve
+```
+
+The reserve position behind CLT, republished from the treasury's last reconciliation run (see [Reserves and Reconciliation](/clutch-treasury/reserves-and-reconciliation)). It returns the object directly:
+
+```json
+{
+  "configured": true,
+  "available": true,
+  "cache_age_seconds": 12,
+  "last_run": {
+    "run_at": "2026-10-06T19:55:02Z",
+    "onchain_supply": 25000000,
+    "genesis_allocation": 0,
+    "treasury_minted": 25000000,
+    "ledger_liability": 25000000,
+    "custody_reported": 25000000,
+    "status": "ok"
+  }
+}
+```
+
+Every figure comes from **one run**, with that run's `run_at`. Live chain supply is deliberately not mixed in: a mint moves supply at once and the reserve figure only at the next run, so the pair would disagree routinely and ordinary lag would read as a shortfall. The amounts are in CLT base units, and since USDT has 6 decimals and 1 USD = 1,000,000 CLT, one base unit of CLT is one micro-USDT, so `ledger_liability` and `custody_reported` compare directly.
+
+| Answer | Meaning |
+|--------|---------|
+| `"configured": false` | This deployment has no treasury behind it. Not an error; the explorer page shows no reserve section. |
+| `"available": false` with `"error"` | The treasury could not be read. The last figures are **not** served instead, because a page that keeps showing `ok` while nobody can check reports a verification that is not happening. |
+| `"last_run": null` | The treasury is reachable and has never reconciled. |
+| `status` | `ok`, `mismatch` or `over_backed_drift`, published as is, including a mismatch. |
+
+The answer is cached for 30 seconds (`cache_age_seconds` says how old it is) and the fetch gives up after 5 seconds. The backend switches this on with `APP_TREASURY_PUBLIC_RECONCILIATION_URL`.
+
 ## Fields that are placeholders today
 
 A few fields in the shapes above never change no matter what happened on chain. That isn't a query bug — each one is a literal value written at the point of ingestion, because the data behind it isn't computed anywhere yet:
@@ -294,7 +330,7 @@ List endpoints wrap results in an envelope:
 
 Endpoints that don't use this envelope:
 
-- **Detail endpoints** (`GET /api/v1/blocks/:id`, `GET /api/v1/transactions/:hash`, `GET /api/v1/accounts/:address`) and **`GET /api/v1/stats`** return the object directly — no `items`, no `paging`.
+- **Detail endpoints** (`GET /api/v1/blocks/:id`, `GET /api/v1/transactions/:hash`, `GET /api/v1/accounts/:address`) **`GET /api/v1/stats`** and **`GET /api/v1/reserve`** return the object directly — no `items`, no `paging`.
 - **`GET /api/v1/search`** returns `{ "items": [...] }` with no `paging` — it takes no `limit`/`offset` to page through.
 
 ## Related

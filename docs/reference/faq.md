@@ -93,11 +93,18 @@ Hub API is for building apps (GraphQL, write txs). Explorer is for browsing chai
 **Why is my transaction not in the explorer yet?**  
 Indexer polls every ~4 seconds. Wait and refresh.
 
+**Is there a public explorer?**  
+For the testnet, at https://explorer-stage.clutchprotocol.io. The mainnet pilot has none yet.
+
+**Where can I see the reserve behind CLT?**  
+On the explorer's home page, and at [`GET /api/v1/reserve`](/clutch-explorer/api-reference#reserve). Both show the treasury's latest reconciliation: CLT issued, what the ledger owes, and the USDT held against it, all from one run.
+
 ## Stage URLs
 
 | Service | URL |
 |---------|-----|
 | Demo | https://app-stage.clutchprotocol.io |
+| Explorer | https://explorer-stage.clutchprotocol.io |
 | API | https://api-stage.clutchprotocol.io |
 | Node 1 | wss://node1-stage.clutchprotocol.io/ws |
 

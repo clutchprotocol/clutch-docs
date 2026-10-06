@@ -34,32 +34,37 @@ Five things must all be true before a production launch, and before the pilot's 
 4. ~~The treasury ledger has off-host backups and a restore that has actually been performed.~~ **Met 2026-09-15.**
 5. More than one person can operate and halt the system.
 
+Where each one stands on 2026-10-06:
+
+| Item | State |
+|------|-------|
+| 1. Keys behind a boundary | **Waived for the pilot.** Both keys are plain secrets on the server. |
+| 2. A real payout receipt | **Open.** The payout wallet has not been activated, so no payout has been made yet. |
+| 3. Fresh genesis, independent operators | **Half met.** The mainnet genesis is fresh: started 2026-09-19 and replaced on 2026-10-05 and twice on 2026-10-06, each time before any CLT existed. The validators share one host and one operator, by choice for now. |
+| 4. Backups and a performed restore | **Met 2026-09-15.** The mainnet restore was rehearsed on 2026-10-05. |
+| 5. More than one person | **Open, by choice.** |
+
 Everything below expands these, plus the product, review, and regulatory work around them.
 
-## The order they happen in
+## What happens next, in order
 
-The items below are not independent, and the sequence is not a preference — several of them physically cannot start until another has finished. That is most of the answer to "when is mainnet?", and it is why the honest answer is an order rather than a date.
+**To finish the pilot**, the payout wallet is activated and the first real withdrawal is made. That withdrawal's receipt is the first mainnet measurement of the payout fee (item 2).
 
-```mermaid
-flowchart LR
-  P["Second operator"] --> K["Key ceremony"]
-  H["KMS boundary"] --> K
-  K --> G["Mainnet genesis"]
-  V["Validator set"] --> G
-  G --> C["Caps applied"]
-  G --> R["Real payout receipt"]
-  R --> F["Redemption fee"]
-  C --> GO["Real funds"]
-  F --> GO
-```
+**Before any pilot limit is raised**, three things, each one an exception the pilot runs under today:
 
-Three things about that shape are worth stating plainly, because each one is a constraint rather than a plan.
+1. The payout key goes behind a KMS boundary, and the reserve goes back to sitting mostly in custody, with the payout wallet holding only a float.
+2. The mint key goes behind a boundary again. The mint authority is a genesis value, so this means a new chain. That is free only while no CLT exists: the chain reset refuses for good once any CLT has been minted, and after that the move needs a planned migration. This is why it is cheaper to do early.
+3. A second person who has rehearsed halting minting.
 
-**Everything funnels through the genesis, and the genesis is final.** Consensus parameters are committed into the genesis hash and compared by peers at handshake, so they cannot be changed afterwards without starting a new chain. That includes the mint authority's address — which means the key ceremony has to happen *before* the chain exists, not after it is running.
+**Before anything beyond the pilot**, the validators move to independent hosts and operators, after the move has been rehearsed on a throwaway network, and a decision is made on reputation.
 
-**A second person gates more than it looks.** The key ceremony requires two people and refuses to proceed with one, because its real subject is testing that *access* recovers — a second principal, in a separate identity, signing from a machine that has never held the first one's credentials. So "find another operator" sits upstream of the keys, which sit upstream of the genesis.
+Several of these physically cannot start until another has finished. That is most of the answer to "when is a production mainnet?", and it is why the honest answer is an order rather than a date. Three constraints shape it.
 
-**The payout fee cannot be set before mainnet exists.** Tron's Nile testnet sponsors its own energy for the test USDT contract, so every testnet payout reports a zero energy fee whether or not energy delegation is working. The first mainnet payout is therefore the first real measurement, and the fee follows it rather than preceding it. See [Redemptions](/clutch-treasury/redemptions).
+**The genesis is final.** Consensus parameters are committed into the genesis hash and compared by peers at handshake, so they cannot be changed afterwards without starting a new chain. That includes the mint authority's address, and it is why the mainnet chain was replaced three times before any CLT existed: once for the mint key on 2026-10-05, and twice on 2026-10-06 for the wallet signatures, which are a consensus change. Once CLT exists, a change like that needs a planned upgrade of every validator instead.
+
+**A second person gates more than it looks.** A real key ceremony requires two people, because its real subject is testing that *access* recovers — a second principal, in a separate identity, signing from a machine that has never held the first one's credentials. So "find another operator" sits upstream of the keys.
+
+**The payout fee cannot be set before a mainnet payout exists.** Tron's Nile testnet sponsors its own energy for the test USDT contract, and its GasFree relay is not mainnet's, so no testnet payout says what a mainnet one costs. The first mainnet withdrawal is therefore the first real measurement, and the fee follows it rather than preceding it. See [Redemptions](/clutch-treasury/redemptions).
 
 ## What "closed" means here
 
@@ -71,7 +76,7 @@ The bar for each is evidence that something worked, not evidence that it was con
 
 **Blocker.** The mint authority is the only key that can create CLT, so its compromise means unbounded issuance against a fixed reserve. Today it is an environment variable on the server, as is the payout key, on the testnet and on the mainnet pilot. On the pilot that is a real exposure: someone who gets into the server could mint CLT without limit and take the reserve, and the pilot's small limits are what keep that loss small. That is a tracked gap rather than an oversight: `ChainSigner` and `PayoutSigner` already exist in the code as swap boundaries for a KMS-backed signer, and the named blocker is that signer plus a real key ceremony and tested recovery. See [Security](/reference/security) for the full key inventory.
 
-One absence is deliberate in the design: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. That holds on the testnet. **The mainnet pilot gives it up on purpose**, because of cost and the early stage of the network: all deposits are swept into the payout wallet, whose key is on the server, and the custody address stays empty. So on the pilot the worst case for a compromised server is the whole reserve, and the small limits bound how large that can be. See [Clutch Treasury Overview](/clutch-treasury/overview).
+One absence is deliberate in the design: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. **The mainnet pilot gives it up on purpose**, and the testnet has been configured the same way since 2026-10-05, because of cost and the early stage of the network: all deposits are swept into the payout wallet, whose key is on the server, and the custody address stays empty. So on the pilot the worst case for a compromised server is the whole reserve, and the small limits bound how large that can be. See [Clutch Treasury Overview](/clutch-treasury/overview).
 
 :::warning What the mainnet pilot actually runs
 The chain supports M-of-N minting, described below, but the mainnet genesis commits **one** mint authority and no co-signers. That was decided on 2026-09-18, because a second independent key store was not affordable. Since 2026-10-05 that one key is a plain secret on the server. The four-eyes rule, the mint caps and the halt breaker are in the treasury service, off-chain, so they stop a mistake in the treasury and not someone who holds the key. Adding co-signers later needs a new chain, because the mint authority and the co-signer set are committed in the genesis.
@@ -81,9 +86,7 @@ The chain supports M-of-N minting, described below, but the mainnet genesis comm
 
 The chain now supports M-of-N: a mint is authorised when it is submitted by one member of an authority set and carries further approval signatures from distinct other members, checked by consensus rather than by an application. Approvers sign a digest covering the chain, recipient, amount and the off-chain payment reference, so an approval for one mint cannot authorise another, and the treasury service that collects those signatures never holds the keys that make them.
 
-The configuration chosen on 2026-09-12 is **three authorities, any two of which must sign**, with the three keys deliberately held in three separate places: one reachable by the treasury service, one under separate credentials elsewhere, and one offline as a cold spare. Three keys in one account would be a two-of-three on paper and a one-of-one in practice. Routine minting uses the first two; the third exists so that losing a key costs availability rather than the chain.
-
-What remains is generating those keys, which happens in a recorded ceremony requiring two people. Their addresses are committed into the genesis, so all three exist and are tested before a mainnet chain starts.
+The configuration designed on 2026-09-12 was **three authorities, any two of which must sign**, with the three keys deliberately held in three separate places: one reachable by the treasury service, one under separate credentials elsewhere, and one offline as a cold spare. Three keys in one account would be a two-of-three on paper and a one-of-one in practice. It was set aside on 2026-09-18 for a single key, as the box above says, and it stays the reference design for a later chain.
 
 **Closed by:** signing through KMS in the mainnet configuration, key material that has never existed outside it, a written ceremony record, and a recovery rehearsal in which both keys were restored into a fresh environment and used to sign.
 
@@ -99,7 +102,7 @@ A single redemption is already bounded twice, in two services that do not share 
 
 ## Chain and validators
 
-**Blocker.** Consensus parameters, including the network id and the testnet flag, are committed into the genesis hash and compared by peers at handshake. Mainnet is therefore a new genesis, not a configuration change, and it must pre-mint nothing, exactly as the current chain does. See [CLT Economics](/clutch-node/clt-economics).
+**Blocker.** Consensus parameters, including the network id and the testnet flag, are committed into the genesis hash and compared by peers at handshake. Mainnet is therefore a new genesis, not a configuration change, and it must pre-mint nothing. That half is done: the mainnet (chain `1000`) started from a fresh genesis on 2026-09-19 that pre-mints nothing, and every replacement since has done the same. See [CLT Economics](/clutch-node/clt-economics).
 
 Aura is an authority round-robin, so the validator set is permissioned by construction. A production mainnet needs authorities that do not share an operator or a failure domain, each with its own key. The pilot's three authorities run on one host and are operated by one person, so the host is the chain: if it is lost, the chain is lost with it. The pilot's own chain holds only what users top up within the small limits.
 
@@ -124,6 +127,8 @@ This is the argument for the item rather than an aside. A backup job that has ne
 That reconciliation runs in a mode that starts no background workers at all. An ordinary instance of the treasury service would start the sweeper, the chain outbox and the payout workers, every one of which acts on chain — so a service pointed at a *copy* of the ledger would re-broadcast transactions already submitted and re-sweep addresses already swept. Verifying a backup must not be able to move money, and the safe path has to be built deliberately rather than assumed.
 
 **The rehearsal found a real discrepancy, which is the argument for the item rather than an aside.** The first run came back not-green, and so did the live ledger, with identical numbers — which is what proved the restore faithful rather than broken. The gap was a single mint that had been submitted to the chain and never confirmed, sitting in a state nothing retried, nothing timed out, and nothing checked. It had been raising an alert for a day. A backup exercise found it because reconciling a restored ledger asks a question nobody had asked of the live one.
+
+The same restore was rehearsed against the mainnet treasury on 2026-10-05, from its own off-host storage with its own passphrase, and reconciled clean. The ledger was still empty then, so it proved the path rather than the data; it will be run again after the first real deposits.
 
 Both defects behind it are fixed: a submission that is not confirmed within a bounded window is now re-queued, safely, because the chain refuses a duplicate mint against the same reference; and the deposit watcher's position is now published and alerted on when it drifts above the chain head, a state a chain reset produces silently.
 
@@ -180,7 +185,7 @@ Stated so the sound parts are not assumed provisional. These were designed for t
 
 - **The deposit mnemonic exists in one service.** The service that hands out deposit addresses holds only an extended public key, which derives receive addresses and cannot spend. Owning it does not move a deposit.
 - **The sweep endpoint takes an address index and nothing else** — no destination, amount, or contract — so it cannot be turned into a second payout path.
-- **Reserve custody is unreachable from code** on the testnet, which is why payouts come from a bounded float there. The mainnet pilot does not have this: see Key custody above.
+- **Reserve custody is unreachable from code**, which is why payouts come from a float. With one wallet that float holds the whole reserve, so this no longer bounds a loss on the pilot: see Key custody above.
 - **Redemptions are bounded twice, in services that do not share the value.**
 - **Ambiguous payouts stop rather than retry.** Only a reply proving nothing was broadcast returns a redemption to the queue; anything else pages a human. That accepts a stuck redemption to avoid a double payment.
 - **Minting has four-eyes approval, a per-transaction cap, a daily cap, and a manual halt.**

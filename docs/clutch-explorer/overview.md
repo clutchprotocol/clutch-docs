@@ -12,7 +12,8 @@ sidebar_position: 1
 flowchart LR
     Node["Clutch Node"] -->|"poll"| Indexer["Explorer Indexer"]
     Indexer --> Postgres[("PostgreSQL")]
-    Indexer --> Api["REST API"]
+    Postgres --> Api["REST API"]
+    Treasury["Treasury reconciliation"] -.->|"reserve, optional"| Api
     Api --> Ui["React Frontend"]
 ```
 
@@ -20,13 +21,19 @@ Unlike the Hub API (GraphQL for app developers), the explorer is read-only infra
 
 ## Screenshots
 
-![Block view](/img/explorer-block.svg)
+The home page: the latest figures, a chart of recent chain activity, the reserve behind CLT, and the newest blocks, transactions and validators.
 
-![Account view](/img/explorer-account.svg)
+![Explorer home page](/img/explorer-home-light.png)
 
-:::note
-Screenshots are placeholders. To replace, start the stack via [clutch-deploy](/deployment/clutch-deploy), capture from the explorer frontend, save as `.png` into `static/img/`, and update the references above.
-:::
+A block, with its producer, its parent and the transactions it carries:
+
+![Block page](/img/explorer-block-light.png)
+
+An account in dark mode, with its balance, nonce and every balance change. Dark mode follows the system, and the button in the header overrides it.
+
+![Account page in dark mode](/img/explorer-address-dark.png)
+
+These were taken from a local stack, so the network chip reads `LOCAL`. The deployed explorers show `TESTNET` or `MAINNET PILOT`.
 
 ## Components
 
@@ -43,6 +50,8 @@ Screenshots are placeholders. To replace, start the stack via [clutch-deploy](/d
 - Account balances, nonces, activity
 - Validator set
 - Referrer fee metadata
+
+It also republishes the treasury's latest reconciliation, so anyone can see the reserve behind CLT next to the chain ([`GET /api/v1/reserve`](/clutch-explorer/api-reference#reserve)). A deployment with no treasury behind it leaves that section out.
 
 Poll interval defaults to 4000ms (`indexer_poll_interval_ms`).
 

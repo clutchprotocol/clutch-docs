@@ -36,6 +36,7 @@ Docker image: [`ghcr.io/clutchprotocol/clutch-hub-demo-app`](https://github.com/
 | `VITE_CHAIN_ID` | Chain id pinned client-side for the auth challenge and `signTransaction`'s verification pin — never sourced from the Hub | `2077` |
 | `VITE_ORCHESTRATOR_URL` | `payment-orchestrator` base URL, used by the deposit panel | `/payment` (a same-origin path, proxied by nginx) |
 | `VITE_CARTO_API_KEY` | CARTO basemap API key (Voyager / Dark Matter map tiles) | empty — falls back to OpenStreetMap tiles |
+| `VITE_EXPLORER_URL` | Block explorer for local development only; deployed hosts work it out from their own address | empty — no explorer link |
 
 Because `VITE_ORCHESTRATOR_URL` defaults to a proxied path rather than a full URL, running `npm run dev` standalone (no nginx in front of it) leaves the deposit panel calling `/payment/...` on the Vite dev server itself, which 404s. Either run the full stack via [clutch-deploy](/deployment/clutch-deploy), or set `VITE_ORCHESTRATOR_URL` to the orchestrator's own address (e.g. `http://localhost:8091`) for standalone dev.
 

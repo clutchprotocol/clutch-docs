@@ -6,7 +6,7 @@ sidebar_position: 2
 
 Full-stack deployment using [clutch-deploy](https://github.com/clutchprotocol/clutch-deploy).
 
-Pre-built images are published to [GHCR](/reference/docker-images). `clutch-deploy` compose files reference the GHCR `:latest` tags.
+Pre-built images are published to [GHCR](/reference/docker-images). `clutch-deploy` compose files pin each Clutch image to an exact `sha-<7>` tag, so a checkout always runs the same builds. See [Docker Images — Tags](/reference/docker-images#tags).
 
 ## Services
 
@@ -21,7 +21,8 @@ Pre-built images are published to [GHCR](/reference/docker-images). `clutch-depl
 | node1 | 8081, 4001, 3001 | Bootstrap node (WebSocket, libp2p, metrics) |
 | node2 | 8082, 4002, 3002 | Node 2 |
 | node3 | 8083, 4003, 3003 | Node 3 |
-| Prometheus | 9090 | Metrics |
+| Prometheus | 9090 | Metrics and alert rules |
+| Alertmanager | 9093 | Routes alerts (Telegram on the deployed stacks) |
 | Grafana | 3030 | Dashboards (`admin` / `GRAFANA_ADMIN_PASSWORD` from `.env`) |
 | Seq | 5341 | Structured logging |
 | nginx | 80 | Reverse proxy (optional — see [Nginx](/deployment/nginx)) |

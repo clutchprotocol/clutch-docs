@@ -198,6 +198,8 @@ The config on this page is local/dev only, brought up via the optional overlay d
 | `config/nginx/clutch.http/*.conf` | `upstream`, `limit_req_zone` and friends | at `http` level |
 | `config/nginx/clutch.shared/*.conf` | snippets every Clutch vhost needs | copied into each Clutch vhost |
 
+The Clutch hostnames served this way are `app-stage`, `api-stage`, `explorer-stage` and `node1-stage` to `node3-stage` for the testnet, and `app` and `api` for the mainnet pilot, all under `clutchprotocol.io`. On both `app` hosts, `/payment/` is the route to that network's own `payment-orchestrator`, which publishes no port of its own. TLS ends at Cloudflare in front of all of them.
+
 An `include` would be the obvious design and cannot work here: the container bind-mounts a single file, not a directory, so no host directory is visible inside it — and a glob matching nothing is valid nginx, which means that mistake passes `nginx -t`, reloads cleanly and loads nothing.
 
 The sync is guarded rather than trusted. The set of `server_name`s must be identical before and after, no upstream may disappear, `nginx -t` must pass, and a set of post-reload checks must answer correctly — including real WebSocket handshakes returning 101, because losing an upgrade header degrades a subscription endpoint to a plain 200 while every page still loads. Any failure restores the previous config and fails the deploy.
