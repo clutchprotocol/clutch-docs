@@ -67,7 +67,7 @@ GET /api/v1/blocks/:id
 }
 ```
 
-`total_fees` is a placeholder — see [Fields that are placeholders today](#fields-that-are-placeholders-today).
+`total_fees` is what the block's author earned in fees, read from the block's `tx_fee_earned` balance effect. Blocks indexed before the explorer recorded fees keep `0` until they are re-indexed.
 
 ## Transactions
 
@@ -93,7 +93,7 @@ GET /api/v1/transactions?limit=20&offset=0&address=0x...&block=...&type=...
       "from": "0x1111111111111111111111111111111111111111",
       "to": "0x2222222222222222222222222222222222222222",
       "amount": 5000000,
-      "fee": 0,
+      "fee": 1000,
       "status": "confirmed",
       "function_call_type": "RidePay",
       "is_ride_related": true,
@@ -107,7 +107,7 @@ GET /api/v1/transactions?limit=20&offset=0&address=0x...&block=...&type=...
 }
 ```
 
-`fee` and `status` are placeholders — see below.
+`fee` is read from the transaction's `tx_fee_paid` balance effect, because the node's transaction payload carries no fee field. It is `0` when the sender produced the block (no self-fee), for a `RideAcceptance` (the node folds that fee into the escrow debit), and for transactions indexed before fees were recorded. `status` is a placeholder — see below.
 
 ### Get transaction
 
@@ -124,7 +124,7 @@ Returns the transaction directly — not wrapped in `items` — with a few field
   "from": "0x1111111111111111111111111111111111111111",
   "to": "0x2222222222222222222222222222222222222222",
   "amount": 5000000,
-  "fee": 0,
+  "fee": 1000,
   "status": "confirmed",
   "function_call_type": "RidePay",
   "is_ride_related": true,
@@ -256,9 +256,7 @@ A few fields in the shapes above never change no matter what happened on chain. 
 
 | Field | Where it appears | Always | Why |
 |-------|-------------------|--------|-----|
-| `fee` | Transaction list and detail | `0` | Hardcoded when the indexer builds a transaction row — the node's block payload has no per-transaction fee for it to read. |
-| `status` | Transaction list and detail; the `status` filter on the list endpoint | `"confirmed"` | Hardcoded for the same reason. Every transaction the indexer sees already passed the node's validation before landing in a block, so there's no pending/failed state to report — but it also means the `status` query parameter can't currently narrow anything, since exactly one value is ever stored. |
-| `total_fees` | Block detail | `0` | Hardcoded at ingestion, same cause as transaction `fee` — nothing populates the per-block sum yet. |
+| `status` | Transaction list and detail; the `status` filter on the list endpoint | `"confirmed"` | Hardcoded at ingestion. Every transaction the indexer sees already passed the node's validation before landing in a block, so there's no pending/failed state to report — but it also means the `status` query parameter can't currently narrow anything, since exactly one value is ever stored. |
 | `peer_id` | Validators | `""` | The indexer derives the validator set from block producer addresses; the node's block payload identifies a producer by address only, with no libp2p peer id attached. |
 
 None of these are configurable from the API side; they'll start reflecting reality only once the indexer or the node is extended to compute them.
