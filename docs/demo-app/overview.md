@@ -9,7 +9,7 @@ The **Clutch Hub Demo App** is a React + Vite application demonstrating blockcha
 ## Features
 
 - **Dual roles** — Separate passenger and driver experiences
-- **Wallet management** — Generate, import or restore keys (optional localStorage), with passphrase-encrypted backup
+- **Your own wallet** — Connect MetaMask or Trust Wallet. The app holds no key: the wallet keeps it and asks before each action
 - **Interactive map** — Leaflet map for pickup/dropoff selection
 - **Full ride lifecycle** — Request, offer, accept, pay, cancel
 - **Real-time updates** — GraphQL subscriptions with polling fallback
@@ -26,8 +26,8 @@ The **Clutch Hub Demo App** is a React + Vite application demonstrating blockcha
 
 ## Key concepts demonstrated
 
-1. **User sovereignty** — Users own and control their keys
-2. **Client-side signing** — Private keys never sent to the server
+1. **User sovereignty** — Users own and control their keys, in their own wallet
+2. **Client-side signing** — Private keys never sent to the server, and never held by the app: the wallet signs
 3. **Transparency** — Transaction history visible on-chain
 4. **Trustless operations** — Ride state enforced by the blockchain
 

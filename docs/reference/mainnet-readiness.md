@@ -143,11 +143,16 @@ Keying it correctly was the substance. Behind a CDN the immediate peer is the CD
 
 ## Client-side key handling
 
-**Blocker for any app holding real funds.** This is the item most likely to affect you today.
+**Closed 2026-10-06.** It was a blocker for any app holding real funds.
 
-The reference demo app generates or imports keys in the browser and stores them in plaintext `localStorage`. That was a deliberate choice for a demo on a valueless testnet, and it is not a wallet. **The mainnet pilot serves this same app**, so on the pilot your key sits in the browser too: clearing site data, switching browsers or using another machine loses it, and nothing can recover it. The app offers an encrypted backup from its menu; use it, and keep only small amounts behind a key stored this way. Do not carry that pattern into an app that holds more. The SDK's design does not require it: keys never leave the client, so a real key boundary can be substituted without changing how transactions are built or signed.
+The reference demo app used to generate or import keys in the browser and store them in plaintext `localStorage`, and the mainnet pilot served that same app. It no longer holds a key, on any network. The user's own wallet (MetaMask or Trust Wallet) keeps the key and signs a short readable text after the user approves, and the node and the Hub API accept that signature next to the signature of a key. Key generation, import, the encrypted backup and the "never put real funds behind a key created here" notice are gone, and the new version deletes the plain-text keys that older versions left in the browser. The SDK's design allowed this from the start: keys never leave the client, so a real key boundary substitutes without changing how transactions are built. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm) and [SDK Usage](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet).
 
-**Closed by:** the reference app moving to a real key boundary such as a hardware wallet, an OS keychain, or an external signer, or being presented unambiguously as a demo that is not a place to hold value.
+Two limits remain, and they are not hidden:
+
+- **A wallet shows the text it signs, not the ride.** The app says what each prompt is for before it opens, and the SDK checks the unsigned transaction against what was asked before it asks the wallet. Readable typed data (EIP-712) would let the wallet show the ride itself.
+- **WalletConnect is not built yet.** A wallet on a phone cannot scan a code shown on a computer. On a phone the page opens inside the wallet app's own browser.
+
+**Closed by:** the reference app holding no key and signing only through the user's wallet, with the node and the Hub API accepting that signature.
 
 ## Market operations
 

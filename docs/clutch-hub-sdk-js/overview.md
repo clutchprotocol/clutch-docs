@@ -8,7 +8,7 @@ JavaScript/TypeScript SDK for client-side transaction signing and Clutch Hub API
 
 ## Features
 
-- **Client-side signing** — Private keys never leave the browser
+- **Client-side signing** — Private keys never leave the user's device. A browser app holds none: the user's wallet (MetaMask, Trust Wallet) keeps the key and signs after the user approves
 - **Full ride lifecycle** — Request, offer, accept, pay, cancel; plus **Burn** for CLT redemption
 - **Chain-bound and verifiable** — `chain_id` in every signature; `verifyUnsignedTransaction` checks a hub-returned transaction before you sign it
 - **GraphQL integration** — Queries, mutations, and WebSocket subscriptions
@@ -41,6 +41,17 @@ const tx = await sdk.createUnsignedRideRequest({
 
 const signed = await sdk.signTransaction(tx, privateKey, { type: 'RideRequest', fare: 5_000_000n });
 await sdk.submitTransaction(signed.rawTransaction);
+```
+
+With a wallet instead of a key:
+
+```javascript
+import { discoverInjectedWallets, connectWallet } from 'clutch-hub-sdk-js';
+
+const [wallet] = await discoverInjectedWallets();
+const signer = await connectWallet(wallet); // the wallet asks the user
+const sdk = new ClutchHubSdk('http://localhost:3000', signer.address, signer, CHAIN_ID);
+// ... then pass `signer` where the example passes `privateKey`
 ```
 
 ## Documentation

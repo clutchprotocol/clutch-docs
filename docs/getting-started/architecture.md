@@ -19,7 +19,7 @@ flowchart LR
 ### Transaction steps
 
 1. **Build unsigned tx** — the app asks the Hub API for an unsigned transaction payload
-2. **Sign client-side** — the user signs the hash locally with their private key (keys never sent to server)
+2. **Sign client-side** — the user signs locally (keys never sent to server): a key signs the hash, and a wallet such as MetaMask or Trust Wallet signs a short readable text that names the chain and the hash
 3. **Submit signed tx** — the app sends the signed RLP hex to the Hub, which forwards it to the node
 4. **Validate & mine** — the node verifies signature/nonce, applies it to state, and includes it in a block
 
@@ -64,7 +64,7 @@ This flow deliberately bypasses the Hub API and the SDK on both legs: the browse
 
 ## Security Model
 
-- **Client-side signing**: Private keys never leave the user's device
+- **Client-side signing**: Private keys never leave the user's device. In the reference app the user's own wallet holds the key
 - **Wallet JWT**: Public key identity — no username/password
 - **Nonce**: Prevents replay attacks per account
 - **On-chain auditability**: All transactions recorded on the blockchain

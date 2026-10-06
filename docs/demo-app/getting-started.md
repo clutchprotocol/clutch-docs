@@ -56,25 +56,25 @@ VITE_API_URL=http://localhost:3000 npm run dev
 ## Using the app
 
 1. Select **Passenger** or **Driver**
-2. Generate a wallet or import existing keys
+2. **Connect your wallet** — MetaMask or Trust Wallet. On a phone, open the page inside the wallet app (the app shows a link when it finds no wallet); on a computer, install the extension first
 3. Fund the wallet: ☰ → **Wallet** → **Top up**, then send USDT (TRC-20) to the address shown
 4. Follow the [User Flows](/demo-app/user-flows) for each role
 
-## localStorage keys
+Your wallet asks you to approve each action. It shows a short text that starts with `clutch-`, not the ride itself, so the app says what each prompt is for before it opens. The first action after you open the page also asks you to sign in (a text that starts with `clutch-auth`). That sign-in lasts 6 hours.
 
-| Key pattern | Purpose |
-|-------------|---------|
-| `clutch_passenger_publicKey` | Passenger wallet |
-| `clutch_passenger_privateKey` | Passenger key (if remembered) |
-| `clutch_driver_publicKey` | Driver wallet |
-| `clutch_driver_privateKey` | Driver key (if remembered) |
+## What the app stores
+
+The app **holds no private key**. Your wallet keeps it and signs. Until 2026-10-06 the demo generated a key in the browser and stored it in `localStorage` in plain text; that, the backup file and the "never put real funds behind a key created here" notice are gone, on the testnet too. The first time the new version starts it deletes the `clutch_passenger_*` and `clutch_driver_*` entries that the old one left.
+
+| Key | Purpose |
+|-----|---------|
+| `clutch_wallet_id` | Which wallet you used last (for example `io.metamask`), so the next visit connects without a prompt. Never a key |
+| `clutch_demo_role` | Which role you picked |
 | `clutch_tx_[address]` | Transaction history per address |
 
 ## Security note
 
-The demo optionally stores keys in localStorage for convenience. **Never do this in production.** Use hardware wallets, secure enclaves, or per-action key prompts instead.
-
-Because that storage is lost by clearing site data, switching browsers or changing machine, the app can write an **encrypted backup**: a passphrase-protected JSON file, sealed with WebCrypto. The passphrase is the whole protection — anyone with both the file and the passphrase has the wallet, and losing the passphrase makes the file unopenable with no recovery. That is still the right shape for a backup, and it is why the export refuses to write a plaintext key.
+Nothing in the browser can sign for you except your wallet, and it asks first. **Disconnect wallet** in the menu forgets the wallet in this app; to remove the site from your wallet's list, do it in the wallet. Not built yet: WalletConnect (a wallet on your phone that scans a code shown on a computer).
 
 ## Related
 

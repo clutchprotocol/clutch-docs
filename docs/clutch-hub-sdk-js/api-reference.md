@@ -15,8 +15,10 @@ This version changes three things that will break code written against v2: amoun
 ### Constructor
 
 ```typescript
-new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string, chainId?: number, options?: ClutchHubSdkOptions)
+new ClutchHubSdk(apiUrl: string, publicKey: string, privateKey?: string | Signer, chainId?: number, options?: ClutchHubSdkOptions)
 ```
+
+The third argument is a private key or a [`Signer`](#signers-and-wallets). A key behaves as it always did. A signer is how a wallet such as MetaMask or Trust Wallet signs: the wallet keeps the key and asks the person first.
 
 ```typescript
 interface ClutchHubSdkOptions {
@@ -34,10 +36,12 @@ Every HTTP request the SDK makes (queries, mutations, `generateToken`) is bounde
 | Method | Description |
 |--------|-------------|
 | `getPublicKey()` | Returns the wallet public key for this instance |
-| `setPrivateKey(privateKey)` | Provide/replace the private key used to sign auth challenges |
-| `isAuthenticated()` | True if a cached JWT exists and is not near expiry |
+| `setPrivateKey(privateKey)` | Provide/replace the private key (or signer) used to sign auth challenges |
+| `setSigner(signer)` | Same, for a [signer](#signers-and-wallets) such as a wallet's |
+| `isAuthenticated()` | True if this instance holds a JWT that is not near expiry |
+| `hasValidToken()` | True if a JWT for this account is cached and good, for every instance of the account: the next authenticated call opens no sign-in prompt. Check it before a poll |
 
-Token generation is automatic, but requires the wallet's private key (constructor or `setPrivateKey`): `generateToken` demands a recoverable secp256k1 signature over the challenge `clutch-auth:{chainId}:{publicKey}:{timestamp}` (timestamp within ±120s of server time). The key is used for local signing only and never leaves the client. The SDK caches JWTs globally per public key. Standalone helpers `buildAuthChallengeMessage(chainId, publicKey, timestamp)`, `authChallengeHashHex(chainId, publicKey, timestamp)`, and `signAuthChallenge(chainId, publicKey, timestamp, privateKey)` are exported for custom clients.
+Token generation is automatic, but requires a signer for the account (constructor, `setPrivateKey` or `setSigner`): `generateToken` demands a recoverable secp256k1 signature over the challenge `clutch-auth:{chainId}:{publicKey}:{timestamp}` (timestamp within ±120s of server time). A key is used for local signing only and never leaves the client; a wallet keeps its key and signs the readable challenge itself. The SDK caches JWTs globally per public key. Standalone helpers `buildAuthChallengeMessage(chainId, publicKey, timestamp)`, `authChallengeHashHex(chainId, publicKey, timestamp)`, and `signAuthChallenge(chainId, publicKey, timestamp, privateKey)` are exported for custom clients.
 
 ### Unsigned transaction builders
 
@@ -70,10 +74,41 @@ The SDK does not expose a Mint builder. Minting is gated to the chain's `mint_au
 
 | Method | Returns | Description |
 |--------|---------|-------------|
-| `signTransaction(unsignedTx, privateKey, expected?)` | `{ r, s, v, rawTransaction, txHash }` | Client-side secp256k1 signing, with optional pre-sign verification |
+| `signTransaction(unsignedTx, keyOrSigner, expected?)` | `{ r, s, v, rawTransaction, txHash }` | Signs with a private key, or asks a signer (a wallet) to sign; optional pre-sign verification |
 | `submitTransaction(rawTransaction)` | `string` | Submits via `sendRawTransaction` mutation |
 
 See [chain_id and verifyUnsignedTransaction](#chain_id-and-verifyunsignedtransaction) for the `expected` argument.
+
+### Signers and wallets
+
+A wallet never hands a page its key, and it will not sign a bare hash. It signs a short readable text with `personal_sign` (EIP-191). The SDK takes a `Signer` wherever it takes a key:
+
+```typescript
+interface Signer {
+  readonly address: string;          // lower case, 0x + 40 hex
+  readonly interactive?: boolean;    // true when signing opens a prompt for a person
+  signTransaction(request: { hashHex: string; chainId: number }): Promise<Signature>;
+  signAuthChallenge(request: { message: string; hashHex: string }): Promise<Signature>;
+}
+```
+
+| Function | Description |
+|----------|-------------|
+| `discoverInjectedWallets(options?)` | The wallets in the page: those that announce themselves (EIP-6963), then `window.ethereum`. Returns `{ id, name, icon?, provider }[]`; an empty list outside a browser |
+| `connectWallet(wallet)` | Asks the wallet to share an account and returns a signer for it. Rejects with the wallet's own error (code 4001) when the person says no |
+| `createWalletSigner(provider, address)` | A signer for an EIP-1193 provider you already have. A transaction is signed as `clutch-tx:{chainId}:{hash}`, the login as the plain `clutch-auth:…` message. The signature is recovered inside the SDK and refused when it came from another account than `address` |
+| `createLocalSigner(privateKey)` | A signer for a key held in memory; signs the hash string |
+| `addressFromPrivateKey(privateKey)` | The address of a key |
+| `walletTransactionText(chainId, hashHex)`, `personalSignDigest(text)` | The text a wallet signs for a transaction, and the digest `personal_sign` signs for any text |
+
+```typescript
+const [wallet] = await discoverInjectedWallets();
+const signer = await connectWallet(wallet);
+const sdk = new ClutchHubSdk(apiUrl, signer.address, signer, 2077);
+const signed = await sdk.signTransaction(unsigned, signer, { type: 'RideRequest', fare: 5_000_000n });
+```
+
+Each `signTransaction` and each sign-in opens a prompt in the wallet, so call them where the person expects one. A wallet signer is `interactive`, and the SDK never asks an interactive signer for a signature in the background: a subscription that reconnects goes without a token rather than opening a prompt. The wallet shows the text it signs, not the ride; tell the person what each prompt is for before it opens (the demo app does). See [Signing and encoding](/reference/signing-and-encoding#signature-algorithm) for the exact texts.
 
 ### Queries
 
