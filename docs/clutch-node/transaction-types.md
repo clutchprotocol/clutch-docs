@@ -20,8 +20,9 @@ Clutch Node supports custom non-EVM transaction types encoded with RLP tags.
 | 7 | `Burn` | Yes (`createUnsignedBurn`) | Destroy CLT from the caller's own balance |
 | 8 | `RideRequestCancel` | Yes | Cancel pending request |
 | 9 | `ChainInit` | No — genesis only | Carries consensus parameters into state at block 0 |
+| 10 | `WalletTransfer` | No — sent from MetaMask through `/rpc` | A transfer signed by an Ethereum wallet |
 
-Tags are **not contiguous** by design: 6 and 7 were reserved ahead of time for Mint/Burn, and 9 was left open for `ChainInit`, added later still. Apps interact with types 1–5, 7, and 8 via the Hub API and SDK. Type 0 is a valid node-level transaction but is not exposed by the Hub API or the SDK. Types 6 and 9 never appear in application code — see below.
+Tags are **not contiguous** by design: 6 and 7 were reserved ahead of time for Mint/Burn, and 9 was left open for `ChainInit`, added later still. Apps interact with types 1–5, 7, and 8 via the Hub API and SDK. Type 0 is a valid node-level transaction but is not exposed by the Hub API or the SDK. Types 6 and 9 never appear in application code, and type 10 is built by the node from a wallet's signed transaction — see below.
 
 ## Ride lifecycle
 
@@ -77,6 +78,25 @@ ChainInit {
 
 Its hash feeds the genesis block hash, and peers compare genesis hashes at the p2p handshake — a node configured with different values for any of these fields computes a different genesis and cannot peer with the rest of the network. `ChainInit` is rejected by validation at any height other than 0; it is never constructed by an app, the SDK, or the Hub API. See [Node Configuration](/clutch-node/configuration#consensus-parameters-must-match-across-every-node) and [CLT Economics](/clutch-node/clt-economics).
 
+## WalletTransfer (tag 10)
+
+A CLT transfer sent from MetaMask, Trust Wallet or another Ethereum wallet. A wallet can only send a coin by signing an ordinary Ethereum transaction, so the node accepts that signed transaction as it is (through [`send_wallet_transaction`](/clutch-node/json-rpc#send_wallet_transaction), which the Hub API's `/rpc` endpoint calls for `eth_sendRawTransaction`) and keeps every field the signature covers:
+
+```
+WalletTransfer { to, value, gas_price, gas_limit, wallet_chain_id }
+```
+
+- `from` is recovered from the signature, and the Clutch nonce is the wallet's nonce plus one (Ethereum counts from 0).
+- `value` is in CLT base units. A wallet counts in 18 decimals, so it signs `value × 10^12`. An amount with more than 6 decimals cannot be represented and is refused, never rounded.
+- The fee is the flat `tx_fee`, as for every transfer. `gas_price × gas_limit` must cover it in wei; the Hub API's `eth_gasPrice` answers the smallest whole-gwei price that does (48 gwei for a fee of $0.001).
+- `wallet_chain_id` is the EIP-155 chain id the wallet signed for (20771 on the testnet, 20770 on mainnet) and must equal the node's own, so a signature made for another network, Ethereum included, does not move CLT here.
+- The transaction hash is the Ethereum transaction hash. Only the wallet's own EIP-155 signature verifies it.
+- Refused: data (there are no contracts), contract creation, typed (EIP-1559) transactions, transactions without a chain id, and malleable high-`s` signatures.
+
+Rides and payments still go through the app; a wallet only sends plain transfers.
+
+**A consensus rule switched on per chain.** Two node settings turn it on: `wallet_chain_id` and `wallet_transfers_from_block` (set both or neither). Without them, or below that block, a `WalletTransfer` is refused in the pool and in blocks, so every validator must carry the same two values before that block is reached. See [Node Configuration](/clutch-node/configuration).
+
 ## Referrer fees
 
 On `RidePay`, the node distributes referrer fees from each payment installment:
@@ -104,6 +124,8 @@ The node exposes these methods at `ws://host:port/ws`:
 |--------|-------------|
 | `send_raw_transaction` | Submit signed RLP hex |
 | `send_transaction` | Submit structured tx object |
+| `send_wallet_transaction` | Submit a wallet's signed Ethereum transfer |
+| `get_transaction_by_hash` | A transaction and the block it is in |
 | `get_next_nonce` | Account nonce |
 | `get_account_balance` | CLT balance |
 | `get_account_balance_effects` | Balance change history |
