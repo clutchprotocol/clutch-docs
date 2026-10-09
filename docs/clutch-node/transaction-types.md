@@ -95,6 +95,8 @@ WalletTransfer { to, value, gas_price, gas_limit, wallet_chain_id }
 
 Rides and payments still go through the app; a wallet only sends plain transfers.
 
+**Where it works today:** the testnet only. Mainnet's validators have not switched it on, so a send from MetaMask on mainnet is refused with a message to send from the Clutch app. Mainnet balances still show in the wallet.
+
 **A consensus rule switched on per chain.** Two node settings turn it on: `wallet_chain_id` and `wallet_transfers_from_block` (set both or neither). Without them, or below that block, a `WalletTransfer` is refused in the pool and in blocks, so every validator must carry the same two values before that block is reached. See [Node Configuration](/clutch-node/configuration).
 
 ## Referrer fees
