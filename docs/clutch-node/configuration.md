@@ -73,6 +73,8 @@ seq_url                = "http://seq:80"
 | `ride_auto_release_secs` | Seconds after a `RideAcceptance` after which a cancel pays the held fare to the driver instead of refunding the rider. `0` turns the rule off. See [Ride Lifecycle](/getting-started/ride-lifecycle) | `300` on the testnet, `7200` on the mainnet |
 | `mint_cosigners` | Further addresses allowed to sign or approve a `Mint`, on top of `mint_authority` | empty: one signer |
 | `mint_threshold` | Distinct authority signatures a `Mint` needs. `0` and `1` both mean one | `0` |
+| `wallet_chain_id` | The EIP-155 chain id wallets sign with; with the next setting it turns on [wallet transfers](/clutch-node/transaction-types#wallettransfer-tag-10). Must equal the Hub API's `wallet_chain_id` | `20771` on the testnet; unset (off) by default |
+| `wallet_transfers_from_block` | The first block that may carry a wallet transfer. Set both or neither: the node refuses to start with one | `0` on the testnet |
 | `sync_enabled` | Whether this node runs the peer-sync job (pulls blocks from peers) | `true` |
 | `serve_metric_enabled` | Whether the Prometheus `/metrics` endpoint is served at all | `true` |
 | `serve_metric_addr` | Prometheus metrics bind | `0.0.0.0:3001` |
@@ -107,6 +109,10 @@ Practically, this means:
 - Changing any of these values on an existing chain is equivalent to starting a new chain — the new genesis hash will not match any existing peer's, and no amount of retrying will make them sync.
 - This is a deliberate fix: these parameters used to be per-node local config with no cross-node consistency check, which meant two misconfigured nodes could silently diverge instead of failing to connect. Now the failure is loud and immediate — a mismatched node simply never syncs.
 
+### Wallet transfers: same rule on every validator, set before its block
+
+`wallet_chain_id` and `wallet_transfers_from_block` are not in genesis, so changing them does not start a new chain, but they decide whether a block is valid. A validator without them refuses a block that carries a wallet transfer, so all validators of a chain must carry the same two values before `wallet_transfers_from_block` is reached. On a running chain with real balances, switch it on as a rolling upgrade: pick a block comfortably ahead of the current height, restart each validator with the new image and the two settings, one at a time, and check all of them carry the setting before that block arrives. On a chain where every validator restarts at once, `0` is enough, because no earlier block can hold a wallet transfer.
+
 ## Key settings
 
 - **Node 1 (bootstrap)**: leave `bootstrap_nodes = []`. It is the seed other nodes dial.
@@ -122,6 +128,7 @@ Practically, this means:
 - [ ] Same `authorities` list (same order) on all nodes
 - [ ] Same `libp2p_topic_name` and `blockchain_name`
 - [ ] Same `chain_id`, `is_testnet`, `tx_fee`, `mint_authority`, `mint_cosigners`, `mint_threshold`, `faucet_address`, `faucet_allocation`, `ride_auto_release_secs`, and both referrer-fee bps rates on all nodes — a mismatch here prevents peering entirely
+- [ ] Same `wallet_chain_id` and `wallet_transfers_from_block` on all validators, or both unset everywhere
 - [ ] Node 1 has empty `bootstrap_nodes`; others point to node 1
 - [ ] Distinct ports per node (8081/8082/8083, 4001/4002/4003, 3001/3002/3003)
 - [ ] Validator secret keys kept out of source control

@@ -19,7 +19,7 @@ All requests follow JSON-RPC 2.0:
 
 Responses return `result` on success or `error` with `code` and `message`.
 
-`params` is a bare JSON **object**, not a positional array — the only exception is `send_raw_transaction`, which takes a bare hex **string**. Array-wrapped params fail with invalid-params on methods that require fields, but the `list_*` methods silently ignore them and return unfiltered results instead of erroring.
+`params` is a bare JSON **object**, not a positional array — the exceptions are `send_raw_transaction` and `send_wallet_transaction`, which take a bare hex **string**. Array-wrapped params fail with invalid-params on methods that require fields, but the `list_*` methods silently ignore them and return unfiltered results instead of erroring.
 
 ## Write methods
 
@@ -40,7 +40,28 @@ Submit a signed, RLP-encoded transaction as hex.
 
 Submit a structured transaction object as `params` (validator / dev tooling). Prefer `send_raw_transaction` from apps. Also returns `"Transaction imported"`.
 
+### `send_wallet_transaction`
+
+Submit a transfer signed by MetaMask or another Ethereum wallet: the signed legacy Ethereum transaction (EIP-155, type 0) as hex, exactly as `eth_sendRawTransaction` carries it. The Hub API's `/rpc` endpoint calls this for wallets; apps do not need it.
+
+```json
+{
+  "method": "send_wallet_transaction",
+  "params": "0xf86e80850b2d05e000825208941111..."
+}
+```
+
+**Result:** `{ "hash": "0x…" }`, the Ethereum transaction hash. The node stores the transfer under that same hash, so the wallet, the explorer and `get_transaction_by_hash` all show one hash. See [WalletTransfer](/clutch-node/transaction-types#wallettransfer-tag-10) for what is checked and refused.
+
 ## Read methods
+
+### `get_transaction_by_hash`
+
+```json
+{ "method": "get_transaction_by_hash", "params": { "hash": "0x2d22…c445" } }
+```
+
+**Result:** `{ "transaction": {…}, "block_index": 812, "block_hash": "…" }`; `block_index` and `block_hash` are `null` while the transaction waits in the pool, and the result is `null` when the node does not know the hash. The hash matches with or without `0x`, in any case.
 
 ### `get_next_nonce`
 
