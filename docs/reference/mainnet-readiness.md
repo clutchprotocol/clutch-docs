@@ -4,9 +4,9 @@ sidebar_position: 2
 
 # Mainnet Readiness
 
-**Status: a capped pilot is live; a production mainnet is not ready.** Last reviewed 2026-10-06.
+**Status: a capped pilot is live; a production mainnet is not ready.** Last reviewed 2026-10-16.
 
-The mainnet (chain `1000`) has been open to every account since 2026-10-05 as a **capped pilot**: real USDT, at most $100 per top-up and $200 per day, and withdrawals are not open yet. The pilot goes ahead without parts of the gate below, on purpose, with limits small enough that a total loss would be acceptable: the mint and payout keys are plain keys on the server, the three validators run on one host and are operated by one person, no real payout has been made yet, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and the limits.
+The mainnet (chain `1000`) has been open to every account since 2026-10-05 as a **capped pilot**: real USDT, at most $100 per top-up and $200 per day, and withdrawals of $25 to $50 (open since 2026-10-16). The pilot goes ahead without parts of the gate below, on purpose, with limits small enough that a total loss would be acceptable: the mint and payout keys are plain keys on the server, the three validators run on one host and are operated by one person, no real payout has been made yet, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and the limits.
 
 Clutch also runs a public alpha testnet. The CLT on it is backed by Tron **Nile testnet** USDT, which has no value and cannot be bought.
 
@@ -39,7 +39,7 @@ Where each one stands on 2026-10-06:
 | Item | State |
 |------|-------|
 | 1. Keys behind a boundary | **Waived for the pilot.** Both keys are plain secrets on the server. |
-| 2. A real payout receipt | **Open.** The payout wallet has not been activated, so no payout has been made yet. |
+| 2. A real payout receipt | **Open.** The payout wallet was activated on 2026-10-16. The first real withdrawal, and so the first receipt, has not been made yet. |
 | 3. Fresh genesis, independent operators | **Half met.** The mainnet genesis is fresh: started 2026-09-19 and replaced on 2026-10-05 and twice on 2026-10-06, each time before any CLT existed. The validators share one host and one operator, by choice for now. |
 | 4. Backups and a performed restore | **Met 2026-09-15.** The mainnet restore was rehearsed on 2026-10-05. |
 | 5. More than one person | **Open, by choice.** |
@@ -48,7 +48,7 @@ Everything below expands these, plus the product, review, and regulatory work ar
 
 ## What happens next, in order
 
-**To finish the pilot**, the payout wallet is activated and the first real withdrawal is made. That withdrawal's receipt is the first mainnet measurement of the payout fee (item 2).
+**To finish the pilot**, the first real withdrawal is made (the payout wallet was activated on 2026-10-16). That withdrawal's receipt is the first mainnet measurement of the payout fee (item 2).
 
 **Before any pilot limit is raised**, three things, each one an exception the pilot runs under today:
 

@@ -31,7 +31,7 @@ The testnet and the mainnet pilot both run the **GasFree rail**: your address is
 - A deposit that is below the **minimum after the fee** mints nothing and waits for a person to decide: **$5.00** on the mainnet pilot and $1.00 on the testnet. The USDT is not lost. It stays counted in the reserve.
 - The **mint caps** bound what is credited. On the mainnet pilot a single deposit credits at most **$100** of CLT and a rolling 24 hours at most **$200**. A deposit that would credit more than the first waits for a manual approval, and one that would pass the second waits and is credited when older mints leave the window. In both cases your USDT stays at your address, counted in the reserve, and no CLT exists for it until it is credited.
 
-That extra builds up from the first deposits. The mainnet payout wallet needs about $4.00 of it once, to set itself up, before the first withdrawal can be paid: see [Redemptions](/clutch-treasury/redemptions). The treasury has no money of its own, and the setup must not be paid out of what users hold, so this is where the money comes from.
+That extra is what pays the treasury's own network costs. A payout wallet needs up to $4.00 of surplus once, to set itself up, before the first withdrawal can be paid: see [Redemptions](/clutch-treasury/redemptions). The treasury has no money of its own, and the setup must not be paid out of what users hold. On the mainnet pilot the maintainer sent that surplus directly before any deposit, and the payout wallet was activated on 2026-10-16.
 
 ## Detection: hot and cold
 

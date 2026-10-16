@@ -74,5 +74,5 @@ Full details: [CLT Economics](/clutch-node/clt-economics)
 :::warning Alpha Software
 Clutch Protocol is in active development. APIs may change without notice. Use at your own risk.
 
-The **mainnet is live as a capped pilot** (chain `1000`, open to every account since 2026-10-05): real USDT, small limits, and withdrawals are not open yet. A public testnet runs beside it for experiments. See [Environments](/getting-started/environments) for the addresses and limits, and [Mainnet Readiness](/reference/mainnet-readiness) for what stands between the pilot and a production mainnet.
+The **mainnet is live as a capped pilot** (chain `1000`, open to every account since 2026-10-05): real USDT, small limits, and top-ups and withdrawals are open. A public testnet runs beside it for experiments. See [Environments](/getting-started/environments) for the addresses and limits, and [Mainnet Readiness](/reference/mainnet-readiness) for what stands between the pilot and a production mainnet.
 :::

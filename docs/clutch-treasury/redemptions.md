@@ -12,10 +12,10 @@ A single redemption is bounded twice, in two services that do not share the valu
 A redemption that finds the float dry is returned to the queue and retried, because a dry float proves nothing was broadcast. Every other unclear outcome stops and pages a human instead. The CLT is already gone by then either way — which is what the next section is about.
 :::
 
-:::warning Withdrawals are not open yet on the mainnet pilot
-The mainnet treasury has redemptions switched on (`APP_REDEMPTIONS_ENABLED` is `true`), but it refuses to create one until its payout wallet has been activated once. The refusal comes before anything exists to burn against, so nobody loses CLT by trying: the app answers that withdrawals are not available yet. The activation needs a small surplus in the reserve, which builds up from the first top-ups (see [Deposits](/clutch-treasury/deposits)).
+:::info Withdrawals on the mainnet pilot
+Withdrawals have been open on the mainnet pilot since 2026-10-16, when the payout wallet was activated. A treasury refuses to create a redemption until its payout wallet has been activated once. The refusal comes before anything exists to burn against, so nobody loses CLT by trying: the app answers that withdrawals are not available yet. The activation needs a small surplus in the reserve (see [Deposits](/clutch-treasury/deposits)).
 
-When withdrawals open, the pilot's limits are $25 to $50 per withdrawal, a $2.00 fee (you burn the full amount and receive that much less), and a rolling 24-hour ceiling of $200 for everyone together. A withdrawal above the ceiling waits, with its CLT already burned, until older payouts leave the 24-hour window.
+The pilot's limits are $25 to $50 per withdrawal, a $2.00 fee (you burn the full amount and receive that much less), and a rolling 24-hour ceiling of $200 for everyone together. A withdrawal above the ceiling waits, with its CLT already burned, until older payouts leave the 24-hour window.
 :::
 
 Redeeming reverses a deposit: burn CLT on the Clutch chain, receive USDT on Tron. The two legs happen in a fixed order, and that order is the whole safety argument.

@@ -138,7 +138,7 @@ function WhatIsClutch(): ReactNode {
           fully backed by USDT, and <Repo name="clutch-treasury" /> gives CLT
           for USDT and pays USDT back. <Repo name="clutch-deploy" /> runs the
           public testnet and the mainnet. The mainnet is live as a capped
-          pilot: top-ups are open, withdrawals are not open yet.</dd>
+          pilot: top-ups and withdrawals are open.</dd>
         </div>
       </dl>
     </section>
