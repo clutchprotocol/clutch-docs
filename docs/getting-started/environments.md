@@ -98,7 +98,7 @@ The pilot's limits:
 | Top-ups per day | $200 of CLT in any rolling 24 hours. A top-up that would pass it waits, and is credited when older ones leave the window |
 | Smallest top-up | $5 after the network fee. A smaller one credits nothing and waits for a manual decision |
 | Network fee | $4.00 is taken from your first top-up and $2.00 from each later one, to pay the relay that moves the USDT out of your address. The relay charges less today ($3.00 and $1.50) and its price can change. The difference is not refunded: it stays in the reserve as extra backing. The app shows the fee before you pay |
-| Withdrawal | **Not open yet.** When it opens: $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
+| Withdrawal | Open since 2026-10-16. $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
 
 :::danger Real money, alpha software
 Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app holds **no key of yours**: you connect your own wallet (MetaMask, Trust Wallet or TronLink), which keeps the key and asks you before each action. Keep the wallet's recovery phrase safe: it is the only way back to your account and your CLT, and nobody can recover it for you.

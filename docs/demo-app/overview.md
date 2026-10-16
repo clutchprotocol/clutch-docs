@@ -39,7 +39,7 @@ The **Clutch Hub Demo App** is a React + Vite application demonstrating blockcha
 | Stage (testnet, test money) | https://app-stage.clutchprotocol.io |
 | Local | http://localhost:5173 |
 
-The same app is served at both hosted addresses and picks its chain and its Hub API from the address it is opened at. On the mainnet pilot, top-ups are open, withdrawals are not open yet, and the limits are small: see [Environments](/getting-started/environments).
+The same app is served at both hosted addresses and picks its chain and its Hub API from the address it is opened at. On the mainnet pilot, top-ups and withdrawals are open, and the limits are small: see [Environments](/getting-started/environments).
 
 ## Screenshots
 
