@@ -34,6 +34,21 @@ The testnet and the mainnet pilot both run the **GasFree rail**: your address is
 
 That extra is what pays the treasury's own network costs. A payout wallet needs up to $4.00 of surplus once, to set itself up, before the first withdrawal can be paid: see [Redemptions](/clutch-treasury/redemptions). The treasury has no money of its own, and the setup must not be paid out of what users hold. On the mainnet pilot the maintainer sent that surplus directly before any deposit, and the payout wallet was activated on 2026-10-16.
 
+## Pay from TronLink
+
+**On the testnet and the mainnet pilot since 2026-10-23.**
+
+If you are signed in with TronLink, you can skip the deposit address and its network fee. The **Pay from TronLink** button in the deposit panel asks TronLink to send USDT from your own TRON address straight to the treasury's payout wallet. Nothing has to be moved afterwards, so there is no relay fee and no first-deposit fee. TronLink charges TRON's own network fee in TRX from your wallet, usually a few TRX, so keep some TRX there. The service fee above still applies from your second deposit.
+
+This works because a TronLink account and a Clutch account are one key: the `T…` address TronLink shows and your `0x…` Clutch address are the same 20 bytes. Only your key can send from that TRON address, so the treasury credits a transfer from it to you.
+
+- **Press the button first, then pay.** Pressing it tells the treasury that you will pay from your TRON address, and only transfers that arrive after that are credited. The app does both steps for you.
+- **Pay from TronLink only, never from an exchange.** A transfer from any other address (an exchange's withdrawal, say) cannot be linked to anyone. It is not credited, and an operator has to send it back by hand. Use your deposit address for exchange withdrawals.
+- The **minimum** and the **mint caps** are the same as for a deposit address. No network fee is taken, so the whole amount counts towards the minimum.
+- Before it mints, the treasury checks on the TRON chain that the transfer reached its own payout wallet, that it came from the TRON address of the account it credits, and that it mints no more than arrived.
+
+The deposit shows under **Recent deposits** marked **TronLink**, with the same statuses as any other.
+
 ## Detection: hot and cold
 
 There is no webhook. Every deposit address is polled directly, and TRON has no way to watch a group of derived addresses at once — each one is its own request. To keep that affordable as the number of users grows, addresses are polled in two tiers:
@@ -75,6 +90,17 @@ A token carrying a public key instead of an address is refused outright with `40
 ```
 
 Calling this endpoint again returns the same address — it is idempotent because you have exactly one.
+
+### `POST /api/v1/direct-topups`
+
+Takes no body. Records that the caller will pay from the TRON address of their own key (see "Pay from TronLink" above), and answers where to pay:
+
+```json
+{ "pay_to": "T…", "from": "TUEZSdKsoDHQMeZwihtdoBiN46zxhGWYdH",
+  "usdt_contract": "T…", "min_deposit_usdt": 1000000 }
+```
+
+`from` is derived from the token's address, never taken from the request. Only transfers from `from` to `pay_to` that arrive after the first call are credited. The answer is `503` where direct top-ups are switched off.
 
 ### `GET /api/v1/deposits`
 

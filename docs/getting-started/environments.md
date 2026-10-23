@@ -88,7 +88,7 @@ const sdk = new ClutchHubSdk('https://api.clutchprotocol.io', publicKey, private
 
 The demo app auto-detects the chain: when served from `app.clutchprotocol.io`, it uses chain `1000` and `api.clutchprotocol.io`.
 
-To get CLT, connect your wallet (MetaMask, Trust Wallet or TronLink; on a phone, open the app inside the wallet app), open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee and, from your second top-up, the service fee below.
+To get CLT, connect your wallet (MetaMask, Trust Wallet or TronLink; on a phone, open the app inside the wallet app), open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee and, from your second top-up, the service fee below. With TronLink you can instead press **Pay from TronLink**: the USDT goes straight from your TronLink account, with no Clutch network fee (TronLink charges TRON's own fee in a few TRX). See [Deposits](/clutch-treasury/deposits#pay-from-tronlink).
 
 The pilot's limits:
 
