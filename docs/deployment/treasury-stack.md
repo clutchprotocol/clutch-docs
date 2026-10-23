@@ -74,7 +74,7 @@ The treasury file also gives `clutch-explorer-backend` one setting, `APP_TREASUR
 | `DEPOSIT_MNEMONIC` | Required | The only copy of the wallet mnemonic anywhere in the stack. No placeholder fallback — a stand-in value here would be a valid but *different* wallet, and the first symptom would be deposits arriving somewhere nothing can sweep. |
 | `SIGNER_TOKEN` | Required | Must match `treasury-service`'s copy. |
 | `CUSTODY_TRON_ADDRESS` | Required | Where sweeps go on the TRX rail. Not a request parameter — this is the entire reason a compromised caller cannot redirect a sweep. |
-| `PAYOUT_FLOAT_TARGET_USDT` | GasFree rail | Sweeps pay into the GasFree float until it holds this much, then into custody. Set above anything deposits can reach, every sweep goes to the float and custody stays empty, which is how the mainnet pilot runs, and the testnet's settings since 2026-10-05 (see [Clutch Treasury Overview](/clutch-treasury/overview#testnet-and-mainnet-posture)). |
+| `PAYOUT_FLOAT_TARGET_USDT` | GasFree rail | Sweeps pay into the GasFree float until it holds this much, then into custody. Set above anything deposits can reach, every sweep goes to the float and custody stays empty, which is how the mainnet runs, and the testnet's settings since 2026-10-05 (see [Clutch Treasury Overview](/clutch-treasury/overview#testnet-and-mainnet-posture)). |
 | `SIGNER_LOG_LEVEL` | Defaulted | Log verbosity. |
 | `DEPOSIT_PASSPHRASE` | Defaulted, empty | Optional BIP-39 passphrase layered on top of the mnemonic. |
 | `TRONGRID_URL`, `TRONGRID_API_KEY`, `USDT_CONTRACT` | Defaulted | Same meaning as on `treasury-service` — must agree with it. |
@@ -98,7 +98,7 @@ The treasury file also gives `clutch-explorer-backend` one setting, `APP_TREASUR
 
 ### The GasFree rail
 
-`TRANSFER_RAIL` picks how USDT moves out of a deposit address and out to a redeemer: `trx` (the default here) pays for energy in TRX from the signer's fee account, and `gasfree` moves it by a relay permit whose fee is taken from the USDT, so no TRX is needed. The stage and the mainnet pilot run `gasfree`. See [Deposits](/clutch-treasury/deposits) for what a user sees.
+`TRANSFER_RAIL` picks how USDT moves out of a deposit address and out to a redeemer: `trx` (the default here) pays for energy in TRX from the signer's fee account, and `gasfree` moves it by a relay permit whose fee is taken from the USDT, so no TRX is needed. The stage and the mainnet run `gasfree`. See [Deposits](/clutch-treasury/deposits) for what a user sees.
 
 The same `.env` names feed all three services, so they cannot disagree: `TRANSFER_RAIL`, `GASFREE_NETWORK` (blank switches the rail off), `GASFREE_ACTIVATE_FEE_MAX_USDT`, `GASFREE_TRANSFER_FEE_MAX_USDT`, `MIN_DEPOSIT_USDT`, `GASFREE_EXPECTED_IMPLEMENTATION` and `GASFREE_EXPECTED_CONTROLLER_IMPLEMENTATION`. `tron-signer` alone also takes the relay's `GASFREE_API_URL`, `GASFREE_API_KEY`, `GASFREE_API_SECRET` and `GASFREE_SERVICE_PROVIDER`. The key and secret are relay credentials: they cannot move money, because only a permit `tron-signer` signs can. `check-cap-invariants.sh` refuses a deploy where the set is incomplete.
 
@@ -106,7 +106,7 @@ The GasFree float has to be activated once before it can pay a redemption, and t
 
 ### The mainnet treasury
 
-The mainnet pilot's treasury does not use this file. `docker-compose.mainnet.treasury.yml` is a complete file of its own, run as compose project `clutch-main-treasury` with its own env file, `.env.mainnet`, and its own image pins, so moving the stage treasury never moves mainnet. Its services are named `mainnet-treasury-service`, `mainnet-tron-signer` and `mainnet-payment-orchestrator`, so that none of them can answer for a stage service on a shared network. It publishes no port: `/payment/` on `app.clutchprotocol.io` proxies to the orchestrator. Two settings exist only there:
+The mainnet's treasury does not use this file. `docker-compose.mainnet.treasury.yml` is a complete file of its own, run as compose project `clutch-main-treasury` with its own env file, `.env.mainnet`, and its own image pins, so moving the stage treasury never moves mainnet. Its services are named `mainnet-treasury-service`, `mainnet-tron-signer` and `mainnet-payment-orchestrator`, so that none of them can answer for a stage service on a shared network. It publishes no port: `/payment/` on `app.clutchprotocol.io` proxies to the orchestrator. Two settings exist only there:
 
 - `PILOT_ALLOWED_ADDRESSES` (required) lists the accounts the orchestrator serves, comma-separated, or `*` for everyone. Every other account gets a 403. Mainnet has been open to everyone since 2026-10-05.
 - `APP_SIGNER_KIND=env` with `MINT_AUTHORITY_SECRET`: the mint key is a plain secret in `.env.mainnet`, made once on the host. At start the treasury compares its address with the chain's `mint_authority` and halts minting if they differ.

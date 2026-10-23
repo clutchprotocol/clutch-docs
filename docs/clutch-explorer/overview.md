@@ -33,7 +33,7 @@ An account in dark mode, with its balance, nonce and every balance change. Dark 
 
 ![Account page in dark mode](/img/explorer-address-dark.png)
 
-These were taken from a local stack, so the network chip reads `LOCAL`. The deployed explorers show `TESTNET` or `MAINNET PILOT`.
+These were taken from a local stack, so the network chip reads `LOCAL`. The deployed explorers show `TESTNET` or `MAINNET`.
 
 ## Components
 

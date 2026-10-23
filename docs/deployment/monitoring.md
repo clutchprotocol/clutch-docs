@@ -19,7 +19,7 @@ Prometheus scrapes, every 10 to 30 seconds:
 | `clutch-hub-api:9090` | The Hub API |
 | `treasury-service:9101`, `payment-orchestrator:9102` | Reconciliation, the breaker, mints, deposits, sweeps, alerts |
 
-On the deployed server the same Prometheus also scrapes the mainnet pilot's validators, Hub API and treasury, labelled `chain: mainnet`, so one set of rules and dashboards covers both.
+On the deployed server the same Prometheus also scrapes the mainnet's validators, Hub API and treasury, labelled `chain: mainnet`, so one set of rules and dashboards covers both.
 
 ## Alerts
 

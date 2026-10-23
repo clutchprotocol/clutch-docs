@@ -4,29 +4,29 @@ sidebar_position: 2
 
 # Mainnet Readiness
 
-**Status: a capped pilot is live; a production mainnet is not ready.** Last reviewed 2026-10-16.
+**Status: the mainnet is live in production with small limits; the hardening below is not done.** Last reviewed 2026-10-23.
 
-The mainnet (chain `1000`) has been open to every account since 2026-10-05 as a **capped pilot**: real USDT, at most $100 per top-up and $200 per day, and withdrawals of $25 to $50 (open since 2026-10-16). The pilot goes ahead without parts of the gate below, on purpose, with limits small enough that a total loss would be acceptable: the mint and payout keys are plain keys on the server, the three validators run on one host and are operated by one person, no real payout has been made yet, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and the limits.
+The mainnet (chain `1000`) has been open to every account since 2026-10-05 and runs in **production**: real USDT, at most $100 per top-up and $200 per day, and withdrawals of $25 to $50 (open since 2026-10-16). It runs without parts of the gate below, on purpose, with limits small enough that a total loss would be acceptable: the mint and payout keys are plain keys on the server, the three validators run on one host and are operated by one person, no real payout has been made yet, and nothing has been audited. Use only what you can afford to lose. See [Environments](/getting-started/environments) for the addresses and the limits.
 
 Clutch also runs a public alpha testnet. The CLT on it is backed by Tron **Nile testnet** USDT, which has no value and cannot be bought.
 
-This page exists because "when is a production mainnet?" deserves a better answer than "no fixed date". Below is what has to be true before a production launch and before the pilot's limits are raised, why each item matters, and what counts as evidence that it is done. It is the public half of a checklist maintained in the treasury repository, which carries the operational detail.
+This page exists because "when is the mainnet hardened?" deserves a better answer than "no fixed date". Below is what has to be true before the mainnet's limits are raised, why each item matters, and what counts as evidence that it is done. It is the public half of a checklist maintained in the treasury repository, which carries the operational detail.
 
 ## How to read this
 
 | Severity | Meaning |
 |----------|---------|
 | **Blocker** | Real funds cannot be accepted until this is done. No cap is small enough to work around it. |
-| **Required** | Must be done before a public launch. May be deferred for a bounded pilot where total loss would be acceptable. |
+| **Required** | Must be done before a public launch. May be deferred while limits stay small enough that total loss would be acceptable. |
 | **Recommended** | Reduces risk. Skipping is a decision to record, not a gap to hide. |
 
 Every item names what closes it. An item is closed by an artefact someone else can inspect, not by intent.
 
-The pilot is a recorded exception to the first row. The maintainer decided to run it before the key custody and the payout rail are closed, and the caps are the bound on the loss. The rule in the table is the rule for anything beyond the pilot.
+Today's mainnet is a recorded exception to the first row. The maintainer decided to run it before the key custody and the payout rail are closed, and the caps are the bound on the loss. The rule in the table is the rule before the limits are raised.
 
 ## The gate
 
-Five things must all be true before a production launch, and before the pilot's limits are raised. The pilot runs without items 1, 2, 3 (independent operators) and 5, on purpose:
+Five things must all be true before the mainnet's limits are raised. The mainnet runs today without items 1, 2, 3 (independent operators) and 5, on purpose:
 
 1. The mint key and the payout key sit behind a KMS or hardware boundary, with a rehearsed recovery.
 2. The payout rail has been proven on mainnet, with a real receipt behind the fee.
@@ -38,7 +38,7 @@ Where each one stands on 2026-10-06:
 
 | Item | State |
 |------|-------|
-| 1. Keys behind a boundary | **Waived for the pilot.** Both keys are plain secrets on the server. |
+| 1. Keys behind a boundary | **Waived for now.** Both keys are plain secrets on the server. |
 | 2. A real payout receipt | **Open.** The payout wallet was activated on 2026-10-16. The first real withdrawal, and so the first receipt, has not been made yet. |
 | 3. Fresh genesis, independent operators | **Half met.** The mainnet genesis is fresh: started 2026-09-19 and replaced on 2026-10-05 and twice on 2026-10-06, each time before any CLT existed. The validators share one host and one operator, by choice for now. |
 | 4. Backups and a performed restore | **Met 2026-09-15.** The mainnet restore was rehearsed on 2026-10-05. |
@@ -48,17 +48,17 @@ Everything below expands these, plus the product, review, and regulatory work ar
 
 ## What happens next, in order
 
-**To finish the pilot**, the first real withdrawal is made (the payout wallet was activated on 2026-10-16). That withdrawal's receipt is the first mainnet measurement of the payout fee (item 2).
+**Still to do first**, the first real withdrawal is made (the payout wallet was activated on 2026-10-16). That withdrawal's receipt is the first mainnet measurement of the payout fee (item 2).
 
-**Before any pilot limit is raised**, three things, each one an exception the pilot runs under today:
+**Before any limit is raised**, three things, each one an exception the mainnet runs under today:
 
 1. The payout key goes behind a KMS boundary, and the reserve goes back to sitting mostly in custody, with the payout wallet holding only a float.
 2. The mint key goes behind a boundary again. The mint authority is a genesis value, so this means a new chain. That is free only while no CLT exists: the chain reset refuses for good once any CLT has been minted, and after that the move needs a planned migration. This is why it is cheaper to do early.
 3. A second person who has rehearsed halting minting.
 
-**Before anything beyond the pilot**, the validators move to independent hosts and operators, after the move has been rehearsed on a throwaway network, and a decision is made on reputation.
+**Before the limits go higher still**, the validators move to independent hosts and operators, after the move has been rehearsed on a throwaway network, and a decision is made on reputation.
 
-Several of these physically cannot start until another has finished. That is most of the answer to "when is a production mainnet?", and it is why the honest answer is an order rather than a date. Three constraints shape it.
+Several of these physically cannot start until another has finished. That is most of the answer to "when is the mainnet hardened?", and it is why the honest answer is an order rather than a date. Three constraints shape it.
 
 **The genesis is final.** Consensus parameters are committed into the genesis hash and compared by peers at handshake, so they cannot be changed afterwards without starting a new chain. That includes the mint authority's address, and it is why the mainnet chain was replaced three times before any CLT existed: once for the mint key on 2026-10-05, and twice on 2026-10-06 for the wallet signatures, which are a consensus change. Once CLT exists, a change like that needs a planned upgrade of every validator instead.
 
@@ -74,11 +74,11 @@ The bar for each is evidence that something worked, not evidence that it was con
 
 ## Key custody
 
-**Blocker.** The mint authority is the only key that can create CLT, so its compromise means unbounded issuance against a fixed reserve. Today it is an environment variable on the server, as is the payout key, on the testnet and on the mainnet pilot. On the pilot that is a real exposure: someone who gets into the server could mint CLT without limit and take the reserve, and the pilot's small limits are what keep that loss small. That is a tracked gap rather than an oversight: `ChainSigner` and `PayoutSigner` already exist in the code as swap boundaries for a KMS-backed signer, and the named blocker is that signer plus a real key ceremony and tested recovery. See [Security](/reference/security) for the full key inventory.
+**Blocker.** The mint authority is the only key that can create CLT, so its compromise means unbounded issuance against a fixed reserve. Today it is an environment variable on the server, as is the payout key, on the testnet and on the mainnet. On the mainnet that is a real exposure: someone who gets into the server could mint CLT without limit and take the reserve, and the pilot's small limits are what keep that loss small. That is a tracked gap rather than an oversight: `ChainSigner` and `PayoutSigner` already exist in the code as swap boundaries for a KMS-backed signer, and the named blocker is that signer plus a real key ceremony and tested recovery. See [Security](/reference/security) for the full key inventory.
 
-One absence is deliberate in the design: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. **The mainnet pilot gives it up on purpose**, and the testnet has been configured the same way since 2026-10-05, because of cost and the early stage of the network: all deposits are swept into the payout wallet, whose key is on the server, and the custody address stays empty. So on the pilot the worst case for a compromised server is the whole reserve, and the small limits bound how large that can be. See [Clutch Treasury Overview](/clutch-treasury/overview).
+One absence is deliberate in the design: nothing in the stack can spend from the reserve custody address. That is why redemptions are paid from a separate, bounded float instead, so the worst case for a compromised service is the float balance rather than the reserve. **The mainnet gives it up on purpose**, and the testnet has been configured the same way since 2026-10-05, because of cost and the early stage of the network: all deposits are swept into the payout wallet, whose key is on the server, and the custody address stays empty. So on the pilot the worst case for a compromised server is the whole reserve, and the small limits bound how large that can be. See [Clutch Treasury Overview](/clutch-treasury/overview).
 
-:::warning What the mainnet pilot actually runs
+:::warning What the mainnet actually runs
 The chain supports M-of-N minting, described below, but the mainnet genesis commits **one** mint authority and no co-signers. That was decided on 2026-09-18, because a second independent key store was not affordable. Since 2026-10-05 that one key is a plain secret on the server. The four-eyes rule, the mint caps and the halt breaker are in the treasury service, off-chain, so they stop a mistake in the treasury and not someone who holds the key. Adding co-signers later needs a new chain, because the mint authority and the co-signer set are committed in the genesis.
 :::
 
@@ -104,7 +104,7 @@ A single redemption is already bounded twice, in two services that do not share 
 
 **Blocker.** Consensus parameters, including the network id and the testnet flag, are committed into the genesis hash and compared by peers at handshake. Mainnet is therefore a new genesis, not a configuration change, and it must pre-mint nothing. That half is done: the mainnet (chain `1000`) started from a fresh genesis on 2026-09-19 that pre-mints nothing, and every replacement since has done the same. See [CLT Economics](/clutch-node/clt-economics).
 
-Aura is an authority round-robin, so the validator set is permissioned by construction. A production mainnet needs authorities that do not share an operator or a failure domain, each with its own key. The pilot's three authorities run on one host and are operated by one person, so the host is the chain: if it is lost, the chain is lost with it. The pilot's own chain holds only what users top up within the small limits.
+Aura is an authority round-robin, so the validator set is permissioned by construction. A hardened mainnet needs authorities that do not share an operator or a failure domain, each with its own key. The mainnet's three authorities run on one host and are operated by one person, so the host is the chain: if it is lost, the chain is lost with it. The pilot's own chain holds only what users top up within the small limits.
 
 **Nothing was watching whether the chain was producing at all until 2026-09-14.** The testnet halted, stayed halted for most of a day, and the first alarm was a person noticing the block explorer was empty — three layers below the fault. Alerts covered the money path and not the chain that money path reads from, which is the wrong way round: a treasury reading a frozen chain believes a frozen supply and judges its reserve against it.
 
@@ -150,7 +150,7 @@ Keying it correctly was the substance. Behind a CDN the immediate peer is the CD
 
 **Closed 2026-10-06.** It was a blocker for any app holding real funds.
 
-The reference demo app used to generate or import keys in the browser and store them in plaintext `localStorage`, and the mainnet pilot served that same app. It no longer holds a key, on any network. The user's own wallet (MetaMask, Trust Wallet or TronLink) keeps the key and signs a short readable text after the user approves, and the node and the Hub API accept that signature next to the signature of a key. Key generation, import, the encrypted backup and the "never put real funds behind a key created here" notice are gone, and the new version deletes the plain-text keys that older versions left in the browser. The SDK's design allowed this from the start: keys never leave the client, so a real key boundary substitutes without changing how transactions are built. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm) and [SDK Usage](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet-tronlink).
+The reference demo app used to generate or import keys in the browser and store them in plaintext `localStorage`, and the mainnet served that same app. It no longer holds a key, on any network. The user's own wallet (MetaMask, Trust Wallet or TronLink) keeps the key and signs a short readable text after the user approves, and the node and the Hub API accept that signature next to the signature of a key. Key generation, import, the encrypted backup and the "never put real funds behind a key created here" notice are gone, and the new version deletes the plain-text keys that older versions left in the browser. The SDK's design allowed this from the start: keys never leave the client, so a real key boundary substitutes without changing how transactions are built. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm) and [SDK Usage](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet-tronlink).
 
 Two limits remain, and they are not hidden:
 
@@ -185,7 +185,7 @@ Stated so the sound parts are not assumed provisional. These were designed for t
 
 - **The deposit mnemonic exists in one service.** The service that hands out deposit addresses holds only an extended public key, which derives receive addresses and cannot spend. Owning it does not move a deposit.
 - **The sweep endpoint takes an address index and nothing else** — no destination, amount, or contract — so it cannot be turned into a second payout path.
-- **Reserve custody is unreachable from code**, which is why payouts come from a float. With one wallet that float holds the whole reserve, so this no longer bounds a loss on the pilot: see Key custody above.
+- **Reserve custody is unreachable from code**, which is why payouts come from a float. With one wallet that float holds the whole reserve, so this no longer bounds a loss on the mainnet: see Key custody above.
 - **Redemptions are bounded twice, in services that do not share the value.**
 - **Ambiguous payouts stop rather than retry.** Only a reply proving nothing was broadcast returns a redemption to the queue; anything else pages a human. That accepts a stuck redemption to avoid a double payment.
 - **Minting has four-eyes approval, a per-transaction cap, a daily cap, and a manual halt.**
@@ -200,4 +200,4 @@ The [discussions](https://github.com/orgs/clutchprotocol/discussions) are open, 
 
 ## What this page is not
 
-It is not a date. The items are ordered by dependency, not by schedule, and no date for a production mainnet will appear here until the gate above is closed. It is also not exhaustive about internal operational work: the checklist this page derives from tracks infrastructure and process items that are not useful to publish.
+It is not a date. The items are ordered by dependency, not by schedule, and no date for a hardened mainnet will appear here until the gate above is closed. It is also not exhaustive about internal operational work: the checklist this page derives from tracks infrastructure and process items that are not useful to publish.

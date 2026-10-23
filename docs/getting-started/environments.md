@@ -4,7 +4,7 @@ sidebar_position: 6
 
 # Environments
 
-Clutch Protocol can run locally via Docker, on the public stage deployment (a testnet), or on the mainnet pilot.
+Clutch Protocol can run locally via Docker, on the public stage deployment (a testnet), or on the mainnet.
 
 ## Local development
 
@@ -67,9 +67,9 @@ const sdk = new ClutchHubSdk('https://api-stage.clutchprotocol.io', publicKey);
 
 The demo app auto-detects stage URLs: when served from `app-stage.clutchprotocol.io`, it uses `api-stage.clutchprotocol.io` automatically.
 
-## Mainnet (capped pilot)
+## Mainnet
 
-The mainnet runs chain id `1000`. It has been open to every account since 2026-10-05 as a **capped pilot**: alpha software, real USDT, small limits. It is a different chain from the testnet, and nothing carries over between the two.
+The mainnet runs chain id `1000`. It has been open to every account since 2026-10-05 and runs in **production**: alpha software, real USDT, small limits. It is a different chain from the testnet, and nothing carries over between the two.
 
 | Service | URL |
 |---------|-----|
@@ -90,7 +90,7 @@ The demo app auto-detects the chain: when served from `app.clutchprotocol.io`, i
 
 To get CLT, connect your wallet (MetaMask, Trust Wallet or TronLink; on a phone, open the app inside the wallet app), open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee and, from your second top-up, the service fee below. With TronLink you can instead press **Pay from TronLink**: the USDT goes straight from your TronLink account, with no Clutch network fee (TronLink charges TRON's own fee in a few TRX). See [Deposits](/clutch-treasury/deposits#pay-from-tronlink).
 
-The pilot's limits:
+The mainnet's limits:
 
 | What | Limit |
 |------|-------|
@@ -102,7 +102,7 @@ The pilot's limits:
 | Withdrawal | Open since 2026-10-16. $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
 
 :::danger Real money, alpha software
-Use only what you can afford to lose. The pilot is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app holds **no key of yours**: you connect your own wallet (MetaMask, Trust Wallet or TronLink), which keeps the key and asks you before each action. Keep the wallet's recovery phrase safe: it is the only way back to your account and your CLT, and nobody can recover it for you.
+Use only what you can afford to lose. The mainnet is not audited. Its three validators run on one host, and the treasury's mint and payout keys are plain keys on the server: see [Mainnet Readiness](/reference/mainnet-readiness). The demo app holds **no key of yours**: you connect your own wallet (MetaMask, Trust Wallet or TronLink), which keeps the key and asks you before each action. Keep the wallet's recovery phrase safe: it is the only way back to your account and your CLT, and nobody can recover it for you.
 :::
 
 ## Website and documentation
@@ -113,7 +113,7 @@ Use only what you can afford to lose. The pilot is not audited. Its three valida
 | Documentation | https://docs.clutchprotocol.io |
 
 :::warning Alpha
-The stage environment is for testing, and the mainnet is a capped pilot. APIs and endpoints may change.
+The stage environment is for testing, and the mainnet runs in production with small limits. APIs and endpoints may change.
 :::
 
 ## Environment variables
@@ -159,5 +159,5 @@ Every environment funds a wallet the same way: deposit USDT. Each wallet gets on
 | Local development | Docker compose on localhost |
 | Integration testing | Stage URLs |
 | Learning / demo | Stage demo app or local stack |
-| Real USDT, small amounts, alpha risk | Mainnet pilot |
-| Block explorer | https://explorer.clutchprotocol.io for the mainnet pilot, https://explorer-stage.clutchprotocol.io for the testnet, or local `:5174` |
+| Real USDT, small amounts, alpha risk | Mainnet |
+| Block explorer | https://explorer.clutchprotocol.io for the mainnet, https://explorer-stage.clutchprotocol.io for the testnet, or local `:5174` |
