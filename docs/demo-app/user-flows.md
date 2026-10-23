@@ -47,7 +47,7 @@ Opened from the app menu (☰ → **Wallet** → **Top up**) once a wallet exist
 | Panel state | What it means |
 |-------------|----------------|
 | Loading | The address request is in flight |
-| Address shown | Your permanent deposit address, the way an exchange shows one: the network (TRON, TRC-20, or the Nile testnet), the address as a QR code and as text with a Copy button, a Share button on phones, the network fee and the minimum after it, and a list of your recent deposits |
+| Address shown | Your permanent deposit address, the way an exchange shows one: the network (TRON, TRC-20, or the Nile testnet), the address as a QR code and as text with a Copy button, a Share button on phones, the network fee, the service fee (or that it is waived on a first top-up) and the minimum after it, and a list of your recent deposits |
 | Unavailable | The orchestrator returned `503` — deposits are temporarily switched off |
 | Error | The address or deposit-list request failed |
 
