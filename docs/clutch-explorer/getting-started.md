@@ -61,7 +61,7 @@ Config loads from `config/{env}.toml`, with environment variables using the `APP
 | Variable | Description |
 |----------|-------------|
 | `VITE_EXPLORER_API_URL` | Backend API URL; `/api` is appended. Default `http://localhost:8088` on localhost, otherwise the relative `/api`. Baked in at build time |
-| `VITE_NETWORK_LABEL` | The network chip in the header. Unset, it is read from the hostname: `*-stage.*` shows Testnet, `*.clutchprotocol.io` shows Mainnet pilot, anything else Local |
+| `VITE_NETWORK_LABEL` | The network chip in the header. Unset, it is read from the hostname: `*-stage.*` shows Testnet, `*.clutchprotocol.io` shows Mainnet, anything else Local |
 
 ## Verify indexing
 

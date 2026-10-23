@@ -23,7 +23,7 @@ The treasury tools work on both stacks. Each has a `chain` choice, `stage` by de
 | `reverse-mint.yml` | Records that a mint the ledger believed happened no longer exists on chain — a node lost its database, say — bringing recorded liability back in line with what the chain actually shows. Touches the ledger only: no chain state changes, no USDT moves. | `reverse` | No |
 | `close-repaid-deposit.yml` | Closes a deposit left in `needs_manual` whose depositor was already repaid by a separate mint. Refuses unless such a credited mint exists, so it cannot make an unpaid deposit look paid. | `close` | No |
 | `activate-float.yml` | Activates the GasFree payout float with its first transfer. Redemptions are refused until this has run. It wants a surplus of at least 4.00 USDT over what users are owed, because the activation costs about 3 USDT. | `activate` | Yes |
-| `set-gasfree-settings.yml` | Writes the GasFree block and the pilot limits into the host's env file. Takes a `network` choice rather than `chain`. | `gasfree` | No |
+| `set-gasfree-settings.yml` | Writes the GasFree block and the mainnet limits into the host's env file. Takes a `network` choice rather than `chain`. | `gasfree` | No |
 | `sweep-address.yml` | Sweeps one deposit address by hand, via `tron-signer`'s index-only sweep endpoint. Stage only, because its log prints the address you type. | `sweep` | Yes |
 | `fund-float.yml` | Moves USDT into the payout float on the TRX rail. Stage only. | `fund` | Yes |
 | `provision-treasury-secrets.yml` | Fills in whichever treasury secrets are missing from the host's `.env` or `.env.mainnet`. | `provision` | No |
@@ -49,7 +49,7 @@ The automatic sweeper only collects a deposit address once its mint intent has r
 
 ### A fresh address has to be funded before it can be swept (TRX rail only)
 
-This applies only to the TRX rail. On the GasFree rail, which the stage and the mainnet pilot run, a sweep is a relay permit whose fee comes out of the USDT, and nothing needs TRX.
+This applies only to the TRX rail. On the GasFree rail, which the stage and the mainnet run, a sweep is a relay permit whose fee comes out of the USDT, and nothing needs TRX.
 
 A TRC-20 transfer costs TRX for energy, and a freshly derived deposit address holds none — receiving USDT does not create a TRX balance. The first sweep of a brand-new address can only fund it from `tron-signer`'s own fee account; collection happens on a later pass, once that funding transaction has confirmed. An operator who runs `sweep-address.yml` and sees `funded` has not failed — that is the expected result of sweeping an address for the first time. Run it again once the funding has had time to confirm, rather than treating `funded` as an error.
 

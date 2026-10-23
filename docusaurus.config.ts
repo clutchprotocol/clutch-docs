@@ -81,9 +81,9 @@ const config: Config = {
     ],
     announcementBar: {
       // A new id on purpose: a visitor who closed the old notice sees this one.
-      id: 'mainnet-pilot',
+      id: 'mainnet-production',
       content:
-        'Alpha software. The mainnet is live as a capped pilot (real money, small limits) and a public testnet is open for experiments — APIs may change without notice.',
+        'Alpha software. The mainnet is live in production (real money, small limits) and a public testnet is open for experiments — APIs may change without notice.',
       isCloseable: true,
       backgroundColor: '#e8b923',
       textColor: '#14181c',

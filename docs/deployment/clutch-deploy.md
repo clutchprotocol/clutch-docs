@@ -30,7 +30,7 @@ docker compose -p clutch-dev -f docker-compose.yml -f docker-compose.dev.yml up 
 | `docker-compose.treasury.yml` | The treasury: three more services and an internal network. See [Treasury Stack](/deployment/treasury-stack) |
 | `docker-compose.stage.cloudflare-flex.yml`, `docker-compose.stage.treasury.yml` | The stage server: no service publishes a port, and nginx in front is the only way in |
 | `docker-compose.nginx.yml` | An optional local reverse proxy on port 80. See [Nginx](/deployment/nginx) |
-| `docker-compose.mainnet.yml`, `docker-compose.mainnet.treasury.yml` | The mainnet pilot: its own three validators, Hub API, demo app and treasury, with their own pins and their own env file |
+| `docker-compose.mainnet.yml`, `docker-compose.mainnet.treasury.yml` | The mainnet: its own three validators, Hub API, demo app and treasury, with their own pins and their own env file |
 
 ## Image tags
 

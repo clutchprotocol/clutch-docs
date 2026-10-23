@@ -14,7 +14,7 @@ Two figures are supposed to move together:
 - **Reserve** — the USDT actually available to back it, which is the sum of three places, not one:
   - **Custody** — the main treasury Tron address.
   - **Unswept deposits** — every deposit address that still holds USDT nobody has moved into custody yet. Each address is counted **once**, no matter how many separate credited deposits it is backing — counting a reused address once per deposit would inflate the reserve, and an inflated reserve is the dangerous direction: it licenses minting against money that was already counted.
-  - **The payout float** — the balance `tron-signer` pays redemptions from (see [Redemptions](/clutch-treasury/redemptions)). It backs CLT exactly like custody does, and leaving it out would make the very first top-up into it look like a shortfall. On the GasFree rail, sweeps fill the float before custody; with the target set out of reach, as on the mainnet pilot, the float holds the whole reserve and custody reads zero.
+  - **The payout float** — the balance `tron-signer` pays redemptions from (see [Redemptions](/clutch-treasury/redemptions)). It backs CLT exactly like custody does, and leaving it out would make the very first top-up into it look like a shortfall. On the GasFree rail, sweeps fill the float before custody; with the target set out of reach, as on the mainnet, the float holds the whole reserve and custody reads zero.
 
 An address moving from "unswept deposit" to "custody" during a sweep does not change the reserve total — it is the same USDT counted under a different bucket, which is exactly why sweeping never writes a ledger event of its own. It only records that the sweep happened.
 
