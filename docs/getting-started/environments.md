@@ -88,7 +88,7 @@ const sdk = new ClutchHubSdk('https://api.clutchprotocol.io', publicKey, private
 
 The demo app auto-detects the chain: when served from `app.clutchprotocol.io`, it uses chain `1000` and `api.clutchprotocol.io`.
 
-To get CLT, connect your wallet (MetaMask, Trust Wallet or TronLink; on a phone, open the app inside the wallet app), open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee below.
+To get CLT, connect your wallet (MetaMask, Trust Wallet or TronLink; on a phone, open the app inside the wallet app), open the menu, choose **Wallet**, then the **Top up** tab, and send USDT (TRC-20, on the Tron mainnet) to the address it shows. There is no faucet. The treasury mints CLT to your wallet for the amount you sent, minus the network fee and, from your second top-up, the service fee below.
 
 The pilot's limits:
 
@@ -98,6 +98,7 @@ The pilot's limits:
 | Top-ups per day | $200 of CLT in any rolling 24 hours. A top-up that would pass it waits, and is credited when older ones leave the window |
 | Smallest top-up | $5 after the network fee. A smaller one credits nothing and waits for a manual decision |
 | Network fee | $4.00 is taken from your first top-up and $2.00 from each later one, to pay the relay that moves the USDT out of your address. The relay charges less today ($3.00 and $1.50) and its price can change. The difference is not refunded: it stays in the reserve as extra backing. The app shows the fee before you pay |
+| Service fee | None on your first top-up. From the second on, 1% of the CLT minted, at least $0.50, paid to the operator as CLT. A $50 second top-up mints $47.50 to you |
 | Withdrawal | Open since 2026-10-16. $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
 
 :::danger Real money, alpha software
