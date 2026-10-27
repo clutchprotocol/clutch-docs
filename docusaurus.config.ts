@@ -175,6 +175,7 @@ const config: Config = {
           title: 'Community',
           items: [
             {label: 'Issues', href: 'https://github.com/clutchprotocol/clutch-node/issues'},
+            {label: 'X (Twitter)', href: 'https://x.com/ClutchCLT'},
           ],
         },
       ],
