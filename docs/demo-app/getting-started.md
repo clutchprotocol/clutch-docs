@@ -75,7 +75,7 @@ The app **holds no private key**. Your wallet keeps it and signs. Until 2026-10-
 
 ## Security note
 
-Nothing in the browser can sign for you except your wallet, and it asks first. **Disconnect wallet** in the menu forgets the wallet in this app; to remove the site from your wallet's list, do it in the wallet. Not built yet: WalletConnect (a wallet on your phone that scans a code shown on a computer).
+Nothing in the browser can sign for you except your wallet, and it asks first. **Disconnect wallet** in the menu forgets the wallet in this app; to remove the site from your wallet's list, do it in the wallet. No wallet in this browser? Choose the WalletConnect option: on a computer, scan its QR code with the wallet on your phone; in a phone's own browser, approve in the wallet app and come back to the page.
 
 ## Related
 

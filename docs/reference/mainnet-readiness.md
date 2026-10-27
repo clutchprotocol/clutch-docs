@@ -152,10 +152,11 @@ Keying it correctly was the substance. Behind a CDN the immediate peer is the CD
 
 The reference demo app used to generate or import keys in the browser and store them in plaintext `localStorage`, and the mainnet served that same app. It no longer holds a key, on any network. The user's own wallet (MetaMask, Trust Wallet or TronLink) keeps the key and signs a short readable text after the user approves, and the node and the Hub API accept that signature next to the signature of a key. Key generation, import, the encrypted backup and the "never put real funds behind a key created here" notice are gone, and the new version deletes the plain-text keys that older versions left in the browser. The SDK's design allowed this from the start: keys never leave the client, so a real key boundary substitutes without changing how transactions are built. See [Signing and Encoding](/reference/signing-and-encoding#signature-algorithm) and [SDK Usage](/clutch-hub-sdk-js/usage#use-a-wallet-metamask-trust-wallet-tronlink).
 
-Two limits remain, and they are not hidden:
+One limit remains, and it is not hidden:
 
 - **A wallet shows the text it signs, not the ride.** The app says what each prompt is for before it opens, and the SDK checks the unsigned transaction against what was asked before it asks the wallet. Readable typed data (EIP-712) would let the wallet show the ride itself.
-- **WalletConnect is not built yet.** A wallet on a phone cannot scan a code shown on a computer. On a phone the page opens inside the wallet app's own browser.
+
+A second limit listed here at first, no WalletConnect, is gone: a wallet on a phone can now scan a QR code shown on a computer, or approve a sign-in started in the phone's own browser.
 
 **Closed by:** the reference app holding no key and signing only through the user's wallet, with the node and the Hub API accepting that signature.
 
