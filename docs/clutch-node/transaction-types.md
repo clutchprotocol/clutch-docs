@@ -21,6 +21,7 @@ Clutch Node supports custom non-EVM transaction types encoded with RLP tags.
 | 8 | `RideRequestCancel` | Yes | Cancel pending request |
 | 9 | `ChainInit` | No — genesis only | Carries consensus parameters into state at block 0 |
 | 10 | `WalletTransfer` | No — sent from MetaMask through `/rpc` | A transfer signed by an Ethereum wallet |
+| 11 | `SessionKey` | Yes (`createUnsignedSessionKey`) | Lets one key sign the account's ride transactions until a block height |
 
 Tags are **not contiguous** by design: 6 and 7 were reserved ahead of time for Mint/Burn, and 9 was left open for `ChainInit`, added later still. Apps interact with types 1–5, 7, and 8 via the Hub API and SDK. Type 0 is a valid node-level transaction but is not exposed by the Hub API or the SDK. Types 6 and 9 never appear in application code, and type 10 is built by the node from a wallet's signed transaction — see below.
 
@@ -98,6 +99,22 @@ Rides and payments still go through the app; a wallet only sends plain transfers
 **Where it works today:** the testnet only. Mainnet's validators have not switched it on, so a send from MetaMask on mainnet is refused with a message to send from the Clutch app. Mainnet balances still show in the wallet.
 
 **A consensus rule switched on per chain.** Two node settings turn it on: `wallet_chain_id` and `wallet_transfers_from_block` (set both or neither). Without them, or below that block, a `WalletTransfer` is refused in the pool and in blocks, so every validator must carry the same two values before that block is reached. See [Node Configuration](/clutch-node/configuration).
+
+## SessionKey (tag 11)
+
+Lets an app sign ride transactions without a wallet prompt for each one. The account signs a `SessionKey` once with its own key (a wallet prompt). It names one other key and a block height:
+
+```
+SessionKey { session_key, expires_at_block }
+```
+
+- Until `expires_at_block` (checked against the next block's height), the node also accepts that key's signature on the account's **ride transactions only**: `RideRequest`, `RideOffer`, `RideAcceptance`, `RidePay`, `RideCancel` and `RideRequestCancel`. The session key signs the hash string, like the SDK's local key.
+- It can never sign a `Transfer`, `Burn`, `WalletTransfer` or another `SessionKey`. Withdrawals and any authorization need the account's own signature.
+- `expires_at_block = 0` revokes. One session key per account; a new one replaces the old one.
+- Nonce and fee stay on the main account. A stolen session key can start, accept and pay rides from the account until it expires or is revoked, and nothing more. There is no spend limit per session yet.
+- A new tag, not a config switch: it has no effect until someone sends one. A node without it rejects a block that carries one, so upgrade every validator first.
+
+The demo app offers it as "Approve rides once" (8 hours, about 20 seconds per block). The SDK has `createUnsignedSessionKey`, `generateSessionKey` and `createSessionKeySigner`, and the Hub API has the `createUnsignedSessionKey` mutation.
 
 ## Referrer fees
 

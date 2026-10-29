@@ -120,6 +120,7 @@ Tags are **deliberately non-contiguous** — 6 and 7 were reserved for Mint/Burn
 | **7** | **`Burn`** | Permissionless |
 | 8 | `RideRequestCancel` | |
 | **9** | **`ChainInit`** | Genesis-only — never constructed by apps or the SDK |
+| 11 | `SessionKey` | `[11, [session_key, expires_at_block]]`; the account's own signature authorizes a key that may then sign ride types only (see [Transaction Types](/clutch-node/transaction-types#sessionkey-tag-11)) |
 
 ### RideRequest (tag 1)
 
