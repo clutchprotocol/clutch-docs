@@ -96,7 +96,7 @@ The mainnet's limits:
 |------|-------|
 | One top-up | $100 of CLT. A top-up that would credit more is not credited by itself: it waits for a manual review, and your USDT stays safe at your address in the meantime |
 | Top-ups per day | $200 of CLT in any rolling 24 hours. A top-up that would pass it waits, and is credited when older ones leave the window |
-| Smallest top-up | $5 after the network fee. A smaller one credits nothing and waits for a manual decision |
+| Smallest top-up | $1 after the network fee, so $5 on a first top-up to a deposit address and $3 after that. Pay from TronLink and BNB Smart Chain take no network fee, so $1 is enough there. A smaller one credits nothing and waits for a manual decision |
 | Network fee | $4.00 is taken from your first top-up and $2.00 from each later one, to pay the relay that moves the USDT out of your address. The relay charges less today ($3.00 and $1.50) and its price can change. The difference is not refunded: it stays in the reserve as extra backing. The app shows the fee before you pay |
 | Service fee | None. The 1% operator fee was turned off on 2026-10-26. If it is turned back on, the app shows it in the deposit panel before you pay |
 | Withdrawal | Open since 2026-10-16. $25 to $50 per withdrawal, a $2.00 fee, and a rolling 24-hour ceiling of $200 for everyone together. See [Redemptions](/clutch-treasury/redemptions) |
